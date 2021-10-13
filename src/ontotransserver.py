@@ -48,7 +48,7 @@ class AbstractFilter(ABC):
 
     def get(self, sessionid=None): 
         if sessionid==None:
-            response = requests.post(f'{self.url}/session/')
+            response = requests.post(f'{self.url}/session/', data='{}')
             if response.status_code !=200:
                 raise ApiError(f'Cannot create session: {response.status_code}')
             self.sessionid = json.loads(response.text)['session_id']
@@ -156,7 +156,7 @@ class Filter(AbstractFilter):
         if response.status_code !=200:
             raise ApiError(f'Cannot create filter: {response.status_code}')
         self.data=json.loads(response.text)
-#         self.id = self.data.pop('filter_id')
+        self.id = self.data.pop('filter_id')
         
     def fetch(self,filter_id):
         """ Fetch a specific Filter with its ID"""
@@ -179,7 +179,7 @@ class Mapping(AbstractFilter):
         if response.status_code !=200:
             raise ApiError(f'Cannot create filter: {response.status_code}')
         self.data=json.loads(response.text)
-#         self.id = self.data.pop('mapping_id')
+        self.id = self.data.pop('mapping_id')
         
     def fetch(self,mapping_id):
         """ Fetch a specific Mapping with its ID"""
