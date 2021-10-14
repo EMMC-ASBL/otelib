@@ -45,6 +45,12 @@ class AbstractFilter(ABC):
         p = Pipe(self)
         other._set_input(p)
         return other
+    
+    def update_session(self,data,sessionid):
+        response = requests.put(f'{self.url}/session/{sessionid}',data=data)
+        if response.status_code !=200:
+             raise ApiError(f'Cannot update session: {response.status_code}') 
+        print(self)
         
 
     def get(self, sessionid=None): 
@@ -52,26 +58,27 @@ class AbstractFilter(ABC):
             response = requests.post(f'{self.url}/session/', data='{}')
             if response.status_code !=200:
                 raise ApiError(f'Cannot create session: {response.status_code}')
-            self.sessionid = json.loads(response.text)['session_id']
-        else:
-            self.sessionid = sessionid
+            sessionid = json.loads(response.text)['session_id']
             
         if self.data:
             response = requests.put(f'{self.url}/session/{self.sessionid}',data=json.dumps(self.data))
             if response.status_code !=200:
                 raise ApiError(f'Cannot update session: {response.status_code}')  
-                #call get () api somewhere here:.
+        
         if hasattr(self, 'input_pipe'):
-            return self.input_pipe.get(sessionid)
+            self.input_pipe.get(sessionid)
+            print(self.readurl())
+            return self.fetch(sessionid)  #fetch and update the session with data!!
         else:
-            return 'Data' # return the readurl or whatever fetches the required data!!        
+            print(self.readurl())
+            return self.fetch(sessionid)        
         
 class Pipe(object):
     """ Pipe object in a pipe-and-filter pattern """
     def __init__(self, i):
         self.input = i
         
-    def get(self, sessionid):
+    def get(self, sessionid):        
         return self.input.get(sessionid)
               
             
@@ -90,9 +97,11 @@ class DataResource(AbstractFilter):
         self.data=json.loads(response.text)
         self.id = self.data.pop('resource_id')
         
-    def fetch(self,resource_id):
+    def fetch(self,sessionid):
         """ Fetch a specific data resource with its ID """
-        self.id=resource_id
+        response = requests.get(f'{self.url}/datasource/{self.id}')
+        self.update_session((response.content.decode()),sessionid)
+        return response.content
     
     def read(self):
         """ Read the data in a specific data resource """
@@ -130,9 +139,11 @@ class Transformation(AbstractFilter):
         self.id = self.data.pop('transformation_id')
         
         
-    def fetch(self,resource_id):
-        """ Fetch a specific Transformation with its ID"""
-        self.id=resource_id        
+    def fetch(self,sessionid):
+        """ Fetch a specific Transformation with its ID"""        
+        response = requests.get(f'{self.url}/transformation/{self.id}')
+        self.update_session(response.content.decode(),sessionid)
+        return response.content       
 
     def execute(self):
         response = requests.post(f'{self.url}/transformation/{self.id}/run')
@@ -158,9 +169,11 @@ class Filter(AbstractFilter):
         self.data=json.loads(response.text)
         self.id = self.data.pop('filter_id')
         
-    def fetch(self,filter_id):
+    def fetch(self,sessionid):
         """ Fetch a specific Filter with its ID"""
-        self.id=filter_id        
+        response = requests.get(f'{self.url}/filter/{self.id}')
+        self.update_session(response.content.decode(),sessionid)
+        return response.content       
 
     def readurl(self):
         filter_url = f'{self.url}/filter/{self.id}'
@@ -181,9 +194,11 @@ class Mapping(AbstractFilter):
         self.data=json.loads(response.text)
         self.id = self.data.pop('mapping_id')
         
-    def fetch(self,mapping_id):
+    def fetch(self,sessionid):
         """ Fetch a specific Mapping with its ID"""
-        self.id=mapping_id        
+        response = requests.get(f'{self.url}/mapping/{self.id}')
+        self.update_session(response.content.decode(),sessionid)
+        return response.content
 
     def readurl(self):
         mapping_url = f'{self.url}/mapping/{self.id}'
