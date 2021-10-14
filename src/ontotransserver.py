@@ -4,6 +4,7 @@ import json
 from dataclasses import dataclass
 from pydantic import BaseModel
 from typing import Optional
+from models import *
 
 
 class ApiError(Exception):
@@ -59,7 +60,7 @@ class AbstractFilter(ABC):
             response = requests.put(f'{self.url}/session/{self.sessionid}',data=json.dumps(self.data))
             if response.status_code !=200:
                 raise ApiError(f'Cannot update session: {response.status_code}')  
-                
+                #call get () api somewhere here:.
         if hasattr(self, 'input_pipe'):
             return self.input_pipe.get(sessionid)
         else:
@@ -80,10 +81,10 @@ class DataResource(AbstractFilter):
     def __init__(self, url):
         self.url = url
         
-    def create(self,uri, mediatype):
+    def create(self, **kwargs):
         """ Create a data resource """
-        data = json.dumps({"downloadUrl":uri, "mediaType":mediatype,  "accessUrl":uri,  "license": "string",  "accessRights": "string",  "description": "string", "published":"string",  "configuration": {}})
-        response = requests.post(f'{self.url}/datasource/',data = data)
+        data=ResourceConfig(**kwargs)
+        response = requests.post(f'{self.url}/datasource/', data=json.dumps(data.dict()))
         if response.status_code !=200:
             raise ApiError(f'Cannot create dataresouce: {response.status_code}')
         self.data=json.loads(response.text)
@@ -119,10 +120,10 @@ class Transformation(AbstractFilter):
     def __init__(self, url):
         self.url = url
     
-    def create(self, transformation_type, name, description, due, priority, secret, configuration):
+    def create(self, **kwargs):
         """ Create a Transformation """
-        data = json.dumps({  "transformation_type":transformation_type,  "name":name,  "description":description,  "due": "2021-10-12T10:52:33.349Z",  "priority":priority,  "secret":secret,  "configuration":configuration})
-        response = requests.post(f'{self.url}/transformation', data=data)
+        data=TransformationConfig( **kwargs)
+        response = requests.post(f'{self.url}/transformation', data=json.dumps(data.dict()))
         if response.status_code !=200:
             raise ApiError(f'Cannot create transformation: {response.status_code}')
         self.data=json.loads(response.text)
@@ -149,10 +150,9 @@ class Filter(AbstractFilter):
     def __init__(self, url):
         self.url = url
     
-    def create(self, filterType, query, condition, limit, configuration):
-        """ Create a Filter """
-        data = json.dumps({"filterType":filterType,  "query":query,  "condition":condition,  "limit":limit,  "configuration":configuration})
-        response = requests.post(f'{self.url}/filter', data=data)
+    def create(self,**kwargs):
+        data= FilterConfig(**kwargs)
+        response = requests.post(f'{self.url}/filter', data=json.dumps(data.dict()))
         if response.status_code !=200:
             raise ApiError(f'Cannot create filter: {response.status_code}')
         self.data=json.loads(response.text)
@@ -172,10 +172,10 @@ class Mapping(AbstractFilter):
     def __init__(self, url):
         self.url = url
     
-    def create(self,  mappingType, prefixes, triples, configuration):
+    def create(self, **kwargs):
         """ Create a Mapping """
-        data = json.dumps({"mappingType":mappingType,  "prefixes":prefixes,  "triples":triples,"configuration":configuration})
-        response = requests.post(f'{self.url}/mapping', data=data)
+        data=MappingConfig(**kwargs)
+        response = requests.post(f'{self.url}/mapping',data=json.dumps(data.dict()))
         if response.status_code !=200:
             raise ApiError(f'Cannot create filter: {response.status_code}')
         self.data=json.loads(response.text)
@@ -199,28 +199,28 @@ class OntoTransServer(object):
         """ Say hello """
         return "hello !!!"
     
-    def create_dataresource(self, uri, mediatype):
+    def create_dataresource(self, **kwargs):
         """ Create a new datasource """
         dr = DataResource(self.url)
-        dr.create(uri, mediatype)
+        dr.create(**kwargs)
         return dr
         pass    
     
-    def create_transformation(self, transformation_type, name, description, due, priority, secret, configuration):
+    def create_transformation(self, **kwargs):
         """ create new tranformation """
         tr = Transformation(self.url)
-        tr.create(transformation_type, name, description, due, priority, secret, configuration)
+        tr.create(**kwargs)
         return tr
 
-    def create_filter(self, filterType, query, condition, limit, configuration):
+    def create_filter(self, **kwargs):
         """ create new filter """
         ft= Filter(self.url)
-        ft.create(filterType, query, condition, limit, configuration)
+        ft.create(**kwargs)
         return ft
     
-    def create_mapping(self, mappingType, prefixes, triples, configuration):
+    def create_mapping(self, **kwargs):
         """ create new mapping """
         mp= Mapping(self.url)
-        mp.create(mappingType, prefixes, triples, configuration)
+        mp.create(**kwargs)
         return mp
  
