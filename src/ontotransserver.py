@@ -99,8 +99,10 @@ class DataResource(AbstractFilter):
         
     def fetch(self,sessionid):
         """ Fetch a specific data resource with its ID """
-        response = requests.get(f'{self.url}/datasource/{self.id}')
+        response = requests.get(f'{self.url}/datasource/{self.id}?session_id={sessionid}')
         self.update_session((response.content.decode()),sessionid)
+        print(response.content)
+        print(sessionid)
         return response.content
     
     def read(self):
@@ -141,7 +143,7 @@ class Transformation(AbstractFilter):
         
     def fetch(self,sessionid):
         """ Fetch a specific Transformation with its ID"""        
-        response = requests.get(f'{self.url}/transformation/{self.id}')
+        response = requests.get(f'{self.url}/transformation/{self.id}?session_id={sessionid}')
         self.update_session(response.content.decode(),sessionid)
         return response.content       
 
@@ -171,7 +173,7 @@ class Filter(AbstractFilter):
         
     def fetch(self,sessionid):
         """ Fetch a specific Filter with its ID"""
-        response = requests.get(f'{self.url}/filter/{self.id}')
+        response = requests.get(f'{self.url}/filter/{self.id}?session_id={sessionid}')
         self.update_session(response.content.decode(),sessionid)
         return response.content       
 
@@ -196,7 +198,7 @@ class Mapping(AbstractFilter):
         
     def fetch(self,sessionid):
         """ Fetch a specific Mapping with its ID"""
-        response = requests.get(f'{self.url}/mapping/{self.id}')
+        response = requests.get(f'{self.url}/mapping/{self.id}?session_id={sessionid}')
         self.update_session(response.content.decode(),sessionid)
         return response.content
 
