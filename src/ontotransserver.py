@@ -23,10 +23,6 @@ class AbstractFilter(ABC):
     @abstractmethod
     def __init__(self, url):
         pass
-
-    @abstractmethod
-    def readurl(self): # returns the fetch url!
-        pass
     
     @abstractmethod
     def create(self, *args, **kwargs):
@@ -34,6 +30,10 @@ class AbstractFilter(ABC):
     
     @abstractmethod
     def fetch(self,resource_id):
+        pass
+    
+    @abstractmethod
+    def initialize(self,resource_id):
         pass
     
 
@@ -45,13 +45,7 @@ class AbstractFilter(ABC):
         p = Pipe(self)
         other._set_input(p)
         return other
-    
-    def update_session(self,data,sessionid):
-        response = requests.put(f'{self.url}/session/{sessionid}',data=data)
-        if response.status_code !=200:
-             raise ApiError(f'Cannot update session: {response.status_code}') 
-        print(self)
-        
+       
 
     def get(self, sessionid=None): 
         if sessionid==None:
@@ -59,18 +53,13 @@ class AbstractFilter(ABC):
             if response.status_code !=200:
                 raise ApiError(f'Cannot create session: {response.status_code}')
             sessionid = json.loads(response.text)['session_id']
-            
-        if self.data:
-            response = requests.put(f'{self.url}/session/{self.sessionid}',data=json.dumps(self.data))
-            if response.status_code !=200:
-                raise ApiError(f'Cannot update session: {response.status_code}')  
-        
+            print(sessionid)
         if hasattr(self, 'input_pipe'):
-            self.input_pipe.get(sessionid)
-            print(self.readurl())
-            return self.fetch(sessionid)  #fetch and update the session with data!!
+            self.initialize(sessionid)  
+            self.input_pipe.get(sessionid)  
+            return self.fetch(sessionid)
         else:
-            print(self.readurl())
+            self.initialize(sessionid) 
             return self.fetch(sessionid)        
         
 class Pipe(object):
@@ -100,29 +89,12 @@ class DataResource(AbstractFilter):
     def fetch(self,sessionid):
         """ Fetch a specific data resource with its ID """
         response = requests.get(f'{self.url}/datasource/{self.id}?session_id={sessionid}')
-        self.update_session((response.content.decode()),sessionid)
-        print(response.content)
-        print(sessionid)
         return response.content
-    
-    def read(self):
-        """ Read the data in a specific data resource """
-        response = requests.get(f'{self.url}/datasource/{self.id}/read')
-        if response.status_code !=200:
-            raise ApiError(f'Cannot read data from  datasource {self.id}: {response.status_code}')
-        return response.text
-    
-    def info(self):
-        """ Get the schema for a datasource """
-        response = requests.get(f'{self.url}/datasource/{self.id}/info')
-        if response.status_code !=200:
-            raise ApiError(f'Cannot read schema from dataresouce {self.id}: {response.status_code}')
-        return response.text
-    
-    def readurl(self):
-        source_url = self.url+'/datasource/'+ self.id +'/read'
-        return source_url
-    
+
+    def initialize(self,sessionid):
+        """ Initialize a specific data resource with its ID """
+        response = requests.post(f'{self.url}/datasource/{self.id}/initialize?session_id={sessionid}')
+        return response.content
     
  
 class Transformation(AbstractFilter):
@@ -138,24 +110,18 @@ class Transformation(AbstractFilter):
         if response.status_code !=200:
             raise ApiError(f'Cannot create transformation: {response.status_code}')
         self.data=json.loads(response.text)
-        self.id = self.data.pop('transformation_id')
-        
+        self.id = self.data.pop('transformation_id')        
         
     def fetch(self,sessionid):
         """ Fetch a specific Transformation with its ID"""        
         response = requests.get(f'{self.url}/transformation/{self.id}?session_id={sessionid}')
-        self.update_session(response.content.decode(),sessionid)
-        return response.content       
-
-    def execute(self):
-        response = requests.post(f'{self.url}/transformation/{self.id}/run')
-        if response.status_code !=200:
-            raise ApiError(f'Cannot run transformation: {response.status_code}')
-        return response.text
+        return response.content      
     
-    def readurl(self):
-        transformation_url = f'{self.url}/transformation/{self.id}'
-        return transformation_url
+    def initialize(self,sessionid):
+        """ Initialize a specific Transformation with its ID"""        
+        response = requests.post(f'{self.url}/transformation/{self.id}/initialize?session_id={sessionid}')
+        return response.content     
+    
     
 class Filter(AbstractFilter):
     """ Context class for the Filter Strategy Interfaces """
@@ -174,12 +140,12 @@ class Filter(AbstractFilter):
     def fetch(self,sessionid):
         """ Fetch a specific Filter with its ID"""
         response = requests.get(f'{self.url}/filter/{self.id}?session_id={sessionid}')
-        self.update_session(response.content.decode(),sessionid)
         return response.content       
-
-    def readurl(self):
-        filter_url = f'{self.url}/filter/{self.id}'
-        return filter_url
+    
+    def initialize(self,sessionid):
+        """ Initialize a specific Filter with its ID"""
+        response = requests.post(f'{self.url}/filter/{self.id}/initialize?session_id={sessionid}')
+        return response.content   
 
 class Mapping(AbstractFilter):
     """ Context class for the Mapping Strategy Interfaces """
@@ -199,22 +165,18 @@ class Mapping(AbstractFilter):
     def fetch(self,sessionid):
         """ Fetch a specific Mapping with its ID"""
         response = requests.get(f'{self.url}/mapping/{self.id}?session_id={sessionid}')
-        self.update_session(response.content.decode(),sessionid)
         return response.content
 
-    def readurl(self):
-        mapping_url = f'{self.url}/mapping/{self.id}'
-        return mapping_url
+    def initialize(self,sessionid):
+        """ Initialize a specific Mapping with its ID"""
+        response = requests.post(f'{self.url}/mapping/{self.id}/initialize?session_id={sessionid}')
+        return response.content
     
 class OntoTransServer(object):
     """ The OntoTransServer object represent a remote OntoTrans REST API on the network. """
     
     def __init__(self, url):
         self.url = url
-        
-    def say_hello(self):
-        """ Say hello """
-        return "hello !!!"
     
     def create_dataresource(self, **kwargs):
         """ Create a new datasource """
