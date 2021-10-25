@@ -23,13 +23,14 @@ class MappingConfig(BaseModel):
 
 class ResourceConfig(BaseModel):
     """ Dataset distributrion """
-    downloadUrl: AnyUrl
-    mediaType: str
-    accessUrl: Optional[AnyUrl] # doc
-    license: Optional[str]
-    accessRights: Optional [str]
-    description: Optional [str]
-    published: Optional [str]
+    downloadUrl: AnyUrl = None
+    mediaType: str = None
+    accessUrl: AnyUrl = None
+    accessService: str = None
+    license: Optional[str] = None
+    accessRights: Optional [str] = None
+    description: Optional [str] = None
+    published: Optional [str] = None
     configuration: Optional[Dict] = None
 
 class TransformationConfig(BaseModel):
