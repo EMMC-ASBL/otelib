@@ -71,10 +71,8 @@ Then you must configure the instances of the filters you want to use:
 dataResource = server.create_dataresource(
     downloadUrl="https://jpeg.org/images/jpegsystems-home.jpg",
     mediaType="image/jpeg")
-mapping = server.create_mapping(
-    mappingType="mapping/demo")
-transformation = server.create_transformation(
-    transformation_type= "script/dummy")
+mapping = server.create_mapping(mappingType="mapping/demo")
+transformation = server.create_transformation(transformation_type= "script/dummy")
 ```
 
 before you easily and elegant can combine them into a pipeline:
