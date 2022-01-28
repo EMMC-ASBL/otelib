@@ -4,10 +4,10 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="ontotransserver-pkg-quaat", 
+    name="otelib",
     version="0.0.1",
-    author="Thomas F. Hagelien",
-    author_email="Thomas.F.Hagelien@sintef.no",
+    author="SINTEF",
+    author_email="team4.0@sintef.no",
     description="Library for represent a remote OntoTrans REST API on the network.",
     long_description=long_description,
     long_description_content_type="text/markdown",
