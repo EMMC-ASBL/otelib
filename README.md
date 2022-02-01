@@ -15,7 +15,7 @@ It makes it very simple to configure, set up and run a pipeline based on the pip
 
 The OTEAPI provides a REST API for connecting a sequence of microservices into a pipeline for connecting simulation tools to data sources in a very flexible and reusable way.  OTELib provides a simple Python interface to OTEAPI that makes it easy to utilise OTEAPI from user applications and Python scripts/notebooks as illustrated in the figure below.
 
-![OTELib overview](docs/figs/otelib-overview.png)
+![OTELib overview](docs/img/otelib-overview.png)
 
 *__Figure:__ Overview showing how the OTELib can be used by user applications to access data and simulation tools via a simple Python interface.*
 
@@ -26,7 +26,7 @@ design pattern to separate the process of connecting to external data resources,
 
 In OTELib the pipes and filters are represented by classes - one Pipe class and currently 4 generic filter classes.  It uses the [strategy](https://en.wikipedia.org/wiki/Strategy_pattern) software design pattern is used to specify the underlying microservice.
 
-![OTELib overview](docs/figs/classes.svg)
+![OTELib overview](docs/img/classes.svg)
 
 - **Pipe:** represent data with a type and connects the output from one filter into the input of another filter. Apart from connecting filters, pipes may also have some additional features, including (not implemented yet):
   - Provide access to data and querying.
@@ -50,7 +50,7 @@ In OTELib the pipes and filters are represented by classes - one Pipe class and 
 ## How to use OTELib
 Lets assume that you want to set up a simple pipeline as shown in the following figure.
 
-![Generic pipeline](docs/figs/generic-pipeline.svg)
+![Generic pipeline](docs/img/generic-pipeline.svg)
 
 *__Figure:__ Generic pipeline connecting three filters, a DataResource filter, a Mapping filter and a Transformation filter via pipes.*
 

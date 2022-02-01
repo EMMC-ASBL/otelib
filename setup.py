@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.0.1",
     author="SINTEF",
     author_email="team4.0@sintef.no",
-    description="Library for represent a remote OntoTrans REST API on the network.",
+    description="Library to represent a remote OntoTrans REST API on the network.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/quaat/otserver",
@@ -19,4 +19,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
+    install_requires=["oteapi-core>=0.0.4"],
 )

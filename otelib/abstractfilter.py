@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 import json
 import requests
 
-from .apierror import ApiError
-from .pipe import Pipe
-from .settings import Settings
+from otelib.apierror import ApiError
+from otelib.pipe import Pipe
+from otelib.settings import Settings
 
 
 class AbstractFilter(ABC):
