@@ -4,8 +4,8 @@ from otelib.filter import Filter
 from otelib.mapping import Mapping
 
 
-class OntoTransServer:
-    """The OntoTransServer object represent a remote OntoTrans REST API on the network."""
+class Server:
+    """The Server object represent a remote OntoTrans REST API on the network. """
 
     def __init__(self, url):
         self.url = url

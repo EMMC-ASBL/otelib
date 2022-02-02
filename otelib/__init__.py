@@ -3,7 +3,7 @@ from .filter import Filter
 from .transformation import Transformation
 from .pipe import Pipe
 from .mapping import Mapping
-from .ontotransserver import OntoTransServer
+from .server import Server
 
 
-__all__ = ("DataResource", "Filter", "Transformation", "Pipe", "Mapping", "OntoTransServer")
+__all__ = ("DataResource", "Filter", "Transformation", "Pipe", "Mapping", "Server")
