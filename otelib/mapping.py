@@ -1,30 +1,33 @@
-import json
-
+"""Mapping strategy."""
 import requests
 from oteapi.models import MappingConfig
 
-from otelib.abstractfilter import AbstractFilter
-from otelib.apierror import ApiError
+from otelib.abc import AbstractStrategy
+from otelib.exceptions import ApiError
 
 
-class Mapping(AbstractFilter):
+class Mapping(AbstractStrategy):
     """Context class for the Mapping Strategy Interfaces"""
 
     def create(self, **kwargs):
         """Create a Mapping."""
         data = MappingConfig(**kwargs)
+
         response = requests.post(
-            f"{self.url}{self.settings.prefix}/mapping", data=json.dumps(data.dict())
+            f"{self.url}{self.settings.prefix}/mapping", json=data.dict()
         )
         if response.status_code != 200:
-            raise ApiError(f"Cannot create filter: {response.status_code}")
-        self.data = json.loads(response.text)
-        self.id = self.data.pop("mapping_id")
+            raise ApiError(
+                f"Cannot create filter: {data.mappingType!r} ({response.status_code})"
+            )
+
+        response_json: dict = response.json()
+        self.id_ = response_json.pop("mapping_id")
 
     def fetch(self, session_id):
         """Fetch a specific Mapping with its ID."""
         response = requests.get(
-            f"{self.url}{self.settings.prefix}/mapping/{self.id}?"
+            f"{self.url}{self.settings.prefix}/mapping/{self.id_}?"
             f"session_id={session_id}"
         )
         return response.content
@@ -32,7 +35,7 @@ class Mapping(AbstractFilter):
     def initialize(self, session_id):
         """Initialize a specific Mapping with its ID."""
         response = requests.post(
-            f"{self.url}{self.settings.prefix}/mapping/{self.id}/initialize?"
+            f"{self.url}{self.settings.prefix}/mapping/{self.id_}/initialize?"
             f"session_id={session_id}"
         )
         return response.content

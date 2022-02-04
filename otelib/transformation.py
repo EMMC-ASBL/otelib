@@ -1,31 +1,35 @@
-import json
-
+"""Transformation strategy."""
 import requests
 from oteapi.models import TransformationConfig
 
-from otelib.abstractfilter import AbstractFilter
-from otelib.apierror import ApiError
+from otelib.abc import AbstractStrategy
+from otelib.exceptions import ApiError
 
 
-class Transformation(AbstractFilter):
+class Transformation(AbstractStrategy):
     """Context class for the Transformation Strategy Interfaces."""
 
     def create(self, **kwargs):
         """Create a Transformation."""
         data = TransformationConfig(**kwargs)
+
         response = requests.post(
             f"{self.url}{self.settings.prefix}/transformation",
-            data=json.dumps(data.dict()),
+            json=data.dict(),
         )
         if response.status_code != 200:
-            raise ApiError(f"Cannot create transformation: {response.status_code}")
-        self.data = json.loads(response.text)
-        self.id = self.data.pop("transformation_id")
+            raise ApiError(
+                f"Cannot create transformation: {data.transformationType!r} "
+                f"({response.status_code})"
+            )
+
+        response_json: dict = response.json()
+        self.id_ = response_json.pop("transformation_id")
 
     def fetch(self, session_id):
         """Fetch a specific Transformation with its ID."""
         response = requests.get(
-            f"{self.url}{self.settings.prefix}/transformation/{self.id}?"
+            f"{self.url}{self.settings.prefix}/transformation/{self.id_}?"
             f"session_id={session_id}"
         )
         return response.content
@@ -33,7 +37,7 @@ class Transformation(AbstractFilter):
     def initialize(self, session_id):
         """Initialize a specific Transformation with its ID."""
         response = requests.post(
-            f"{self.url}{self.settings.prefix}/transformation/{self.id}/"
+            f"{self.url}{self.settings.prefix}/transformation/{self.id_}/"
             f"initialize?session_id={session_id}"
         )
         return response.content

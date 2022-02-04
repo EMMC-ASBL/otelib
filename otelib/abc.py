@@ -1,34 +1,36 @@
+"""Abstract Base Class (abc) for strategies."""
 import json
 from abc import ABC, abstractmethod
 
 import requests
 
-from otelib.apierror import ApiError
+from otelib.exceptions import ApiError
 from otelib.pipe import Pipe
 from otelib.settings import Settings
 
 
-class AbstractFilter(ABC):
-    """Abstract class for filters."""
+class AbstractStrategy(ABC):
+    """Abstract class for strategies."""
 
     def __init__(self, url):
-        """Initiates a filter.
+        """Initiates a strategy.
         The `url` is the base URL of the OTEAPI Services.
         """
         self.url = url
         self.settings = Settings()
         self.input_pipe = None
+        self.id_: str = ""
 
     @abstractmethod
     def create(self, **kwargs):
-        """Create a filter.
+        """Create a strategy.
 
-        It should post the configuration for the created filter.
+        It should post the configuration for the created strategy.
         """
 
     @abstractmethod
     def fetch(self, session_id):
-        """Returns the result of the current filter.
+        """Returns the result of the current strategy.
 
         This method is called by get() while propagating up the pipeline.
 
@@ -37,7 +39,7 @@ class AbstractFilter(ABC):
 
     @abstractmethod
     def initialize(self, session_id):
-        """Initialise the current filter.
+        """Initialise the current strategy.
 
         This method is called by get() when propagating down the pipeline.
 
@@ -48,9 +50,9 @@ class AbstractFilter(ABC):
         self.input_pipe = input_pipe
 
     def __rshift__(self, other):
-        """Implements filter concatenation using the `>>` symbol."""
-        p = Pipe(self)
-        other._set_input(p)
+        """Implements strategy concatenation using the `>>` symbol."""
+        pipe = Pipe(self)
+        other._set_input(pipe)
         return other
 
     def get(self, session_id=None):
@@ -60,7 +62,7 @@ class AbstractFilter(ABC):
 
         This will call initialize() and then the get() method on the
         input pipe, which in turn will call the get() method on the
-        filter connected to its input and so forth until the beginning
+        strategy connected to its input and so forth until the beginning
         of the pipeline.
 
         Finally fetch() is called and its output is returned.

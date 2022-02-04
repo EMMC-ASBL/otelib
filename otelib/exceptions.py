@@ -1,4 +1,11 @@
-class ApiError(Exception):
+"""OTElib exceptions."""
+
+
+class BaseOtelibException(Exception):
+    """A base OTElib exception."""
+
+
+class ApiError(BaseOtelibException):
     """An API Error Exception"""
 
     def __init__(self, status):

@@ -1,3 +1,4 @@
+"""OTE Client."""
 from otelib.dataresource import DataResource
 from otelib.filter import Filter
 from otelib.mapping import Mapping
@@ -5,31 +6,33 @@ from otelib.transformation import Transformation
 
 
 class OntoTransServer:
-    """The OntoTransServer object represent a remote OntoTrans REST API on the network."""
+    """The OntoTransServer object representing a remote OntoTrans REST API on the
+    network."""
 
     def __init__(self, url):
         self.url = url
 
     def create_dataresource(self, **kwargs):
         """Create a new datasource."""
-        dr = DataResource(self.url)
-        dr.create(**kwargs)
-        return dr
+        data_resource = DataResource(self.url)
+        data_resource.create(**kwargs)
+        return data_resource
 
     def create_transformation(self, **kwargs):
         """Create new tranformation."""
-        tr = Transformation(self.url)
-        tr.create(**kwargs)
-        return tr
+        transformation = Transformation(self.url)
+        transformation.create(**kwargs)
+        return transformation
 
     def create_filter(self, **kwargs):
         """Create new filter."""
-        ft = Filter(self.url)
-        ft.create(**kwargs)
-        return ft
+        # pylint: disable=redefined-builtin
+        filter = Filter(self.url)
+        filter.create(**kwargs)
+        return filter
 
     def create_mapping(self, **kwargs):
         """Create new mapping."""
-        mp = Mapping(self.url)
-        mp.create(**kwargs)
-        return mp
+        mapping = Mapping(self.url)
+        mapping.create(**kwargs)
+        return mapping
