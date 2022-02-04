@@ -59,7 +59,7 @@ setup(
     long_description=(TOP_DIR / "README.md").read_text(encoding="utf8"),
     long_description_content_type="text/markdown",
     packages=find_packages(),
-    python_requires='>=3.9',
+    python_requires=">=3.9",
     install_requires=BASE,
     extras_require={"dev": DEV},
     classifiers=[

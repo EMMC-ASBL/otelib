@@ -1,7 +1,7 @@
 from otelib.dataresource import DataResource
-from otelib.transformation import Transformation
 from otelib.filter import Filter
 from otelib.mapping import Mapping
+from otelib.transformation import Transformation
 
 
 class OntoTransServer:

@@ -15,7 +15,7 @@ def test_dataresource():
         "address": {"streetAddress": "101", "city": "San Diego", "state": "CA"},
         "phoneNumbers": [{"type": "home", "number": "7349282382"}],
     }
-    server = OntoTransServer('http://localhost:80')
+    server = OntoTransServer("http://localhost:80")
     dataresource = server.create_dataresource(
         downloadUrl="https://filesamples.com/samples/code/json/sample2.json",
         mediaType="text/json",

@@ -1,5 +1,6 @@
 class Pipe:
     """Pipe object in a pipe-and-filter pattern."""
+
     def __init__(self, i):
         self.input = i
 

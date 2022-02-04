@@ -1,5 +1,6 @@
-from abc import ABC, abstractmethod
 import json
+from abc import ABC, abstractmethod
+
 import requests
 
 from otelib.apierror import ApiError
@@ -68,13 +69,11 @@ class AbstractFilter(ABC):
 
         if session_id is None:
             response = requests.post(
-                f'{self.url}{self.settings.prefix}/session/', data='{}'
+                f"{self.url}{self.settings.prefix}/session/", data="{}"
             )
             if response.status_code != 200:
-                raise ApiError(
-                    f'Cannot create session: {response.status_code}'
-                )
-            session_id = json.loads(response.text)['session_id']
+                raise ApiError(f"Cannot create session: {response.status_code}")
+            session_id = json.loads(response.text)["session_id"]
 
         self.initialize(session_id)
         if self.input_pipe:

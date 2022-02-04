@@ -49,7 +49,7 @@ repos:
     - id: pylint
       name: pylint
       entry: pylint
-      args: ["--rcfile=.pylintrc", "--extension-pkg-whitelist='pydantic'"]
+      args: ["--rcfile=pyproject.toml", "--extension-pkg-whitelist='pydantic'"]
       language: python
       types: [python]
       require_serial: true
@@ -58,7 +58,7 @@ repos:
     - id: pylint-tests
       name: pylint - tests
       entry: pylint
-      args: ["--rcfile=.pylintrc", "--extension-pkg-whitelist='pydantic'", "--disable=C0415,W0621"]
+      args: ["--rcfile=pyproject.toml", "--extension-pkg-whitelist='pydantic'", "--disable=C0415,W0621"]
       language: python
       types: [python]
       require_serial: true
