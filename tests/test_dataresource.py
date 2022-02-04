@@ -4,6 +4,7 @@
 def test_dataresource():
     """Test dataresource parse strategy."""
     import json
+
     from otelib import OntoTransServer
 
     data = {
