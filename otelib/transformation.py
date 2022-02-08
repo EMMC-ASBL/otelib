@@ -17,10 +17,10 @@ class Transformation(AbstractStrategy):
             f"{self.url}{self.settings.prefix}/transformation",
             json=data.dict(),
         )
-        if response.status_code != 200:
+        if not response.ok:
             raise ApiError(
-                f"Cannot create transformation: {data.transformationType!r} "
-                f"({response.status_code})"
+                f"Cannot create transformation: {data.transformationType!r}",
+                status=response.status_code,
             )
 
         response_json: dict = response.json()
@@ -32,7 +32,13 @@ class Transformation(AbstractStrategy):
             f"{self.url}{self.settings.prefix}/transformation/{self.id_}?"
             f"session_id={session_id}"
         )
-        return response.content
+        if response.ok:
+            return response.content
+        raise ApiError(
+            f"Cannot fetch transformation: session_id={session_id!r} "
+            f"transformation_id={self.id_!r}",
+            status=response.status_code,
+        )
 
     def initialize(self, session_id):
         """Initialize a specific Transformation with its ID."""
@@ -40,4 +46,10 @@ class Transformation(AbstractStrategy):
             f"{self.url}{self.settings.prefix}/transformation/{self.id_}/"
             f"initialize?session_id={session_id}"
         )
-        return response.content
+        if response.ok:
+            return response.content
+        raise ApiError(
+            f"Cannot initialize transformation: session_id={session_id!r} "
+            f"transformation_id={self.id_!r}",
+            status=response.status_code,
+        )

@@ -73,8 +73,11 @@ class AbstractStrategy(ABC):
             response = requests.post(
                 f"{self.url}{self.settings.prefix}/session/", data="{}"
             )
-            if response.status_code != 200:
-                raise ApiError(f"Cannot create session: {response.status_code}")
+            if not response.ok:
+                raise ApiError(
+                    f"Cannot create session: {response.status_code}",
+                    status=response.status_code,
+                )
             session_id = json.loads(response.text)["session_id"]
 
         self.initialize(session_id)

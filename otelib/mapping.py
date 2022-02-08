@@ -16,9 +16,10 @@ class Mapping(AbstractStrategy):
         response = requests.post(
             f"{self.url}{self.settings.prefix}/mapping", json=data.dict()
         )
-        if response.status_code != 200:
+        if not response.ok:
             raise ApiError(
-                f"Cannot create filter: {data.mappingType!r} ({response.status_code})"
+                f"Cannot create filter: {data.mappingType!r}",
+                status=response.status_code,
             )
 
         response_json: dict = response.json()
@@ -30,7 +31,13 @@ class Mapping(AbstractStrategy):
             f"{self.url}{self.settings.prefix}/mapping/{self.id_}?"
             f"session_id={session_id}"
         )
-        return response.content
+        if response.ok:
+            return response.content
+        raise ApiError(
+            f"Cannot fetch mapping: session_id={session_id!r} "
+            f"mapping_id={self.id_!r}",
+            status=response.status_code,
+        )
 
     def initialize(self, session_id):
         """Initialize a specific Mapping with its ID."""
@@ -38,4 +45,10 @@ class Mapping(AbstractStrategy):
             f"{self.url}{self.settings.prefix}/mapping/{self.id_}/initialize?"
             f"session_id={session_id}"
         )
-        return response.content
+        if response.ok:
+            return response.content
+        raise ApiError(
+            f"Cannot initialize mapping: session_id={session_id!r} "
+            f"mapping_id={self.id_!r}",
+            status=response.status_code,
+        )

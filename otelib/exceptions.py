@@ -8,9 +8,10 @@ class BaseOtelibException(Exception):
 class ApiError(BaseOtelibException):
     """An API Error Exception"""
 
-    def __init__(self, status):
-        super().__init__()
+    def __init__(self, detail: str, status: int, *args):
+        super().__init__(detail, *args)
+        self.detail = detail
         self.status = status
 
     def __str__(self):
-        return f"APIError: status={self.status}"
+        return f"APIError: status={self.status} {self.detail}"

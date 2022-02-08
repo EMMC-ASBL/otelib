@@ -18,11 +18,11 @@ class DataResource(AbstractStrategy):
             f"{self.url}{self.settings.prefix}/dataresource/",
             json=data.dict(),
         )
-        if response.status_code != 200:
+        if not response.ok:
             raise ApiError(
                 f"Cannot create dataresouce: downloadUrl={data.downloadUrl} "
-                f"accessService={data.accessService} mediaType={data.mediaType} "
-                f"({response.status_code})"
+                f"accessService={data.accessService} mediaType={data.mediaType}",
+                status=response.status_code,
             )
 
         response_json: dict = response.json()
@@ -34,7 +34,13 @@ class DataResource(AbstractStrategy):
             f"{self.url}{self.settings.prefix}/dataresource/{self.id_}"
             f"?session_id={session_id}"
         )
-        return response.content
+        if response.ok:
+            return response.content
+        raise ApiError(
+            f"Cannot fetch dataresource: session_id={session_id!r} "
+            f"resource_id={self.id_!r}",
+            status=response.status_code,
+        )
 
     def initialize(self, session_id):
         """Initialize a specific data resource with its ID"""
@@ -42,4 +48,10 @@ class DataResource(AbstractStrategy):
             f"{self.url}{self.settings.prefix}/dataresource/{self.id_}/"
             f"initialize?session_id={session_id}"
         )
-        return response.content
+        if response.ok:
+            return response.content
+        raise ApiError(
+            f"Cannot initialize dataresource: session_id={session_id!r} "
+            f"resource_id={self.id_!r}",
+            status=response.status_code,
+        )
