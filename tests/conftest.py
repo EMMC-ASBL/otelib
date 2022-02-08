@@ -50,19 +50,6 @@ class HTTPMethod(Enum):
 
 
 @pytest.fixture
-def dataresource_data() -> "Dict[str, Any]":
-    """Test data for a DataResource"""
-    return {
-        "firstName": "Joe",
-        "lastName": "Jackson",
-        "gender": "male",
-        "age": 28,
-        "address": {"streetAddress": "101", "city": "San Diego", "state": "CA"},
-        "phoneNumbers": [{"type": "home", "number": "7349282382"}],
-    }
-
-
-@pytest.fixture
 def ids() -> "Callable[[Union[ResourceType, str]], str]":
     """Provide a function to return a test resource id.
 
@@ -116,7 +103,7 @@ def mock_ote_response(
         method: "Union[HTTPMethod, str]",
         endpoint: str,
         params: "Optional[Union[Dict[str, Any], str]]" = None,
-        data: "Optional[Union[dict, str]]" = None,
+        return_json: "Optional[Union[dict, str]]" = None,
         ote_server: "Optional[OntoTransServer]" = None,
     ) -> None:
         """Use `requests_mock` to mock a response from an OTE services server.
@@ -124,7 +111,7 @@ def mock_ote_response(
         It will only be ensured that the `endpoint` starts with a forward slash.
         If it does not, one will be added. Otherwise, `endpoint` is not manipulated.
 
-        The `data` is expected to be a dictionary passed through with the `json`
+        The `return_json` is expected to be a dictionary passed through with the `json`
         parameter.
         """
         method: str = (
@@ -165,7 +152,7 @@ def mock_ote_response(
                 f"{ote_server.url if ote_server else server.url}{Settings().prefix}"
                 f"{endpoint}{params}"
             ),
-            json=data or {},
+            json=return_json or {},
         )
 
     return _mock_response

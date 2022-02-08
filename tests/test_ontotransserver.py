@@ -7,8 +7,7 @@ if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Optional, Union
 
     from otelib.ontotransserver import OntoTransServer
-
-    from .conftest import HTTPMethod, ResourceType
+    from tests.conftest import HTTPMethod, ResourceType
 
     OTEResponse = Callable[
         [
@@ -22,21 +21,51 @@ if TYPE_CHECKING:
     ]
 
 
+@pytest.fixture
+def testdata() -> "Callable[[Union[ResourceType, str]], dict]":
+    """Test data for OTE resource."""
+    from tests.conftest import ResourceType
+
+    def _testdata(resource_type: "Union[ResourceType, str]") -> dict:
+        """Return test data for a given resource."""
+        resource_type = ResourceType(resource_type)
+        if resource_type == ResourceType.RESOURCE:
+            resource_type = ResourceType.DATARESOURCE
+        if resource_type == ResourceType.SESSION:
+            raise ValueError("No test data available for a session.")
+
+        return {
+            ResourceType.DATARESOURCE: {
+                "firstName": "Joe",
+                "lastName": "Jackson",
+                "gender": "male",
+                "age": 28,
+                "address": {"streetAddress": "101", "city": "San Diego", "state": "CA"},
+                "phoneNumbers": [{"type": "home", "number": "7349282382"}],
+            },
+            ResourceType.FILTER: {},
+            ResourceType.MAPPING: {},
+            ResourceType.TRANSFORMATION: {},
+        }[resource_type]
+
+    return _testdata
+
+
 @pytest.mark.usefixtures("mock_session")
 def test_create_dataresource(
-    dataresource_data: "Dict[str, Any]",
     server: "OntoTransServer",
     ids: "Callable[[Union[ResourceType, str]], str]",
     mock_ote_response: "OTEResponse",
+    testdata: "Callable[[Union[ResourceType, str]], dict]",
 ) -> None:
-    """Test dataresource parse strategy."""
+    """Test creating a dataresource."""
     import json
 
     # DataResource.create()
     mock_ote_response(
         method="post",
         endpoint="/dataresource/",
-        data={"resource_id": ids("dataresource")},
+        return_json={"resource_id": ids("dataresource")},
     )
 
     # DataResource.initialize()
@@ -51,7 +80,7 @@ def test_create_dataresource(
         method="get",
         endpoint=f"/dataresource/{ids('dataresource')}",
         params={"session_id": ids("session")},
-        data=dataresource_data,
+        return_json=testdata("dataresource"),
     )
 
     dataresource = server.create_dataresource(
@@ -59,4 +88,47 @@ def test_create_dataresource(
         mediaType="application/json",
     )
     content = json.loads(dataresource.get())
-    assert content == dataresource_data
+    assert content == testdata("dataresource")
+
+
+@pytest.mark.usefixtures("mock_session")
+def test_create_filter(
+    server: "OntoTransServer",
+    ids: "Callable[[Union[ResourceType, str]], str]",
+    mock_ote_response: "OTEResponse",
+    testdata: "Callable[[Union[ResourceType, str]], dict]",
+) -> None:
+    """Test creating a filter."""
+    import json
+
+    sql_query = "DROP TABLE myTable;"
+
+    # Filter.create()
+    mock_ote_response(
+        method="post",
+        endpoint="/filter",
+        return_json={"filter_id": ids("filter")},
+    )
+
+    # Filter.initialize()
+    mock_ote_response(
+        method="post",
+        endpoint=f"/filter/{ids('filter')}/initialize",
+        params={"session_id": ids("session")},
+        return_json={"sqlquery": sql_query},
+    )
+
+    # Filter.fetch()
+    mock_ote_response(
+        method="get",
+        endpoint=f"/filter/{ids('filter')}",
+        params={"session_id": ids("session")},
+    )
+
+    # pylint: disable=redefined-builtin
+    filter = server.create_filter(
+        filterType="filter/sql",
+        configuration={"query": sql_query},
+    )
+    content = json.loads(filter.get())
+    assert content == testdata("filter")
