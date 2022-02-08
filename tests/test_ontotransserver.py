@@ -1,4 +1,4 @@
-"""Test parse strategies."""
+"""Test OTE Client."""
 from typing import TYPE_CHECKING
 
 import pytest
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 
 
 @pytest.mark.usefixtures("mock_session")
-def test_dataresource(
+def test_create_dataresource(
     dataresource_data: "Dict[str, Any]",
     server: "OntoTransServer",
     ids: "Callable[[Union[ResourceType, str]], str]",
