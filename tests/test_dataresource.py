@@ -1,60 +1,62 @@
 """Test parse strategies."""
 from typing import TYPE_CHECKING
 
+import pytest
+
 if TYPE_CHECKING:
-    from requests_mock import Mocker
+    from typing import Any, Callable, Dict, Optional, Union
+
+    from otelib.ontotransserver import OntoTransServer
+
+    from .conftest import HTTPMethod, ResourceType
+
+    OTEResponse = Callable[
+        [
+            Union[HTTPMethod, str],
+            str,
+            Optional[Union[Dict[str, Any], str]],
+            Optional[Union[dict, str]],
+            Optional[OntoTransServer],
+        ],
+        None,
+    ]
 
 
-def test_dataresource(requests_mock: "Mocker") -> None:
+@pytest.mark.usefixtures("mock_session")
+def test_dataresource(
+    dataresource_data: "Dict[str, Any]",
+    server: "OntoTransServer",
+    ids: "Callable[[Union[ResourceType, str]], str]",
+    mock_ote_response: "OTEResponse",
+) -> None:
     """Test dataresource parse strategy."""
     import json
 
-    from otelib.ontotransserver import OntoTransServer
-    from otelib.settings import Settings
-
-    data = {
-        "firstName": "Joe",
-        "lastName": "Jackson",
-        "gender": "male",
-        "age": 28,
-        "address": {"streetAddress": "101", "city": "San Diego", "state": "CA"},
-        "phoneNumbers": [{"type": "home", "number": "7349282382"}],
-    }
-    resource_id = {"resource_id": "dataresource-test"}
-    session_id = {"session_id": "sessions-test"}
-    url_prefix = Settings().prefix
-
-    server = OntoTransServer("http://example.org")
-
     # DataResource.create()
-    requests_mock.post(
-        f"{server.url}{url_prefix}/dataresource/",
-        text=json.dumps(resource_id),
-    )
-
-    # AbstractStrategy.get() (DataResource.get())
-    requests_mock.post(
-        f"{server.url}{url_prefix}/session/",
-        text=json.dumps(session_id),
+    mock_ote_response(
+        method="post",
+        endpoint="/dataresource/",
+        data={"resource_id": ids("dataresource")},
     )
 
     # DataResource.initialize()
-    requests_mock.post(
-        f"{server.url}{url_prefix}/dataresource/{resource_id['resource_id']}/"
-        f"initialize?session_id={session_id['session_id']}",
-        text="{}",
+    mock_ote_response(
+        method="post",
+        endpoint=f"/dataresource/{ids('dataresource')}/initialize",
+        params={"session_id": ids("session")},
     )
 
     # DataResource.fetch()
-    requests_mock.get(
-        f"{server.url}{url_prefix}/dataresource/{resource_id['resource_id']}"
-        f"?session_id={session_id['session_id']}",
-        text=json.dumps(data),
+    mock_ote_response(
+        method="get",
+        endpoint=f"/dataresource/{ids('dataresource')}",
+        params={"session_id": ids("session")},
+        data=dataresource_data,
     )
 
     dataresource = server.create_dataresource(
         downloadUrl="https://filesamples.com/samples/code/json/sample2.json",
-        mediaType="text/json",
+        mediaType="application/json",
     )
     content = json.loads(dataresource.get())
-    assert content == data
+    assert content == dataresource_data

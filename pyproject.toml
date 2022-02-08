@@ -23,3 +23,4 @@ addopts = "-rs --cov=otelib --cov-report=term --durations=10"
 filterwarnings = [
     "ignore:.*imp module.*:DeprecationWarning",
 ]
+requests_mock_case_sensitive = true
