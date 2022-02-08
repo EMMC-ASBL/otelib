@@ -195,4 +195,4 @@ jobs:
     - name: Test with pytest
       run: pytest -vvv
       env:
-        OTELIB_TEST_OTE_SERVER_URL: "http://localhost:${PORT}"
+        OTELIB_TEST_OTE_SERVER_URL: "http://localhost:${{ env.PORT }}"
