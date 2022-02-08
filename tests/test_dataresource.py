@@ -4,7 +4,8 @@
 def test_dataresource():
     """Test dataresource parse strategy."""
     import json
-    from otelib import Server
+
+    from otelib import OTEClient
 
     data = {
         "firstName": "Joe",
@@ -14,8 +15,8 @@ def test_dataresource():
         "address": {"streetAddress": "101", "city": "San Diego", "state": "CA"},
         "phoneNumbers": [{"type": "home", "number": "7349282382"}],
     }
-    OTEServer = Server('http://localhost:80')
-    dataresource = OTEServer.create_dataresource(
+    client = OTEClient('http://localhost:80')
+    dataresource = client.create_dataresource(
         downloadUrl="https://filesamples.com/samples/code/json/sample2.json",
         mediaType="text/json",
     )

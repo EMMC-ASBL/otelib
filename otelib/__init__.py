@@ -1,9 +1,4 @@
-from .dataresource import DataResource
-from .filter import Filter
-from .transformation import Transformation
-from .pipe import Pipe
-from .mapping import Mapping
-from .server import Server
+from .client import OTEClient
 
 
-__all__ = ("DataResource", "Filter", "Transformation", "Pipe", "Mapping", "Server")
+__all__ = ("OTEClient",)
