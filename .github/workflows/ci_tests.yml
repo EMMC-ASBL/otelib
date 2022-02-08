@@ -55,6 +55,7 @@ jobs:
         python -m pip install -U pip
         pip install -U setuptools wheel
         pip install -U -r requirements.txt -r requirements_dev.txt
+        pip install -e .  # Ensure imports work for pylint
         pip install safety
 
     - name: Run pylint
