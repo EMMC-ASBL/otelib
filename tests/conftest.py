@@ -67,9 +67,13 @@ def ids() -> "Callable[[Union[ResourceType, str]], str]":
 @pytest.fixture
 def server() -> "OntoTransServer":
     """Create an `OntoTransServer` test server."""
+    import os
+
     from otelib.ontotransserver import OntoTransServer
 
-    return OntoTransServer("https://example.org")
+    return OntoTransServer(
+        os.getenv("OTELIB_TEST_OTE_SERVER_URL", "https://example.org")
+    )
 
 
 @pytest.fixture

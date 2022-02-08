@@ -158,3 +158,39 @@ jobs:
 
       - name: Check building distribution
         run: python -m build
+
+  pytest-real-backend:
+    runs-on: ubuntu-latest
+    name: pytest-real backend
+    # timeout-minutes: 15
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 2
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
+    - name: Install python dependencies
+      run: |
+        python -m pip install -U pip
+        pip install -U setuptools wheel
+        pip install -e .[dev]
+
+    - name: Run OTE server
+      run: |
+        cd ..
+        git clone https://github.com/EMMC-ASBL/oteapi-services.git
+        docker-compose -f ./oteapi-services/docker-compose.yml up &
+        .github/utils/wait_for_it.sh localhost:8080 -t 120
+        sleep 15
+
+    - name: Test with pytest
+      run: |
+        echo $PWD
+        pytest -vvv --cov-report=xml
+      env:
+        OTELIB_TEST_OTE_SERVER_URL: "http://localhost:8080"
