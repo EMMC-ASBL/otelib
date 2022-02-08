@@ -85,7 +85,7 @@ def test_create_dataresource(
 
     dataresource = server.create_dataresource(
         downloadUrl="https://filesamples.com/samples/code/json/sample2.json",
-        mediaType="application/json",
+        mediaType="text/json",
     )
     content = json.loads(dataresource.get())
     assert content == testdata("dataresource")
@@ -128,7 +128,7 @@ def test_create_filter(
     # pylint: disable=redefined-builtin
     filter = server.create_filter(
         filterType="filter/sql",
-        configuration={"query": sql_query},
+        query=sql_query,
     )
     content = json.loads(filter.get())
     assert content == testdata("filter")

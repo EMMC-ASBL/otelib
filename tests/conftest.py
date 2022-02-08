@@ -49,6 +49,17 @@ class HTTPMethod(Enum):
     PUT = "put"
 
 
+def server_url() -> str:
+    """Return a possibly set real server URL.
+
+    The server URL must be set through the environment variable
+    `OTELIB_TEST_OTE_SERVER_URL`.
+    """
+    import os
+
+    return os.getenv("OTELIB_TEST_OTE_SERVER_URL", "https://example.org")
+
+
 @pytest.fixture
 def ids() -> "Callable[[Union[ResourceType, str]], str]":
     """Provide a function to return a test resource id.
@@ -67,13 +78,9 @@ def ids() -> "Callable[[Union[ResourceType, str]], str]":
 @pytest.fixture
 def server() -> "OntoTransServer":
     """Create an `OntoTransServer` test server."""
-    import os
-
     from otelib.ontotransserver import OntoTransServer
 
-    return OntoTransServer(
-        os.getenv("OTELIB_TEST_OTE_SERVER_URL", "https://example.org")
-    )
+    return OntoTransServer(server_url())
 
 
 @pytest.fixture
@@ -88,10 +95,14 @@ def mock_session(
     """
     from otelib.settings import Settings
 
-    requests_mock.post(
-        f"{server.url}{Settings().prefix}/session/",
-        json={"session_id": ids("session")},
-    )
+    if "example" in server_url():
+        requests_mock.post(
+            f"{server.url}{Settings().prefix}/session/",
+            json={"session_id": ids("session")},
+        )
+    else:
+        # Make sure the requests are done for real.
+        requests_mock.real_http = True
 
 
 @pytest.fixture
@@ -118,6 +129,11 @@ def mock_ote_response(
         The `return_json` is expected to be a dictionary passed through with the `json`
         parameter.
         """
+        if "example" not in server_url():
+            # Make sure the requests are done for real.
+            requests_mock.real_http = True
+            return
+
         method: str = (
             HTTPMethod(method.lower())
             if isinstance(method, str)
