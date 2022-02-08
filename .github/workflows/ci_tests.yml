@@ -164,6 +164,10 @@ jobs:
     name: pytest-real backend
     # timeout-minutes: 15
 
+    env:
+      PORT: 8080
+      OTEAPI_prefix: "/api/v1"
+
     steps:
     - uses: actions/checkout@v2
       with:
@@ -182,16 +186,13 @@ jobs:
 
     - name: Run OTE server
       run: |
-        git clone https://github.com/EMMC-ASBL/oteapi-services.git ../oteapi-services
-        docker-compose -f ../oteapi-services/docker-compose.yml up &
+        docker-compose -f .github/utils/docker-compose.yml up &
         .github/utils/wait_for_it.sh localhost:${PORT} -t 240
         sleep 15
       env:
-        PORT: 8080
+        DOCKER_OTEAPI_VERSION: latest
 
     - name: Test with pytest
-      run: |
-        echo $PWD
-        pytest -vvv --cov-report=xml
+      run: pytest -vvv
       env:
-        OTELIB_TEST_OTE_SERVER_URL: "http://localhost:8080"
+        OTELIB_TEST_OTE_SERVER_URL: "http://localhost:${PORT}"
