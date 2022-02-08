@@ -182,11 +182,12 @@ jobs:
 
     - name: Run OTE server
       run: |
-        cd ..
-        git clone https://github.com/EMMC-ASBL/oteapi-services.git
-        docker-compose -f ./oteapi-services/docker-compose.yml up &
-        otelib/.github/utils/wait_for_it.sh localhost:8080 -t 240
+        git clone https://github.com/EMMC-ASBL/oteapi-services.git ../oteapi-services
+        docker-compose -f ../oteapi-services/docker-compose.yml up &
+        .github/utils/wait_for_it.sh localhost:${PORT} -t 240
         sleep 15
+      env:
+        PORT: 8080
 
     - name: Test with pytest
       run: |
