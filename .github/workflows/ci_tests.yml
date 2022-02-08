@@ -185,7 +185,7 @@ jobs:
         cd ..
         git clone https://github.com/EMMC-ASBL/oteapi-services.git
         docker-compose -f ./oteapi-services/docker-compose.yml up &
-        otelib/.github/utils/wait_for_it.sh localhost:8080 -t 120
+        otelib/.github/utils/wait_for_it.sh localhost:8080 -t 240
         sleep 15
 
     - name: Test with pytest
