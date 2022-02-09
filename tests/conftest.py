@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
     from requests_mock import Mocker
 
-    from otelib.ontotransserver import OntoTransServer
+    from otelib.client import OTEClient
 
 
 class ResourceType(Enum):
@@ -76,17 +76,17 @@ def ids() -> "Callable[[Union[ResourceType, str]], str]":
 
 
 @pytest.fixture
-def server() -> "OntoTransServer":
-    """Create an `OntoTransServer` test server."""
-    from otelib.ontotransserver import OntoTransServer
+def client() -> "OTEClient":
+    """Create an `OTEClient` test client."""
+    from otelib.client import OTEClient
 
-    return OntoTransServer(server_url())
+    return OTEClient(server_url())
 
 
 @pytest.fixture
 def mock_session(
     requests_mock: "Mocker",
-    server: "OntoTransServer",
+    client: "OTEClient",
     ids: "Callable[[Union[ResourceType, str]], str]",
 ) -> None:
     """Mock `POST /session/`.
@@ -97,7 +97,7 @@ def mock_session(
 
     if "example" in server_url():
         requests_mock.post(
-            f"{server.url}{Settings().prefix}/session/",
+            f"{client.url}{Settings().prefix}/session/",
             json={"session_id": ids("session")},
         )
     else:
@@ -107,7 +107,7 @@ def mock_session(
 
 @pytest.fixture
 def mock_ote_response(
-    requests_mock: "Mocker", server: "OntoTransServer"
+    requests_mock: "Mocker", client: "OTEClient"
 ) -> "Callable[[Union[HTTPMethod, str], str, Optional[Union[Dict[str, Any], str]], Optional[Union[dict, str]]], None]":  # pylint: disable=line-too-long
     """Provide a function to mock OTE services responses."""
     from urllib.parse import parse_qs
@@ -119,7 +119,7 @@ def mock_ote_response(
         endpoint: str,
         params: "Optional[Union[Dict[str, Any], str]]" = None,
         return_json: "Optional[Union[dict, str]]" = None,
-        ote_server: "Optional[OntoTransServer]" = None,
+        ote_client: "Optional[OTEClient]" = None,
     ) -> None:
         """Use `requests_mock` to mock a response from an OTE services server.
 
@@ -169,7 +169,7 @@ def mock_ote_response(
         requests_mock.request(
             method=method,
             url=(
-                f"{ote_server.url if ote_server else server.url}{Settings().prefix}"
+                f"{ote_client.url if ote_client else client.url}{Settings().prefix}"
                 f"{endpoint}{params}"
             ),
             json=return_json or {},

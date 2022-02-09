@@ -6,7 +6,7 @@ import pytest
 if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Optional, Union
 
-    from otelib.ontotransserver import OntoTransServer
+    from otelib.client import OTEClient
     from tests.conftest import HTTPMethod, ResourceType
 
     OTEResponse = Callable[
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
             str,
             Optional[Union[Dict[str, Any], str]],
             Optional[Union[dict, str]],
-            Optional[OntoTransServer],
+            Optional[OTEClient],
         ],
         None,
     ]
@@ -53,7 +53,7 @@ def testdata() -> "Callable[[Union[ResourceType, str]], dict]":
 
 @pytest.mark.usefixtures("mock_session")
 def test_create_dataresource(
-    server: "OntoTransServer",
+    client: "OTEClient",
     ids: "Callable[[Union[ResourceType, str]], str]",
     mock_ote_response: "OTEResponse",
     testdata: "Callable[[Union[ResourceType, str]], dict]",
@@ -83,7 +83,7 @@ def test_create_dataresource(
         return_json=testdata("dataresource"),
     )
 
-    dataresource = server.create_dataresource(
+    dataresource = client.create_dataresource(
         downloadUrl="https://filesamples.com/samples/code/json/sample2.json",
         mediaType="text/json",
     )
@@ -93,7 +93,7 @@ def test_create_dataresource(
 
 @pytest.mark.usefixtures("mock_session")
 def test_create_filter(
-    server: "OntoTransServer",
+    client: "OTEClient",
     ids: "Callable[[Union[ResourceType, str]], str]",
     mock_ote_response: "OTEResponse",
     testdata: "Callable[[Union[ResourceType, str]], dict]",
@@ -126,7 +126,7 @@ def test_create_filter(
     )
 
     # pylint: disable=redefined-builtin
-    filter = server.create_filter(
+    filter = client.create_filter(
         filterType="filter/sql",
         query=sql_query,
     )
