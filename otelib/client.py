@@ -5,9 +5,8 @@ from otelib.mapping import Mapping
 from otelib.transformation import Transformation
 
 
-class OntoTransServer:
-    """The OntoTransServer object representing a remote OntoTrans REST API on the
-    network."""
+class OTEClient:
+    """The OTEClient object representing a remote OTE REST API."""
 
     def __init__(self, url):
         self.url = url

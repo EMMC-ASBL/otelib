@@ -2,10 +2,10 @@
 
 A package to interact with the Open Translation Environment (OTE) API.
 """
-from .ontotransserver import OntoTransServer
+from .client import OTEClient
 from .pipe import Pipe
 
-__all__ = ("Pipe", "OntoTransServer")
+__all__ = ("OTEClient", "Pipe")
 
 __version__ = "0.0.1"
 __author__ = "SINTEF"
