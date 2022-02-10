@@ -1,38 +1,53 @@
-import json
+"""Filter strategy."""
 import requests
-
 from oteapi.models import FilterConfig
 
-from otelib.apierror import ApiError
-from otelib.abstractfilter import AbstractFilter
+from otelib.abc import AbstractStrategy
+from otelib.exceptions import ApiError
 
 
-class Filter(AbstractFilter):
-    """ Context class for the Filter Strategy Interfaces """
+class Filter(AbstractStrategy):
+    """Context class for the Filter Strategy Interfaces"""
 
     def create(self, **kwargs):
         data = FilterConfig(**kwargs)
+
         response = requests.post(
-            f'{self.url}{self.settings.prefix}/filter',
-            data=json.dumps(data.dict())
+            f"{self.url}{self.settings.prefix}/filter", json=data.dict()
         )
-        if response.status_code != 200:
-            raise ApiError(f'Cannot create filter: {response.status_code}')
-        self.data = json.loads(response.text)
-        self.id = self.data.pop('filter_id')
+        if not response.ok:
+            raise ApiError(
+                f"Cannot create filter: {data.filterType!r}",
+                status=response.status_code,
+            )
+
+        response_json: dict = response.json()
+        self.id_ = response_json.pop("filter_id")
 
     def fetch(self, session_id):
-        """ Fetch a specific Filter with its ID"""
+        """Fetch a specific Filter with its ID"""
         response = requests.get(
-            f'{self.url}{self.settings.prefix}/filter/{self.id}?'
-            f'session_id={session_id}'
+            f"{self.url}{self.settings.prefix}/filter/{self.id_}?"
+            f"session_id={session_id}"
         )
-        return response.content
+        if response.ok:
+            return response.content
+        raise ApiError(
+            f"Cannot fetch filter: session_id={session_id!r} "
+            f"filter_id={self.id_!r}",
+            status=response.status_code,
+        )
 
     def initialize(self, session_id):
-        """ Initialize a specific Filter with its ID"""
+        """Initialize a specific Filter with its ID"""
         response = requests.post(
-            f'{self.url}{self.settings.prefix}/filter/{self.id}/initialize?'
-            f'session_id={session_id}'
+            f"{self.url}{self.settings.prefix}/filter/{self.id_}/initialize?"
+            f"session_id={session_id}"
         )
-        return response.content
+        if response.ok:
+            return response.content
+        raise ApiError(
+            f"Cannot initialize filter: session_id={session_id!r} "
+            f"filter_id={self.id_!r}",
+            status=response.status_code,
+        )

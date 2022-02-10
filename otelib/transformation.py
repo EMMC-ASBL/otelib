@@ -1,41 +1,55 @@
-import json
+"""Transformation strategy."""
 import requests
-
 from oteapi.models import TransformationConfig
 
-from otelib.apierror import ApiError
-from otelib.abstractfilter import AbstractFilter
+from otelib.abc import AbstractStrategy
+from otelib.exceptions import ApiError
 
 
-class Transformation(AbstractFilter):
+class Transformation(AbstractStrategy):
     """Context class for the Transformation Strategy Interfaces."""
 
     def create(self, **kwargs):
         """Create a Transformation."""
         data = TransformationConfig(**kwargs)
+
         response = requests.post(
-            f'{self.url}{self.settings.prefix}/transformation',
-            data=json.dumps(data.dict())
+            f"{self.url}{self.settings.prefix}/transformation",
+            json=data.dict(),
         )
-        if response.status_code != 200:
+        if not response.ok:
             raise ApiError(
-                f'Cannot create transformation: {response.status_code}'
+                f"Cannot create transformation: {data.transformationType!r}",
+                status=response.status_code,
             )
-        self.data = json.loads(response.text)
-        self.id = self.data.pop('transformation_id')
+
+        response_json: dict = response.json()
+        self.id_ = response_json.pop("transformation_id")
 
     def fetch(self, session_id):
         """Fetch a specific Transformation with its ID."""
         response = requests.get(
-            f'{self.url}{self.settings.prefix}/transformation/{self.id}?'
-            f'session_id={session_id}'
+            f"{self.url}{self.settings.prefix}/transformation/{self.id_}?"
+            f"session_id={session_id}"
         )
-        return response.content
+        if response.ok:
+            return response.content
+        raise ApiError(
+            f"Cannot fetch transformation: session_id={session_id!r} "
+            f"transformation_id={self.id_!r}",
+            status=response.status_code,
+        )
 
     def initialize(self, session_id):
         """Initialize a specific Transformation with its ID."""
         response = requests.post(
-            f'{self.url}{self.settings.prefix}/transformation/{self.id}/'
-            f'initialize?session_id={session_id}'
+            f"{self.url}{self.settings.prefix}/transformation/{self.id_}/"
+            f"initialize?session_id={session_id}"
         )
-        return response.content
+        if response.ok:
+            return response.content
+        raise ApiError(
+            f"Cannot initialize transformation: session_id={session_id!r} "
+            f"transformation_id={self.id_!r}",
+            status=response.status_code,
+        )
