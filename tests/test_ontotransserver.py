@@ -36,14 +36,20 @@ def testdata() -> "Callable[[Union[ResourceType, str]], dict]":
 
         return {
             ResourceType.DATARESOURCE: {
-                "firstName": "Joe",
-                "lastName": "Jackson",
-                "gender": "male",
-                "age": 28,
-                "address": {"streetAddress": "101", "city": "San Diego", "state": "CA"},
-                "phoneNumbers": [{"type": "home", "number": "7349282382"}],
+                "content": {
+                    "firstName": "Joe",
+                    "lastName": "Jackson",
+                    "gender": "male",
+                    "age": 28,
+                    "address": {
+                        "streetAddress": "101",
+                        "city": "San Diego",
+                        "state": "CA",
+                    },
+                    "phoneNumbers": [{"type": "home", "number": "7349282382"}],
+                }
             },
-            ResourceType.FILTER: {},
+            ResourceType.FILTER: {"sqlquery": "DROP TABLE myTable;"},
             ResourceType.MAPPING: {},
             ResourceType.TRANSFORMATION: {},
         }[resource_type]
@@ -85,10 +91,10 @@ def test_create_dataresource(
 
     dataresource = client.create_dataresource(
         downloadUrl="https://filesamples.com/samples/code/json/sample2.json",
-        mediaType="text/json",
+        mediaType="application/json",
     )
-    content = json.loads(dataresource.get())
-    assert content == testdata("dataresource")
+    content = dataresource.get()
+    assert json.loads(content) == testdata("dataresource")
 
 
 @pytest.mark.usefixtures("mock_session")
@@ -100,8 +106,6 @@ def test_create_filter(
 ) -> None:
     """Test creating a filter."""
     import json
-
-    sql_query = "DROP TABLE myTable;"
 
     # Filter.create()
     mock_ote_response(
@@ -115,7 +119,6 @@ def test_create_filter(
         method="post",
         endpoint=f"/filter/{ids('filter')}/initialize",
         params={"session_id": ids("session")},
-        return_json={"sqlquery": sql_query},
     )
 
     # Filter.fetch()
@@ -123,12 +126,14 @@ def test_create_filter(
         method="get",
         endpoint=f"/filter/{ids('filter')}",
         params={"session_id": ids("session")},
+        return_json=testdata("filter"),
     )
 
     # pylint: disable=redefined-builtin
     filter = client.create_filter(
         filterType="filter/sql",
-        query=sql_query,
+        query=testdata("filter")["sqlquery"],
     )
-    content = json.loads(filter.get())
-    assert content == testdata("filter")
+
+    content = filter.get()
+    assert json.loads(content) == testdata("filter")

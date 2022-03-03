@@ -1,5 +1,6 @@
 """Abstract Base Class (abc) for strategies."""
 import json
+import os
 from abc import ABC, abstractmethod
 
 import requests
@@ -20,6 +21,9 @@ class AbstractStrategy(ABC):
         self.settings = Settings()
         self.input_pipe = None
         self.id_: str = ""
+
+        # For debugging/testing
+        self.debug = bool(os.getenv("OTELIB_DEBUG", ""))
 
     @abstractmethod
     def create(self, **kwargs):
@@ -75,7 +79,8 @@ class AbstractStrategy(ABC):
             )
             if not response.ok:
                 raise ApiError(
-                    f"Cannot create session: {response.status_code}",
+                    f"Cannot create session: {response.status_code}"
+                    f"{' content=' + str(response.content) if self.debug else ''}",
                     status=response.status_code,
                 )
             session_id = json.loads(response.text)["session_id"]

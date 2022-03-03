@@ -18,7 +18,8 @@ class Mapping(AbstractStrategy):
         )
         if not response.ok:
             raise ApiError(
-                f"Cannot create filter: {data.mappingType!r}",
+                f"Cannot create filter: {data.mappingType!r}"
+                f"{' content=' + str(response.content) if self.debug else ''}",
                 status=response.status_code,
             )
 
@@ -35,7 +36,8 @@ class Mapping(AbstractStrategy):
             return response.content
         raise ApiError(
             f"Cannot fetch mapping: session_id={session_id!r} "
-            f"mapping_id={self.id_!r}",
+            f"mapping_id={self.id_!r}"
+            f"{' content=' + str(response.content) if self.debug else ''}",
             status=response.status_code,
         )
 
@@ -49,6 +51,7 @@ class Mapping(AbstractStrategy):
             return response.content
         raise ApiError(
             f"Cannot initialize mapping: session_id={session_id!r} "
-            f"mapping_id={self.id_!r}",
+            f"mapping_id={self.id_!r}"
+            f"{' content=' + str(response.content) if self.debug else ''}",
             status=response.status_code,
         )
