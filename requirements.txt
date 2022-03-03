@@ -1,1 +1,1 @@
-oteapi-core>=0.1.1,<1
+oteapi-core>=0.1.2,<1

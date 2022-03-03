@@ -19,7 +19,8 @@ class Transformation(AbstractStrategy):
         )
         if not response.ok:
             raise ApiError(
-                f"Cannot create transformation: {data.transformationType!r}",
+                f"Cannot create transformation: {data.transformationType!r}"
+                f"{' content=' + str(response.content) if self.debug else ''}",
                 status=response.status_code,
             )
 
@@ -36,7 +37,8 @@ class Transformation(AbstractStrategy):
             return response.content
         raise ApiError(
             f"Cannot fetch transformation: session_id={session_id!r} "
-            f"transformation_id={self.id_!r}",
+            f"transformation_id={self.id_!r}"
+            f"{' content=' + str(response.content) if self.debug else ''}",
             status=response.status_code,
         )
 
@@ -50,6 +52,7 @@ class Transformation(AbstractStrategy):
             return response.content
         raise ApiError(
             f"Cannot initialize transformation: session_id={session_id!r} "
-            f"transformation_id={self.id_!r}",
+            f"transformation_id={self.id_!r}"
+            f"{' content=' + str(response.content) if self.debug else ''}",
             status=response.status_code,
         )
