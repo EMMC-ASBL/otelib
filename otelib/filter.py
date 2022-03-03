@@ -13,11 +13,14 @@ class Filter(AbstractStrategy):
         data = FilterConfig(**kwargs)
 
         response = requests.post(
-            f"{self.url}{self.settings.prefix}/filter", json=data.dict()
+            f"{self.url}{self.settings.prefix}/filter",
+            json=data.dict(),
+            params={"session_id": kwargs.pop("session_id", None)},
         )
         if not response.ok:
             raise ApiError(
-                f"Cannot create filter: {data.filterType!r}",
+                f"Cannot create filter: {data.filterType!r}"
+                f"{' content=' + str(response.content) if self.debug else ''}",
                 status=response.status_code,
             )
 
@@ -27,27 +30,29 @@ class Filter(AbstractStrategy):
     def fetch(self, session_id):
         """Fetch a specific Filter with its ID"""
         response = requests.get(
-            f"{self.url}{self.settings.prefix}/filter/{self.id_}?"
-            f"session_id={session_id}"
+            f"{self.url}{self.settings.prefix}/filter/{self.id_}",
+            params={"session_id": session_id},
         )
         if response.ok:
             return response.content
         raise ApiError(
             f"Cannot fetch filter: session_id={session_id!r} "
-            f"filter_id={self.id_!r}",
+            f"filter_id={self.id_!r}"
+            f"{' content=' + str(response.content) if self.debug else ''}",
             status=response.status_code,
         )
 
     def initialize(self, session_id):
         """Initialize a specific Filter with its ID"""
         response = requests.post(
-            f"{self.url}{self.settings.prefix}/filter/{self.id_}/initialize?"
-            f"session_id={session_id}"
+            f"{self.url}{self.settings.prefix}/filter/{self.id_}/initialize",
+            params={"session_id": session_id},
         )
         if response.ok:
             return response.content
         raise ApiError(
             f"Cannot initialize filter: session_id={session_id!r} "
-            f"filter_id={self.id_!r}",
+            f"filter_id={self.id_!r}"
+            f"{' content=' + str(response.content) if self.debug else ''}",
             status=response.status_code,
         )
