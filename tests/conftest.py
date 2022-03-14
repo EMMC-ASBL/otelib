@@ -104,7 +104,7 @@ def mock_session(
 
     if "example" in server_url():
         requests_mock.post(
-            f"{client.url}{Settings().prefix}/session/",
+            f"{client.url}{Settings().prefix}/session",
             json={"session_id": ids("session")},
         )
     else:

@@ -70,7 +70,7 @@ def test_create_dataresource(
     # DataResource.create()
     mock_ote_response(
         method="post",
-        endpoint="/dataresource/",
+        endpoint="/dataresource",
         return_json={"resource_id": ids("dataresource")},
     )
 
@@ -95,8 +95,13 @@ def test_create_dataresource(
         mediaType="application/json",
     )
 
+    # The data resource returns everything from it's `get()` method.
+    # However, it should return anything from its `initalize()` method.
     content = dataresource.get()
     assert json.loads(content) == testdata("dataresource")
+
+    content = dataresource.initialize(ids("session"))
+    assert json.loads(content) == {}
 
 
 @pytest.mark.usefixtures("mock_session")
@@ -129,7 +134,7 @@ def test_create_filter(
         method="get",
         endpoint=f"/filter/{ids('filter')}",
         params={"session_id": ids("session")},
-        return_json=testdata("filter"),
+        return_json={},
     )
 
     # pylint: disable=redefined-builtin
@@ -138,5 +143,10 @@ def test_create_filter(
         query=testdata("filter")["sqlquery"],
     )
 
+    # The filter does not return anything from it's `get()` method.
+    # Rather it returns its filter in the `initalize()` method.
     content = filter.get()
+    assert json.loads(content) == {}
+
+    content = filter.initialize(ids("session"))
     assert json.loads(content) == testdata("filter")
