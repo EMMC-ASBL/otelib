@@ -95,10 +95,8 @@ def test_create_dataresource(
         mediaType="application/json",
     )
 
-    initialize_content = dataresource.initialize()
-    get_content = dataresource.get()
-    assert json.loads(initialize_content) == {}
-    assert json.loads(get_content) == testdata("dataresource")
+    content = dataresource.get()
+    assert json.loads(content) == testdata("dataresource")
 
 
 @pytest.mark.usefixtures("mock_session")
@@ -131,7 +129,7 @@ def test_create_filter(
         method="get",
         endpoint=f"/filter/{ids('filter')}",
         params={"session_id": ids("session")},
-        return_json={},
+        return_json=testdata("filter"),
     )
 
     # pylint: disable=redefined-builtin
@@ -140,7 +138,5 @@ def test_create_filter(
         query=testdata("filter")["sqlquery"],
     )
 
-    intialize_content = filter.initialize()
-    get_content = filter.get()
-    assert json.loads(intialize_content) == testdata("filter")
-    assert json.loads(get_content) == {}
+    content = filter.get()
+    assert json.loads(content) == testdata("filter")
