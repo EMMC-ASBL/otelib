@@ -67,6 +67,8 @@ def test_create_dataresource(
     """Test creating a dataresource."""
     import json
 
+    import requests
+
     # DataResource.create()
     mock_ote_response(
         method="post",
@@ -90,6 +92,13 @@ def test_create_dataresource(
         return_json=testdata("dataresource"),
     )
 
+    # Session content
+    mock_ote_response(
+        method="get",
+        endpoint=f"/session/{ids('session')}",
+        return_json=testdata("dataresource"),
+    )
+
     dataresource = client.create_dataresource(
         downloadUrl="https://filesamples.com/samples/code/json/sample2.json",
         mediaType="application/json",
@@ -103,6 +112,12 @@ def test_create_dataresource(
     content = dataresource.initialize(ids("session"))
     assert json.loads(content) == {}
 
+    # The testdata should always be what's in the full session
+    content_session = requests.get(
+        f"{dataresource.url}{dataresource.settings.prefix}/session/{ids('session')}"
+    )
+    assert content_session.json() == testdata("dataresource")
+
 
 @pytest.mark.usefixtures("mock_session")
 def test_create_filter(
@@ -113,6 +128,8 @@ def test_create_filter(
 ) -> None:
     """Test creating a filter."""
     import json
+
+    import requests
 
     # Filter.create()
     mock_ote_response(
@@ -137,6 +154,13 @@ def test_create_filter(
         return_json={},
     )
 
+    # Session content
+    mock_ote_response(
+        method="get",
+        endpoint=f"/session/{ids('session')}",
+        return_json=testdata("filter"),
+    )
+
     # pylint: disable=redefined-builtin
     filter = client.create_filter(
         filterType="filter/sql",
@@ -150,3 +174,9 @@ def test_create_filter(
 
     content = filter.initialize(ids("session"))
     assert json.loads(content) == testdata("filter")
+
+    # The testdata should always be what's in the full session
+    content_session = requests.get(
+        f"{filter.url}{filter.settings.prefix}/session/{ids('session')}"
+    )
+    assert content_session.json() == testdata("filter")

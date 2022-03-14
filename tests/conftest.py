@@ -96,7 +96,7 @@ def mock_session(
     client: "OTEClient",
     ids: "Callable[[Union[ResourceType, str]], str]",
 ) -> None:
-    """Mock `POST /session/`.
+    """Mock `POST /session`.
 
     This is called in `AbstractStrategy.get()`.
     """
