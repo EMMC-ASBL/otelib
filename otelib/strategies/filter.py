@@ -10,12 +10,13 @@ class Filter(AbstractStrategy):
     """Context class for the Filter Strategy Interfaces"""
 
     def create(self, **kwargs) -> None:
+        session_id = kwargs.pop("session_id", None)
         data = FilterConfig(**kwargs)
 
         response = requests.post(
             f"{self.url}{self.settings.prefix}/filter",
             json=data.dict(),
-            params={"session_id": kwargs.pop("session_id", None)},
+            params={"session_id": session_id} if session_id else {},
         )
         if not response.ok:
             raise ApiError(
