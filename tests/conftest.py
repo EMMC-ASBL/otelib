@@ -263,7 +263,9 @@ TEST_DATA = {
 @pytest.fixture
 def raw_test_data() -> "Dict[str, Any]":
     """Return raw test data."""
-    return TEST_DATA.copy()
+    from copy import deepcopy
+
+    return deepcopy(TEST_DATA)
 
 
 @pytest.fixture
