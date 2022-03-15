@@ -39,6 +39,7 @@ class AbstractStrategy(ABC):
 
         # For debugging/testing
         self.debug: bool = bool(os.getenv("OTELIB_DEBUG", ""))
+        self._session_id: "Optional[str]" = None
 
     @abstractmethod
     def create(self, **kwargs) -> None:
@@ -129,6 +130,9 @@ class AbstractStrategy(ABC):
                     status=response.status_code,
                 )
             session_id = json.loads(response.text)["session_id"]
+
+        if self.debug:
+            self._session_id = session_id
 
         self.initialize(session_id)
         if self.input_pipe:

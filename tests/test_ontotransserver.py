@@ -1,4 +1,5 @@
 """Test OTE Client."""
+# pylint: disable=protected-access
 from typing import TYPE_CHECKING
 
 import pytest
@@ -109,12 +110,13 @@ def test_create_dataresource(
     content = dataresource.get()
     assert json.loads(content) == testdata("dataresource")
 
-    content = dataresource.initialize(ids("session"))
-    assert json.loads(content) == {}
-
     # The testdata should always be what's in the full session
+    assert (
+        dataresource._session_id
+    ), "Session ID not found in filter ! Is OTEAPI_DEBUG not set?"
     content_session = requests.get(
-        f"{dataresource.url}{dataresource.settings.prefix}/session/{ids('session')}"
+        f"{dataresource.url}{dataresource.settings.prefix}"
+        f"/session/{dataresource._session_id}"
     )
     assert content_session.json() == testdata("dataresource")
 
@@ -169,14 +171,14 @@ def test_create_filter(
 
     # The filter does not return anything from it's `get()` method.
     # Rather it returns its filter in the `initalize()` method.
+    # The returned value from `initialize()` can be found in the session.
     content = filter.get()
     assert json.loads(content) == {}
 
-    content = filter.initialize(ids("session"))
-    assert json.loads(content) == testdata("filter")
-
-    # The testdata should always be what's in the full session
+    assert (
+        filter._session_id
+    ), "Session ID not found in filter ! Is OTEAPI_DEBUG not set?"
     content_session = requests.get(
-        f"{filter.url}{filter.settings.prefix}/session/{ids('session')}"
+        f"{filter.url}{filter.settings.prefix}/session/{filter._session_id}"
     )
     assert content_session.json() == testdata("filter")

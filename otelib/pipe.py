@@ -2,6 +2,8 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from typing import List, Optional
+
     from otelib.strategies.abc import AbstractStrategy
 
 
@@ -11,6 +13,6 @@ class Pipe:
     def __init__(self, strategy: "AbstractStrategy") -> None:
         self.input: "AbstractStrategy" = strategy
 
-    def get(self, session: str) -> bytes:
+    def get(self, session: "Optional[str]" = None) -> bytes:
         """Call the input strategy's `get()` method."""
         return self.input.get(session)
