@@ -70,7 +70,7 @@ To set up a pipeline, you will first have to connect to a running OTE server usi
 ```python
 from otelib import OTEClient
 
-client = OTEClient('http://localhost:8080/api/v1')
+client = OTEClient('http://localhost:8080')
 ```
 
 Then you must configure the instances of the filters you want to use:
