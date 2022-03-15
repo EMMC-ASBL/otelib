@@ -68,6 +68,12 @@ def server_url() -> str:
 
 
 @pytest.fixture
+def resource_type_cls() -> ResourceType:
+    """Return the `ResourceType` Enum."""
+    return ResourceType
+
+
+@pytest.fixture
 def ids() -> "Callable[[Union[ResourceType, str]], str]":
     """Provide a function to return a test resource id.
 
@@ -96,7 +102,7 @@ def mock_session(
     client: "OTEClient",
     ids: "Callable[[Union[ResourceType, str]], str]",
 ) -> None:
-    """Mock `POST /session/`.
+    """Mock `POST /session`.
 
     This is called in `AbstractStrategy.get()`.
     """
@@ -104,7 +110,7 @@ def mock_session(
 
     if "example" in server_url():
         requests_mock.post(
-            f"{client.url}{Settings().prefix}/session/",
+            f"{client.url}{Settings().prefix}/session",
             json={"session_id": ids("session")},
         )
     else:
