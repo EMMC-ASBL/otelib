@@ -49,6 +49,13 @@ class HTTPMethod(Enum):
     PUT = "put"
 
 
+def pytest_configure(config) -> None:  # pylint: disable=unused-argument
+    """Method that runs before pytest collects tests, so no modules are imported."""
+    import os
+
+    os.environ["OTELIB_DEBUG"] = "True"
+
+
 def server_url() -> str:
     """Return a possibly set real server URL.
 
