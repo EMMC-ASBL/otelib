@@ -33,6 +33,7 @@ class ResourceType(str, Enum):
 
     DATARESOURCE = "dataresource"
     FILTER = "filter"
+    FUNCTION = "function"
     MAPPING = "mapping"
     SESSION = "session"
     TRANSFORMATION = "transformation"
@@ -42,6 +43,7 @@ class ResourceType(str, Enum):
         return {
             "dataresource": "dataresource-",
             "filter": "filter-",
+            "function": "function-",
             "mapping": "mapping-",
             "session": "session-",
             "transformation": "transformation-",
@@ -245,6 +247,7 @@ TEST_DATA = {
         }
     },
     "filter": {"sqlquery": "DROP TABLE myTable;"},
+    "function": {},
     "mapping": {
         "prefixes": {
             "map": "http://example.org/0.0.1/mapping_ontology#",

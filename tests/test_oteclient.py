@@ -28,6 +28,9 @@ def test_create_strategies(
     create_kwargs: "Dict[str, Any]",
 ) -> None:
     """Test creating any strategy and calling it's `get()` method."""
+    if strategy == "function" and "example" not in client.url:
+        pytest.skip("No function strategy exists in oteapi-core yet.")
+
     import json
 
     import requests

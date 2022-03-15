@@ -21,7 +21,7 @@ class DataResource(AbstractStrategy):
         )
         if not response.ok:
             raise ApiError(
-                f"Cannot create dataresouce: downloadUrl={data.downloadUrl} "
+                f"Cannot create data resouce: downloadUrl={data.downloadUrl} "
                 f"accessService={data.accessService} mediaType={data.mediaType}"
                 f"{' content=' + str(response.content) if self.debug else ''}",
                 status=response.status_code,
@@ -38,7 +38,7 @@ class DataResource(AbstractStrategy):
         if response.ok:
             return response.content
         raise ApiError(
-            f"Cannot fetch dataresource: session_id={session_id!r} "
+            f"Cannot fetch data resource: session_id={session_id!r} "
             f"resource_id={self.id!r}"
             f"{' content=' + str(response.content) if self.debug else ''}",
             status=response.status_code,
@@ -52,7 +52,7 @@ class DataResource(AbstractStrategy):
         if response.ok:
             return response.content
         raise ApiError(
-            f"Cannot initialize dataresource: session_id={session_id!r} "
+            f"Cannot initialize data resource: session_id={session_id!r} "
             f"resource_id={self.id!r}"
             f"{' content=' + str(response.content) if self.debug else ''}",
             status=response.status_code,
