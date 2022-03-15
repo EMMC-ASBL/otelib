@@ -16,7 +16,7 @@ class Filter(AbstractStrategy):
         response = requests.post(
             f"{self.url}{self.settings.prefix}/filter",
             json=data.dict(),
-            params={"session_id": session_id},
+            params={"session_id": session_id} if session_id else {},
         )
         if not response.ok:
             raise ApiError(
