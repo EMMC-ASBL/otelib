@@ -100,7 +100,13 @@ def strategy_create_kwargs() -> "List[Tuple[str, Dict[str, Any]]]":
         ),
         (
             ResourceType.TRANSFORMATION.value,
-            {"transformationType": "celery/remote"},
+            {
+                "transformationType": "celery/remote",
+                "configuration": {
+                    "task_name": "test-task",
+                    "args": [],
+                },
+            },
         ),
     ]
 
