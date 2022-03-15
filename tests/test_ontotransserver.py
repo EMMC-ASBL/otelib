@@ -110,7 +110,7 @@ def test_create_dataresource(
     content = dataresource.get()
     assert json.loads(content) == testdata("dataresource")
 
-    # The testdata should always be what's in the full session
+    # The testdata should always be in the full session
     assert (
         dataresource._session_id
     ), "Session ID not found in filter ! Is OTEAPI_DEBUG not set?"
@@ -118,7 +118,10 @@ def test_create_dataresource(
         f"{dataresource.url}{dataresource.settings.prefix}"
         f"/session/{dataresource._session_id}"
     )
-    assert content_session.json() == testdata("dataresource")
+    session: "Dict[str, Any]" = content_session.json()
+    for key, value in testdata("dataresource").items():
+        assert key in session
+        assert value == session[key]
 
 
 @pytest.mark.usefixtures("mock_session")
@@ -181,4 +184,7 @@ def test_create_filter(
     content_session = requests.get(
         f"{filter.url}{filter.settings.prefix}/session/{filter._session_id}"
     )
-    assert content_session.json() == testdata("filter")
+    session: "Dict[str, Any]" = content_session.json()
+    for key, value in testdata("filter").items():
+        assert key in session
+        assert value == session[key]
