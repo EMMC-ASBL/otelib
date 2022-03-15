@@ -1,5 +1,5 @@
 """OTE Client."""
-from otelib.strategies import DataResource, Filter, Mapping, Transformation
+from otelib.strategies import DataResource, Filter, Function, Mapping, Transformation
 
 
 class OTEClient:
@@ -71,3 +71,16 @@ class OTEClient:
         mapping = Mapping(self.url)
         mapping.create(**kwargs)
         return mapping
+
+    def create_function(self, **kwargs) -> Function:
+        """Create a new function.
+
+        Any given keyword arguments are passed on to the `create()` method.
+
+        Returns:
+            The newly created function.
+
+        """
+        function_ = Function(self.url)
+        function_.create(**kwargs)
+        return function_

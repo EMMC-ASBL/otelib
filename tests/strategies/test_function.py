@@ -133,7 +133,7 @@ def test_fetch_fails(
 
     # We must first create the resource - getting a resource ID
     function.create(
-        functionType="triples",
+        functionType="function/demo",
         **testdata("function"),
     )
 
