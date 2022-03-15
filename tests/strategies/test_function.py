@@ -74,6 +74,9 @@ def test_fetch(
     testdata: "Callable[[Union[ResourceType, str]], dict]",
 ) -> None:
     """Test `Function.fetch()`."""
+    if "example" not in server_url:
+        pytest.skip("No function strategy exists in oteapi-core yet.")
+
     import json
 
     from otelib.strategies.function import Function
@@ -94,7 +97,7 @@ def test_fetch(
 
     # We must first create the resource - getting a resource ID
     function.create(
-        functionType="triples",
+        functionType="function/demo",
         **testdata("function"),
     )
 
@@ -146,6 +149,9 @@ def test_initialize(
     testdata: "Callable[[Union[ResourceType, str]], dict]",
 ) -> None:
     """Test `Function.fetch()`."""
+    if "example" not in server_url:
+        pytest.skip("No function strategy exists in oteapi-core yet.")
+
     import json
 
     from otelib.strategies.function import Function
