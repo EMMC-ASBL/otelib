@@ -229,12 +229,48 @@ def mock_ote_response(
     return _mock_response
 
 
-@pytest.fixture
-def testdata() -> "Callable[[Union[ResourceType, str]], dict]":
-    """Test data for OTE resource."""
-    from copy import deepcopy
+TEST_DATA = {
+    "dataresource": {
+        "content": {
+            "firstName": "Joe",
+            "lastName": "Jackson",
+            "gender": "male",
+            "age": 28,
+            "address": {
+                "streetAddress": "101",
+                "city": "San Diego",
+                "state": "CA",
+            },
+            "phoneNumbers": [{"type": "home", "number": "7349282382"}],
+        }
+    },
+    "filter": {"sqlquery": "DROP TABLE myTable;"},
+    "mapping": {
+        "prefixes": {
+            "map": "http://example.org/0.0.1/mapping_ontology#",
+            "onto": "http://example.org/0.2.1/ontology#",
+        },
+        "triples": [
+            ["http://onto-ns.com/meta/1.0/Foo#a", "map:mapsTo", "onto:A"],
+            ["http://onto-ns.com/meta/1.0/Foo#b", "map:mapsTo", "onto:B"],
+            ["http://onto-ns.com/meta/1.0/Bar#a", "map:mapsTo", "onto:C"],
+        ],
+    },
+    "transformation": {"data": {}},
+}
 
-    from tests.utils import TEST_DATA
+
+@pytest.fixture
+def raw_test_data() -> "Dict[str, Any]":
+    """Return raw test data."""
+    return TEST_DATA.copy()
+
+
+@pytest.fixture
+def testdata(
+    raw_test_data: "Dict[str, Any]",
+) -> "Callable[[Union[ResourceType, str]], dict]":
+    """Test data for OTE resource."""
 
     def _testdata(resource_type: "Union[ResourceType, str]") -> dict:
         """Return test data for a given resource."""
@@ -242,6 +278,6 @@ def testdata() -> "Callable[[Union[ResourceType, str]], dict]":
         if resource_type == ResourceType.SESSION:
             raise ValueError("No test data available for a session.")
 
-        return deepcopy(TEST_DATA[resource_type.value])
+        return raw_test_data[resource_type.value]
 
     return _testdata

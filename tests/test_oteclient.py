@@ -3,8 +3,7 @@
 from typing import TYPE_CHECKING
 
 import pytest
-
-from tests.utils import strategy_create_kwargs
+from utils import strategy_create_kwargs
 
 if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Union

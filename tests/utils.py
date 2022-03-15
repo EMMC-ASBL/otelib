@@ -5,40 +5,9 @@ if TYPE_CHECKING:
     from typing import Any, Dict, List, Tuple
 
 
-TEST_DATA = {
-    "dataresource": {
-        "content": {
-            "firstName": "Joe",
-            "lastName": "Jackson",
-            "gender": "male",
-            "age": 28,
-            "address": {
-                "streetAddress": "101",
-                "city": "San Diego",
-                "state": "CA",
-            },
-            "phoneNumbers": [{"type": "home", "number": "7349282382"}],
-        }
-    },
-    "filter": {"sqlquery": "DROP TABLE myTable;"},
-    "mapping": {
-        "prefixes": {
-            "map": "http://example.org/0.0.1/mapping_ontology#",
-            "onto": "http://example.org/0.2.1/ontology#",
-        },
-        "triples": [
-            ["http://onto-ns.com/meta/1.0/Foo#a", "map:mapsTo", "onto:A"],
-            ["http://onto-ns.com/meta/1.0/Foo#b", "map:mapsTo", "onto:B"],
-            ["http://onto-ns.com/meta/1.0/Bar#a", "map:mapsTo", "onto:C"],
-        ],
-    },
-    "transformation": {"data": {}},
-}
-
-
 def strategy_create_kwargs() -> "List[Tuple[str, Dict[str, Any]]]":
     """Strategy to creation key-word-arguments."""
-    from tests.conftest import ResourceType
+    from conftest import TEST_DATA, ResourceType
 
     return [
         (
