@@ -1,4 +1,5 @@
 """Test OTE Client."""
+# pylint: disable=protected-access,invalid-name
 from typing import TYPE_CHECKING
 
 import pytest
@@ -22,9 +23,11 @@ if TYPE_CHECKING:
 
 
 @pytest.fixture
-def testdata() -> "Callable[[Union[ResourceType, str]], dict]":
+def testdata(
+    resource_type_cls: "ResourceType",
+) -> "Callable[[Union[ResourceType, str]], dict]":
     """Test data for OTE resource."""
-    from tests.conftest import ResourceType
+    ResourceType = resource_type_cls
 
     def _testdata(resource_type: "Union[ResourceType, str]") -> dict:
         """Return test data for a given resource."""
@@ -36,14 +39,20 @@ def testdata() -> "Callable[[Union[ResourceType, str]], dict]":
 
         return {
             ResourceType.DATARESOURCE: {
-                "firstName": "Joe",
-                "lastName": "Jackson",
-                "gender": "male",
-                "age": 28,
-                "address": {"streetAddress": "101", "city": "San Diego", "state": "CA"},
-                "phoneNumbers": [{"type": "home", "number": "7349282382"}],
+                "content": {
+                    "firstName": "Joe",
+                    "lastName": "Jackson",
+                    "gender": "male",
+                    "age": 28,
+                    "address": {
+                        "streetAddress": "101",
+                        "city": "San Diego",
+                        "state": "CA",
+                    },
+                    "phoneNumbers": [{"type": "home", "number": "7349282382"}],
+                }
             },
-            ResourceType.FILTER: {},
+            ResourceType.FILTER: {"sqlquery": "DROP TABLE myTable;"},
             ResourceType.MAPPING: {},
             ResourceType.TRANSFORMATION: {},
         }[resource_type]
@@ -61,10 +70,12 @@ def test_create_dataresource(
     """Test creating a dataresource."""
     import json
 
+    import requests
+
     # DataResource.create()
     mock_ote_response(
         method="post",
-        endpoint="/dataresource/",
+        endpoint="/dataresource",
         return_json={"resource_id": ids("dataresource")},
     )
 
@@ -73,6 +84,7 @@ def test_create_dataresource(
         method="post",
         endpoint=f"/dataresource/{ids('dataresource')}/initialize",
         params={"session_id": ids("session")},
+        return_json={},
     )
 
     # DataResource.fetch()
@@ -83,12 +95,35 @@ def test_create_dataresource(
         return_json=testdata("dataresource"),
     )
 
+    # Session content
+    mock_ote_response(
+        method="get",
+        endpoint=f"/session/{ids('session')}",
+        return_json=testdata("dataresource"),
+    )
+
     dataresource = client.create_dataresource(
         downloadUrl="https://filesamples.com/samples/code/json/sample2.json",
-        mediaType="text/json",
+        mediaType="application/json",
     )
-    content = json.loads(dataresource.get())
-    assert content == testdata("dataresource")
+
+    # The data resource returns everything from it's `get()` method.
+    # However, it should return anything from its `initalize()` method.
+    content = dataresource.get()
+    assert json.loads(content) == testdata("dataresource")
+
+    # The testdata should always be in the full session
+    assert (
+        dataresource._session_id
+    ), "Session ID not found in filter ! Is OTEAPI_DEBUG not set?"
+    content_session = requests.get(
+        f"{dataresource.url}{dataresource.settings.prefix}"
+        f"/session/{dataresource._session_id}"
+    )
+    session: "Dict[str, Any]" = content_session.json()
+    for key, value in testdata("dataresource").items():
+        assert key in session
+        assert value == session[key]
 
 
 @pytest.mark.usefixtures("mock_session")
@@ -101,7 +136,7 @@ def test_create_filter(
     """Test creating a filter."""
     import json
 
-    sql_query = "DROP TABLE myTable;"
+    import requests
 
     # Filter.create()
     mock_ote_response(
@@ -115,7 +150,7 @@ def test_create_filter(
         method="post",
         endpoint=f"/filter/{ids('filter')}/initialize",
         params={"session_id": ids("session")},
-        return_json={"sqlquery": sql_query},
+        return_json=testdata("filter"),
     )
 
     # Filter.fetch()
@@ -123,12 +158,35 @@ def test_create_filter(
         method="get",
         endpoint=f"/filter/{ids('filter')}",
         params={"session_id": ids("session")},
+        return_json={},
+    )
+
+    # Session content
+    mock_ote_response(
+        method="get",
+        endpoint=f"/session/{ids('session')}",
+        return_json=testdata("filter"),
     )
 
     # pylint: disable=redefined-builtin
     filter = client.create_filter(
         filterType="filter/sql",
-        query=sql_query,
+        query=testdata("filter")["sqlquery"],
     )
-    content = json.loads(filter.get())
-    assert content == testdata("filter")
+
+    # The filter does not return anything from it's `get()` method.
+    # Rather it returns its filter in the `initalize()` method.
+    # The returned value from `initialize()` can be found in the session.
+    content = filter.get()
+    assert json.loads(content) == {}
+
+    assert (
+        filter._session_id
+    ), "Session ID not found in filter ! Is OTEAPI_DEBUG not set?"
+    content_session = requests.get(
+        f"{filter.url}{filter.settings.prefix}/session/{filter._session_id}"
+    )
+    session: "Dict[str, Any]" = content_session.json()
+    for key, value in testdata("filter").items():
+        assert key in session
+        assert value == session[key]

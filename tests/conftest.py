@@ -49,6 +49,13 @@ class HTTPMethod(Enum):
     PUT = "put"
 
 
+def pytest_configure(config) -> None:  # pylint: disable=unused-argument
+    """Method that runs before pytest collects tests, so no modules are imported."""
+    import os
+
+    os.environ["OTELIB_DEBUG"] = "True"
+
+
 def server_url() -> str:
     """Return a possibly set real server URL.
 
@@ -58,6 +65,12 @@ def server_url() -> str:
     import os
 
     return os.getenv("OTELIB_TEST_OTE_SERVER_URL", "https://example.org")
+
+
+@pytest.fixture
+def resource_type_cls() -> ResourceType:
+    """Return the `ResourceType` Enum."""
+    return ResourceType
 
 
 @pytest.fixture
@@ -89,7 +102,7 @@ def mock_session(
     client: "OTEClient",
     ids: "Callable[[Union[ResourceType, str]], str]",
 ) -> None:
-    """Mock `POST /session/`.
+    """Mock `POST /session`.
 
     This is called in `AbstractStrategy.get()`.
     """
@@ -97,7 +110,7 @@ def mock_session(
 
     if "example" in server_url():
         requests_mock.post(
-            f"{client.url}{Settings().prefix}/session/",
+            f"{client.url}{Settings().prefix}/session",
             json={"session_id": ids("session")},
         )
     else:

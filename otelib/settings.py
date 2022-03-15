@@ -1,5 +1,4 @@
 """Configuration settings for creating the OTE client."""
-# pylint: disable=no-name-in-module,too-few-public-methods
 from pydantic import BaseModel, Field
 
 
