@@ -11,12 +11,13 @@ class DataResource(AbstractStrategy):
     operations."""
 
     def create(self, **kwargs) -> None:
+        session_id = kwargs.pop("session_id", None)
         data = ResourceConfig(**kwargs)
 
         response = requests.post(
             f"{self.url}{self.settings.prefix}/dataresource",
             json=data.dict(),
-            params={"session_id": kwargs.pop("session_id", None)},
+            params={"session_id": session_id},
         )
         if not response.ok:
             raise ApiError(

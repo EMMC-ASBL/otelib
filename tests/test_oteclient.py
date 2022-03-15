@@ -5,76 +5,16 @@ from typing import TYPE_CHECKING
 import pytest
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+    from typing import Any, Callable, Dict, List, Tuple, Union
 
     from otelib.client import OTEClient
     from otelib.strategies.abc import AbstractStrategy
-    from tests.conftest import HTTPMethod, ResourceType
-
-    OTEResponse = Callable[
-        [
-            Union[HTTPMethod, str],
-            str,
-            Optional[Union[Dict[str, Any], str]],
-            Optional[Union[dict, str]],
-            Optional[OTEClient],
-        ],
-        None,
-    ]
-
-
-TEST_DATA = {
-    "dataresource": {
-        "content": {
-            "firstName": "Joe",
-            "lastName": "Jackson",
-            "gender": "male",
-            "age": 28,
-            "address": {
-                "streetAddress": "101",
-                "city": "San Diego",
-                "state": "CA",
-            },
-            "phoneNumbers": [{"type": "home", "number": "7349282382"}],
-        }
-    },
-    "filter": {"sqlquery": "DROP TABLE myTable;"},
-    "mapping": {
-        "prefixes": {
-            "map": "http://example.org/0.0.1/mapping_ontology#",
-            "onto": "http://example.org/0.2.1/ontology#",
-        },
-        "triples": [
-            ["http://onto-ns.com/meta/1.0/Foo#a", "map:mapsTo", "onto:A"],
-            ["http://onto-ns.com/meta/1.0/Foo#b", "map:mapsTo", "onto:B"],
-            ["http://onto-ns.com/meta/1.0/Bar#a", "map:mapsTo", "onto:C"],
-        ],
-    },
-    "transformation": {"data": {}},
-}
-
-
-@pytest.fixture
-def testdata(
-    resource_type_cls: "ResourceType",
-) -> "Callable[[Union[ResourceType, str]], dict]":
-    """Test data for OTE resource."""
-    ResourceType = resource_type_cls
-
-    def _testdata(resource_type: "Union[ResourceType, str]") -> dict:
-        """Return test data for a given resource."""
-        resource_type = ResourceType(resource_type)
-        if resource_type == ResourceType.SESSION:
-            raise ValueError("No test data available for a session.")
-
-        return TEST_DATA[resource_type.value]
-
-    return _testdata
+    from tests.conftest import OTEResponse, ResourceType
 
 
 def strategy_create_kwargs() -> "List[Tuple[str, Dict[str, Any]]]":
     """Strategy to creation key-word-arguments."""
-    from tests.conftest import ResourceType
+    from tests.conftest import TEST_DATA, ResourceType
 
     return [
         (
