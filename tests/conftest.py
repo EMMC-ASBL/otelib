@@ -5,20 +5,19 @@ from typing import TYPE_CHECKING
 import pytest
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Dict, Optional, Union
+    from typing import Any, Callable, Dict, Optional, Tuple, Union
 
     from requests_mock import Mocker
 
     from otelib.client import OTEClient
 
 
-class ResourceType(Enum):
+class ResourceType(str, Enum):
     """Enumeration of resource types."""
 
     DATARESOURCE = "dataresource"
     FILTER = "filter"
     MAPPING = "mapping"
-    RESOURCE = "resource"
     SESSION = "session"
     TRANSFORMATION = "transformation"
 
@@ -28,13 +27,12 @@ class ResourceType(Enum):
             "dataresource": "dataresource-",
             "filter": "filter-",
             "mapping": "mapping-",
-            "resource": "dataresource-",
             "session": "session-",
             "transformation": "transformation-",
         }[self.value]
 
 
-class HTTPMethod(Enum):
+class HTTPMethod(str, Enum):
     """Allowed HTTP methods.
 
     See `requests_mock.mocker` for the reference list.
