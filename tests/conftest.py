@@ -68,6 +68,12 @@ def server_url() -> str:
 
 
 @pytest.fixture
+def resource_type_cls() -> ResourceType:
+    """Return the `ResourceType` Enum."""
+    return ResourceType
+
+
+@pytest.fixture
 def ids() -> "Callable[[Union[ResourceType, str]], str]":
     """Provide a function to return a test resource id.
 

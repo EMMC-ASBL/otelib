@@ -1,5 +1,5 @@
 """Test OTE Client."""
-# pylint: disable=protected-access
+# pylint: disable=protected-access,invalid-name
 from typing import TYPE_CHECKING
 
 import pytest
@@ -23,9 +23,11 @@ if TYPE_CHECKING:
 
 
 @pytest.fixture
-def testdata() -> "Callable[[Union[ResourceType, str]], dict]":
+def testdata(
+    resource_type_cls: "ResourceType",
+) -> "Callable[[Union[ResourceType, str]], dict]":
     """Test data for OTE resource."""
-    from tests.conftest import ResourceType
+    ResourceType = resource_type_cls
 
     def _testdata(resource_type: "Union[ResourceType, str]") -> dict:
         """Return test data for a given resource."""
