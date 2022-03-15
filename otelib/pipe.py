@@ -1,8 +1,8 @@
 """Pipe object for creating a pipeline."""
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from typing import List, Optional
+if TYPE_CHECKING:  # pragma: no cover
+    from typing import Optional
 
     from otelib.strategies.abc import AbstractStrategy
 

@@ -10,12 +10,13 @@ class Transformation(AbstractStrategy):
     """Context class for the Transformation Strategy Interfaces."""
 
     def create(self, **kwargs) -> None:
+        session_id = kwargs.pop("session_id", None)
         data = TransformationConfig(**kwargs)
 
         response = requests.post(
             f"{self.url}{self.settings.prefix}/transformation",
             json=data.dict(),
-            params={"session_id": kwargs.pop("session_id", None)},
+            params={"session_id": session_id},
         )
         if not response.ok:
             raise ApiError(

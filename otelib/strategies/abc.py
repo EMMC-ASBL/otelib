@@ -10,7 +10,7 @@ from otelib.exceptions import ApiError
 from otelib.pipe import Pipe
 from otelib.settings import Settings
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from typing import Optional
 
 
