@@ -25,6 +25,13 @@ def strategy_create_kwargs() -> "List[Tuple[str, Dict[str, Any]]]":
             },
         ),
         (
+            ResourceType.FUNCTION.value,
+            {
+                "functionType": "function/demo",
+                **TEST_DATA[ResourceType.FUNCTION.value],
+            },
+        ),
+        (
             ResourceType.MAPPING.value,
             {
                 "mappingType": "triples",

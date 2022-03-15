@@ -27,6 +27,9 @@ def test_pipe(
     create_kwargs: "Dict[str, Any]",
 ) -> None:
     """Test creating a `Pipe` and run the `get()` method."""
+    if strategy_name == "function" and "example" not in server_url:
+        pytest.skip("No function strategy exists in oteapi-core yet.")
+
     import json
 
     import requests
@@ -76,15 +79,10 @@ def test_pipe(
         return_json=testdata(strategy_name),
     )
 
-    strategy_name_map = {
-        "dataresource": "DataResource",
-        "filter": "Filter",
-        "mapping": "Mapping",
-        "transformation": "Transformation",
-    }
+    strategy_name_map = {"dataresource": "DataResource"}
 
     strategy: "AbstractStrategy" = getattr(
-        strategies, strategy_name_map[strategy_name]
+        strategies, strategy_name_map.get(strategy_name, strategy_name.capitalize())
     )(server_url)
 
     # We must create the strategy - getting a strategy ID
