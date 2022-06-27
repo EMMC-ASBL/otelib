@@ -11,6 +11,7 @@ from otelib.pipe import Pipe
 from otelib.settings import Settings
 
 if TYPE_CHECKING:  # pragma: no cover
+    from pathlib import Path
     from typing import Optional
 
 
@@ -23,15 +24,17 @@ class AbstractStrategy(ABC):
     Attributes:
         url (str): The base URL of the OTEAPI Service.
         settings (otelib.settings.Settings): OTEAPI Service settings.
-        input_pipe ()
+        input_pipe (Optional[Pipe]): An input pipeline.
 
     """
 
-    def __init__(self, url: str) -> None:
-        """Initiates a strategy.
+    def __init__(
+        self, url: "Optional[str]" = None, py_exec: "Optional[Path]" = None
+    ) -> None:
+        """Initiates a strategy."""
+        if not url and not py_exec or all((url, py_exec)):
+            raise ValueError("Either url or py_exec must be specified, not both.")
 
-        The `url` is the base URL of the OTEAPI Service.
-        """
         self.url: str = url
         self.settings: Settings = Settings()
         self.input_pipe: "Optional[Pipe]" = None
