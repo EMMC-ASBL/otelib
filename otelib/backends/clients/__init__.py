@@ -1,3 +1,4 @@
+
 """OTE Client."""
 
 from otelib.backends.clients.python import OTEPythonClient
@@ -14,3 +15,5 @@ class OTEClient:
             return OTEPythonClient(url)
         else:
             return OTEServiceClient(url)
+
+

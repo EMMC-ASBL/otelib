@@ -49,7 +49,7 @@ class BaseStrategy(AbstractBaseStrategy):
     def _create(
         self,
         strategy_type: "Union[StrategyType, str]",
-        session_id: Optional[str] = None,
+        session_id: "Optional[str]" = None,
         **kwargs: "Any",
     ) -> None:
         """Create a strategy.

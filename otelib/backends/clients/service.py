@@ -1,16 +1,7 @@
-"""OTE Client for use with a local OTEAPI Core installation."""
-import sys
-from typing import TYPE_CHECKING
+from otelib.backends.services import DataResource, Filter, Function, Mapping, Transformation
 
-from otelib.strategies import DataResource, Filter, Function, Mapping, Transformation
-
-if TYPE_CHECKING:  # pragma: no cover
-    from pathlib import Path
-    from typing import Optional, Union
-
-
-class OTEClientPython:
-    """The OTEClient object representing a local Python environment with OTEAPI Core.
+class OTEServiceClient:
+    """The OTEClient object representing a remote OTE REST API.
 
     Parameters:
         url (str): The base URL of the OTEAPI Service.
@@ -20,9 +11,12 @@ class OTEClientPython:
 
     """
 
-    def __init__(self, python_interpreter: "Optional[Union[Path, str]]" = None) -> None:
-        """Initiates an OTEAPI Core client."""
-        self._python_interpreter = Path(python_interpreter or sys.executable).resolve()
+    def __init__(self, url: str) -> None:
+        """Initiates an OTEAPI Service client.
+
+        The `url` is the base URL of the OTEAPI Service.
+        """
+        self.url: str = url
 
     def create_dataresource(self, **kwargs) -> DataResource:
         """Create a new data resource.
@@ -33,7 +27,7 @@ class OTEClientPython:
             The newly created data resource.
 
         """
-        data_resource = DataResource(py_exec=self._python_interpreter)
+        data_resource = DataResource(self.url)
         data_resource.create(**kwargs)
         return data_resource
 
