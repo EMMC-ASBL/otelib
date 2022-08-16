@@ -165,7 +165,7 @@ jobs:
         docker pull ghcr.io/emmc-asbl/oteapi:${DOCKER_OTEAPI_VERSION}
         docker run \
           --env "OTEAPI_REDIS_TYPE=redis" \
-          --env "OTEAPI_REDIS_HOST=redis" \
+          --env "OTEAPI_REDIS_HOST=localhost" \
           --env "OTEAPI_REDIS_PORT=6379" \
           --env "OTEAPI_prefix=${OTEAPI_prefix}" \
           --network "host" \
