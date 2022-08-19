@@ -19,7 +19,7 @@ jobs:
     - name: Set up Python 3.9
       uses: actions/setup-python@v4
       with:
-        python-version: 3.9
+        python-version: "3.9"
 
     - name: Install dependencies
       run: |
@@ -48,7 +48,7 @@ jobs:
     - name: Set up Python 3.9
       uses: actions/setup-python@v4
       with:
-        python-version: 3.9
+        python-version: "3.9"
 
     - name: Install dependencies
       run: |
@@ -62,7 +62,7 @@ jobs:
       run: pylint --rcfile=pyproject.toml --ignore-paths=tests/ --extension-pkg-whitelist='pydantic' *.py otelib
 
     - name: Run pylint - tests
-      run: pylint --rcfile=pyproject.toml --extension-pkg-whitelist='pydantic' --disable=import-outside-toplevel,redefined-outer-name,duplicate-code tests
+      run: pylint --rcfile=pyproject.toml --extension-pkg-whitelist='pydantic' --disable=import-outside-toplevel,redefined-outer-name,duplicate-code,import-error tests
 
     # Ignore ID 44715 for now.
     # See this NumPy issue for more information: https://github.com/numpy/numpy/issues/19038
@@ -118,7 +118,7 @@ jobs:
 
       - uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: "3.9"
 
       - name: Install dependencies
         run: |
@@ -131,11 +131,18 @@ jobs:
   pytest-real-backend:
     runs-on: ubuntu-latest
     name: pytest-real backend
-    # timeout-minutes: 15
 
     env:
       PORT: 8080
       OTEAPI_prefix: "/api/v1"
+
+    services:
+      redis:
+        image: redis:latest
+        volumes:
+          - redis-persist:/data
+        ports:
+          - "6379:6379"
 
     steps:
     - uses: actions/checkout@v3
@@ -145,7 +152,7 @@ jobs:
     - name: Set up Python 3.9
       uses: actions/setup-python@v4
       with:
-        python-version: 3.9
+        python-version: "3.9"
 
     - name: Install python dependencies
       run: |
@@ -155,9 +162,17 @@ jobs:
 
     - name: Run OTE server
       run: |
-        docker-compose -f .github/utils/docker-compose.yml up &
+        docker pull ghcr.io/emmc-asbl/oteapi:${DOCKER_OTEAPI_VERSION}
+        docker run \
+          --env "OTEAPI_REDIS_TYPE=redis" \
+          --env "OTEAPI_REDIS_HOST=localhost" \
+          --env "OTEAPI_REDIS_PORT=6379" \
+          --env "OTEAPI_prefix=${OTEAPI_prefix}" \
+          --network "host" \
+          ghcr.io/emmc-asbl/oteapi:${DOCKER_OTEAPI_VERSION} &
+
         .github/utils/wait_for_it.sh localhost:${PORT} -t 240
-        sleep 15
+        sleep 5
       env:
         DOCKER_OTEAPI_VERSION: latest
 
