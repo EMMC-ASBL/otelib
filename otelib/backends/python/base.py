@@ -14,6 +14,18 @@ if TYPE_CHECKING:  # pragma: no cover
     from pathlib import Path
     from typing import Optional
 
+class Singleton(object):
+  def __new__(cls):
+    if not hasattr(cls, 'instance'):
+      cls.instance = super(Singleton, cls).__new__(cls)
+    return cls.instance
+
+#Note this is a buggy way of having the Cache in memory
+#most notably, it is hard to 'clear' the contents 
+class Cache(Singleton, dict):
+    pass
+
+
 class BasePythonStrategy(ABC):
     """Abstract class for strategies for the python backend.
 
@@ -40,7 +52,7 @@ class BasePythonStrategy(ABC):
         self.id: "Optional[str]" = None  # pylint: disable=invalid-name
 
         # Maybe there is a smarter way to have a persistant cache...
-        self.cache = {}
+        self.cache = Cache() 
 
         # For debugging/testing
         self.debug: bool = bool(os.getenv("OTELIB_DEBUG", ""))
@@ -126,7 +138,7 @@ class BasePythonStrategy(ABC):
 
         if session_id is None:
             session_id = 'session-'+str(uuid4())
-            self.cache[session_id] = {} #seems like there may be a case where the session already exists?
+            self.cache[session_id] = {}
 
         if self.debug:
             self._session_id = session_id

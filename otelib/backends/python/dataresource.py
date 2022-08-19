@@ -62,7 +62,6 @@ class DataResource(BasePythonStrategy):
 
     def initialize(self, session_id: str) -> bytes:
         resource_id = self.id
-        print(resource_id)
 
         config = ResourceConfig(**json.loads(self.cache[resource_id]))
         if session_id:
