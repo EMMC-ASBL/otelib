@@ -1,4 +1,4 @@
-"""Tests for `otelib.strategies.function`."""
+"""Tests for `otelib.backends.services.function`."""
 from typing import TYPE_CHECKING
 
 import pytest
@@ -16,7 +16,8 @@ def test_create(
     testdata: "Callable[[Union[ResourceType, str]], dict]",
 ) -> None:
     """Test `Function.create()`."""
-    from otelib.strategies.function import Function
+    from otelib.backends.services.function import Function
+    from otelib.backends.services.function import Function
 
     mock_ote_response(
         method="post",
@@ -43,7 +44,7 @@ def test_create_fails(
 ) -> None:
     """Check `Function.create()` raises `ApiError` upon request failure."""
     from otelib.exceptions import ApiError
-    from otelib.strategies.function import Function
+    from otelib.backends.services.function import Function
 
     mock_ote_response(
         method="post",
@@ -79,7 +80,7 @@ def test_fetch(
 
     import json
 
-    from otelib.strategies.function import Function
+    from otelib.backends.services.function import Function
 
     mock_ote_response(
         method="post",
@@ -114,7 +115,7 @@ def test_fetch_fails(
 ) -> None:
     """Check `Function.fetch()` raises `ApiError` upon request failure."""
     from otelib.exceptions import ApiError
-    from otelib.strategies.function import Function
+    from otelib.backends.services.function import Function
 
     mock_ote_response(
         method="post",
@@ -154,7 +155,7 @@ def test_initialize(
 
     import json
 
-    from otelib.strategies.function import Function
+    from otelib.backends.services.function import Function
 
     mock_ote_response(
         method="post",
@@ -189,7 +190,7 @@ def test_initialize_fails(
 ) -> None:
     """Check `Function.fetch()` raises `ApiError` upon request failure."""
     from otelib.exceptions import ApiError
-    from otelib.strategies.function import Function
+    from otelib.backends.services.function import Function
 
     mock_ote_response(
         method="post",

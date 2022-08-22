@@ -1,4 +1,4 @@
-"""Tests for `otelib.strategies.transformation`."""
+"""Tests for `otelib.backends.services.transformation`."""
 from typing import TYPE_CHECKING
 
 import pytest
@@ -15,7 +15,7 @@ def test_create(
     server_url: str,
 ) -> None:
     """Test `Transformation.create()`."""
-    from otelib.strategies.transformation import Transformation
+    from otelib.backends.services.transformation import Transformation
 
     mock_ote_response(
         method="post",
@@ -41,7 +41,7 @@ def test_create_fails(
 ) -> None:
     """Check `Transformation.create()` raises `ApiError` upon request failure."""
     from otelib.exceptions import ApiError
-    from otelib.strategies.transformation import Transformation
+    from otelib.backends.services.transformation import Transformation
 
     mock_ote_response(
         method="post",
@@ -74,7 +74,7 @@ def test_fetch(
     """Test `Transformation.fetch()`."""
     import json
 
-    from otelib.strategies.transformation import Transformation
+    from otelib.backends.services.transformation import Transformation
 
     mock_ote_response(
         method="post",
@@ -108,7 +108,7 @@ def test_fetch_fails(
 ) -> None:
     """Check `Transformation.fetch()` raises `ApiError` upon request failure."""
     from otelib.exceptions import ApiError
-    from otelib.strategies.transformation import Transformation
+    from otelib.backends.services.transformation import Transformation
 
     mock_ote_response(
         method="post",
@@ -144,7 +144,7 @@ def test_initialize(
     """Test `Transformation.fetch()`."""
     import json
 
-    from otelib.strategies.transformation import Transformation
+    from otelib.backends.services.transformation import Transformation
 
     mock_ote_response(
         method="post",
@@ -178,7 +178,7 @@ def test_initialize_fails(
 ) -> None:
     """Check `Transformation.fetch()` raises `ApiError` upon request failure."""
     from otelib.exceptions import ApiError
-    from otelib.strategies.transformation import Transformation
+    from otelib.backends.services.transformation import Transformation
 
     mock_ote_response(
         method="post",

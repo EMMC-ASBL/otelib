@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
     from requests_mock import Mocker
 
-    from otelib.strategies.abc import AbstractStrategy
+    from otelib.backends.services.abc import AbstractStrategy
     from tests.conftest import OTEResponse, ResourceType
 
 

@@ -1,4 +1,4 @@
-"""Tests for `otelib.strategies.filter`."""
+"""Tests for `otelib.backends.services.filter`."""
 # pylint: disable=redefined-builtin
 from typing import TYPE_CHECKING
 
@@ -17,7 +17,7 @@ def test_create(
     testdata: "Callable[[Union[ResourceType, str]], dict]",
 ) -> None:
     """Test `Filter.create()`."""
-    from otelib.strategies.filter import Filter
+    from otelib.backends.services.filter import Filter
 
     mock_ote_response(
         method="post",
@@ -44,7 +44,7 @@ def test_create_fails(
 ) -> None:
     """Check `Filter.create()` raises `ApiError` upon request failure."""
     from otelib.exceptions import ApiError
-    from otelib.strategies.filter import Filter
+    from otelib.backends.services.filter import Filter
 
     mock_ote_response(
         method="post",
@@ -77,7 +77,7 @@ def test_fetch(
     """Test `Filter.fetch()`."""
     import json
 
-    from otelib.strategies.filter import Filter
+    from otelib.backends.services.filter import Filter
 
     mock_ote_response(
         method="post",
@@ -112,7 +112,7 @@ def test_fetch_fails(
 ) -> None:
     """Check `Filter.fetch()` raises `ApiError` upon request failure."""
     from otelib.exceptions import ApiError
-    from otelib.strategies.filter import Filter
+    from otelib.backends.services.filter import Filter
 
     mock_ote_response(
         method="post",
@@ -149,7 +149,7 @@ def test_initialize(
     """Test `Filter.fetch()`."""
     import json
 
-    from otelib.strategies.filter import Filter
+    from otelib.backends.services.filter import Filter
 
     mock_ote_response(
         method="post",
@@ -184,7 +184,7 @@ def test_initialize_fails(
 ) -> None:
     """Check `Filter.fetch()` raises `ApiError` upon request failure."""
     from otelib.exceptions import ApiError
-    from otelib.strategies.filter import Filter
+    from otelib.backends.services.filter import Filter
 
     mock_ote_response(
         method="post",

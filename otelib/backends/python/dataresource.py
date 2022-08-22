@@ -7,7 +7,6 @@ from oteapi.models import ResourceConfig, AttrDict
 from uuid import uuid4
 
 from otelib.exceptions import ApiError
-from otelib.strategies.abc import AbstractStrategy
 
 from oteapi.plugins import create_strategy
 

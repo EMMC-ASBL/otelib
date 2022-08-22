@@ -1,4 +1,4 @@
-"""Tests for `otelib.strategies.dataresource`."""
+"""Tests for `otelib.backends.services.dataresource`."""
 from typing import TYPE_CHECKING
 
 import pytest
@@ -15,7 +15,7 @@ def test_create(
     server_url: str,
 ) -> None:
     """Test `DataResource.create()`."""
-    from otelib.strategies.dataresource import DataResource
+    from otelib.backends.services.dataresource import DataResource
 
     mock_ote_response(
         method="post",
@@ -41,7 +41,7 @@ def test_create_fails(
 ) -> None:
     """Check `DataResource.create()` raises `ApiError` upon request failure."""
     from otelib.exceptions import ApiError
-    from otelib.strategies.dataresource import DataResource
+    from otelib.backends.services.dataresource import DataResource
 
     mock_ote_response(
         method="post",
@@ -74,7 +74,7 @@ def test_fetch(
     """Test `DataResource.fetch()`."""
     import json
 
-    from otelib.strategies.dataresource import DataResource
+    from otelib.backends.services.dataresource import DataResource
 
     mock_ote_response(
         method="post",
@@ -108,7 +108,7 @@ def test_fetch_fails(
 ) -> None:
     """Check `DataResource.fetch()` raises `ApiError` upon request failure."""
     from otelib.exceptions import ApiError
-    from otelib.strategies.dataresource import DataResource
+    from otelib.backends.services.dataresource import DataResource
 
     mock_ote_response(
         method="post",
@@ -144,7 +144,7 @@ def test_initialize(
     """Test `DataResource.fetch()`."""
     import json
 
-    from otelib.strategies.dataresource import DataResource
+    from otelib.backends.services.dataresource import DataResource
 
     mock_ote_response(
         method="post",
@@ -178,7 +178,7 @@ def test_initialize_fails(
 ) -> None:
     """Check `DataResource.fetch()` raises `ApiError` upon request failure."""
     from otelib.exceptions import ApiError
-    from otelib.strategies.dataresource import DataResource
+    from otelib.backends.services.dataresource import DataResource
 
     mock_ote_response(
         method="post",

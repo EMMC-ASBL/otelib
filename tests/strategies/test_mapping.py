@@ -1,4 +1,4 @@
-"""Tests for `otelib.strategies.mapping`."""
+"""Tests for `otelib.backends.services.mapping`."""
 from typing import TYPE_CHECKING
 
 import pytest
@@ -16,7 +16,7 @@ def test_create(
     testdata: "Callable[[Union[ResourceType, str]], dict]",
 ) -> None:
     """Test `Mapping.create()`."""
-    from otelib.strategies.mapping import Mapping
+    from otelib.backends.services.mapping import Mapping
 
     mock_ote_response(
         method="post",
@@ -43,7 +43,7 @@ def test_create_fails(
 ) -> None:
     """Check `Mapping.create()` raises `ApiError` upon request failure."""
     from otelib.exceptions import ApiError
-    from otelib.strategies.mapping import Mapping
+    from otelib.backends.services.mapping import Mapping
 
     mock_ote_response(
         method="post",
@@ -76,7 +76,7 @@ def test_fetch(
     """Test `Mapping.fetch()`."""
     import json
 
-    from otelib.strategies.mapping import Mapping
+    from otelib.backends.services.mapping import Mapping
 
     mock_ote_response(
         method="post",
@@ -111,7 +111,7 @@ def test_fetch_fails(
 ) -> None:
     """Check `Mapping.fetch()` raises `ApiError` upon request failure."""
     from otelib.exceptions import ApiError
-    from otelib.strategies.mapping import Mapping
+    from otelib.backends.services.mapping import Mapping
 
     mock_ote_response(
         method="post",
@@ -148,7 +148,7 @@ def test_initialize(
     """Test `Mapping.fetch()`."""
     import json
 
-    from otelib.strategies.mapping import Mapping
+    from otelib.backends.services.mapping import Mapping
 
     mock_ote_response(
         method="post",
@@ -183,7 +183,7 @@ def test_initialize_fails(
 ) -> None:
     """Check `Mapping.fetch()` raises `ApiError` upon request failure."""
     from otelib.exceptions import ApiError
-    from otelib.strategies.mapping import Mapping
+    from otelib.backends.services.mapping import Mapping
 
     mock_ote_response(
         method="post",
