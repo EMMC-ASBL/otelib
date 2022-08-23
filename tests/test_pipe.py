@@ -34,7 +34,7 @@ def test_pipe(
 
     import requests
 
-    from otelib import strategies
+    from otelib.backends import services as strategies
     from otelib.pipe import Pipe
 
     # create()
@@ -122,7 +122,7 @@ def test_pipeing_strategies(
 
     import requests
 
-    from otelib.strategies import DataResource, Filter
+    from otelib.backends.services import DataResource, Filter
 
     # create()
     mock_ote_response(
