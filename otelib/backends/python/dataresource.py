@@ -38,7 +38,7 @@ class DataResource(BasePythonStrategy):
         resource_id = self.id
 
         config = ResourceConfig(**json.loads(self.cache[resource_id]))
-        session_data = self.cache[session_id]
+        session_data = None if not session_id else self.cache[session_id]
 
         if config.downloadUrl and config.mediaType:
             # Download strategy
