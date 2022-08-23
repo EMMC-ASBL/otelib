@@ -36,7 +36,7 @@ def test_get(
 
     import requests
 
-    from otelib import strategies
+    from otelib.backends import services as strategies
 
     # create()
     mock_ote_response(
@@ -123,7 +123,7 @@ def test_get_fails(
     requests_mock: "Mocker",
 ) -> None:
     """Check `AbstractStrategy.get()` raises `ApiError` upon request failure."""
-    from otelib import strategies
+    from otelib.backends import services as strategies
     from otelib.exceptions import ApiError
     from otelib.settings import Settings
 
