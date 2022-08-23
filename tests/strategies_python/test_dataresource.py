@@ -47,112 +47,27 @@ def test_fetch() -> None:
         downloadUrl="https://filesamples.com/samples/code/json/sample2.json",
         mediaType="application/json",
     )
+    
+    #                            services does not use .json()
     content = data_resource.fetch(session_id=None).json()
 
     assert json.loads(content) == expected_result 
-#
-#
-#def test_fetch_fails(
-#    mock_ote_response: "OTEResponse",
-#    ids: "Callable[[Union[ResourceType, str]], str]",
-#    server_url: str,
-#) -> None:
-#    """Check `DataResource.fetch()` raises `ApiError` upon request failure."""
-#    from otelib.exceptions import ApiError
-#    from otelib.backends.services.dataresource import DataResource
-#
-#    mock_ote_response(
-#        method="post",
-#        endpoint="/dataresource",
-#        return_json={"resource_id": ids("dataresource")},
-#    )
-#
-#    mock_ote_response(
-#        method="get",
-#        endpoint=f"/dataresource/{ids('dataresource')}",
-#        status_code=500,
-#        return_content=b"Internal Server Error",
-#    )
-#
-#    data_resource = DataResource(server_url)
-#
-#    # We must first create the resource - getting a resource ID
-#    data_resource.create(
-#        downloadUrl="https://filesamples.com/samples/code/json/sample2.json",
-#        mediaType="application/json",
-#    )
-#
-#    with pytest.raises(ApiError, match="APIError"):
-#        # `session_id` has a wrong type, the request should fail.
-#        data_resource.fetch(session_id=123)
-#
-#
-#def test_initialize(
-#    mock_ote_response: "OTEResponse",
-#    ids: "Callable[[Union[ResourceType, str]], str]",
-#    server_url: str,
-#) -> None:
-#    """Test `DataResource.fetch()`."""
-#    import json
-#
-#    from otelib.backends.services.dataresource import DataResource
-#
-#    mock_ote_response(
-#        method="post",
-#        endpoint="/dataresource",
-#        return_json={"resource_id": ids("dataresource")},
-#    )
-#
-#    mock_ote_response(
-#        method="post",
-#        endpoint=f"/dataresource/{ids('dataresource')}/initialize",
-#        return_json={},
-#    )
-#
-#    data_resource = DataResource(server_url)
-#
-#    # We must first create the resource - getting a resource ID
-#    data_resource.create(
-#        downloadUrl="https://filesamples.com/samples/code/json/sample2.json",
-#        mediaType="application/json",
-#    )
-#
-#    content = data_resource.initialize(session_id=None)
-#
-#    assert json.loads(content) == {}
-#
-#
-#def test_initialize_fails(
-#    mock_ote_response: "OTEResponse",
-#    ids: "Callable[[Union[ResourceType, str]], str]",
-#    server_url: str,
-#) -> None:
-#    """Check `DataResource.fetch()` raises `ApiError` upon request failure."""
-#    from otelib.exceptions import ApiError
-#    from otelib.backends.services.dataresource import DataResource
-#
-#    mock_ote_response(
-#        method="post",
-#        endpoint="/dataresource",
-#        return_json={"resource_id": ids("dataresource")},
-#    )
-#
-#    mock_ote_response(
-#        method="post",
-#        endpoint=f"/dataresource/{ids('dataresource')}/initialize",
-#        status_code=500,
-#        return_content=b"Internal Server Error",
-#    )
-#
-#    data_resource = DataResource(server_url)
-#
-#    # We must first create the resource - getting a resource ID
-#    data_resource.create(
-#        downloadUrl="https://filesamples.com/samples/code/json/sample2.json",
-#        mediaType="application/json",
-#    )
-#
-#    with pytest.raises(ApiError, match="APIError"):
-#        # `session_id` has a wrong type, the request should fail.
-#        data_resource.initialize(session_id=123)
-#
+
+def test_initialize() -> None:
+    """Test `DataResource.fetch()`."""
+    import json
+
+    from otelib.backends.python.dataresource import DataResource
+
+    data_resource = DataResource('python')
+
+    # We must first create the resource - getting a resource ID
+    data_resource.create(
+        downloadUrl="https://filesamples.com/samples/code/json/sample2.json",
+        mediaType="application/json",
+    )
+
+    # services returns {} not None
+    content = data_resource.initialize(session_id=None)
+
+    assert content is None 
