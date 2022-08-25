@@ -24,7 +24,7 @@ def test_pipe(
     create_kwargs: "Dict[str, Any]",
 ) -> None:
     """Test creating a `Pipe` and run the `get()` method."""
-    if strategy_name == "function" and "example" not in server_url:
+    if strategy_name == "function":
         pytest.skip("No function strategy exists in oteapi-core yet.")
 
     import json

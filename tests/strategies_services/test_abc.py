@@ -29,7 +29,7 @@ def test_get(
     create_kwargs: "Dict[str, Any]",
 ) -> None:
     """Test `AbstractStrategy.get()`."""
-    if strategy_name == "function" and "example" not in server_url:
+    if strategy_name == "function":
         pytest.skip("No function strategy exists in oteapi-core yet.")
 
     import json
