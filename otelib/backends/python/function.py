@@ -41,7 +41,7 @@ class Function(BasePythonStrategy):
         if session_update and session_id:
             self.cache[session_id].update(session_update)
 
-        return AttrDict(**session_update)
+        return AttrDict(**session_update).json()
 
     def initialize(self, session_id: str) -> bytes:
         resource_id = self.id
@@ -56,4 +56,6 @@ class Function(BasePythonStrategy):
         session_update = strategy.initialize(session=session_data)
         if session_update and session_id:
             self.cache[session_id].update(session_update)
+
+        return AttrDict(**session_update).json()
 
