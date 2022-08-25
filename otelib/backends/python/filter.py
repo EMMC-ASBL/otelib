@@ -57,3 +57,5 @@ class Filter(BasePythonStrategy):
         if session_update and session_id:
             self.cache[session_id].update(session_update)
 
+        return AttrDict(**session_update).json()
+
