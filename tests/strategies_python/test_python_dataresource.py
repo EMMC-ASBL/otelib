@@ -1,15 +1,13 @@
 """Tests for `otelib.backends.services.dataresource`."""
 from typing import TYPE_CHECKING
 
-import pytest
-
 if TYPE_CHECKING:
     from typing import Callable, Union
 
     from tests.conftest import OTEResponse, ResourceType
 
 
-def test_create() -> None:
+def test_python_create() -> None:
     """Test `DataResource.create()`."""
     from otelib.backends.python.dataresource import DataResource
     data_resource = DataResource('python')
@@ -24,7 +22,10 @@ def test_create() -> None:
     assert data_resource.id
 
 
-def test_fetch() -> None:
+#NOTE: this takes too long (6seconds), probably should do some mocking?
+def test_python_fetch(
+    testdata: "Callable[[Union[ResourceType, str]], dict]",
+) -> None:
     """Test `DataResource.fetch()`."""
     import json
 
@@ -32,15 +33,6 @@ def test_fetch() -> None:
     from oteapi.plugins import load_strategies
     load_strategies()
 
-    expected_result = {'content': {'firstName': 'Joe',
-                       'lastName': 'Jackson',
-                       'gender': 'male',
-                       'age': 28,
-                       'address': 
-                       {'streetAddress': '101',
-                        'city': 'San Diego', 'state': 'CA'},
-                       'phoneNumbers':
-                        [{'type': 'home', 'number': '7349282382'}]}}
 
     data_resource = DataResource('python')
     data_resource.create(
@@ -48,16 +40,17 @@ def test_fetch() -> None:
         mediaType="application/json",
     )
     
-    #                            services does not use .json()
-    content = data_resource.fetch(session_id=None).json()
+    content = data_resource.fetch(session_id=None)
 
-    assert json.loads(content) == expected_result 
+    assert json.loads(content) == testdata("dataresource") 
 
-def test_initialize() -> None:
+def test_python_initialize() -> None:
     """Test `DataResource.fetch()`."""
-    import json
 
+    import json
     from otelib.backends.python.dataresource import DataResource
+    from oteapi.plugins import load_strategies
+    load_strategies()
 
     data_resource = DataResource('python')
 
@@ -70,4 +63,4 @@ def test_initialize() -> None:
     # services returns {} not None
     content = data_resource.initialize(session_id=None)
 
-    assert content is None 
+    assert json.loads(content) == {} 
