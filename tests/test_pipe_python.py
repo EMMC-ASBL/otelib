@@ -30,12 +30,17 @@ def test_pipe(
     import json
 
     import requests
-
     from oteapi.plugins import load_strategies
+
+    # Need to manually clear the cache before starting test
+    from otelib.backends.python.base import Cache
+
+    cache = Cache()
+    cache.clear()
+
     load_strategies()
     from otelib.backends import python as strategies
     from otelib.pipe import Pipe
-
 
     strategy_name_map = {"dataresource": "DataResource"}
 
@@ -59,7 +64,7 @@ def test_pipe(
     assert (
         strategy._session_id
     ), f"Session ID not found in {strategy_name} ! Is OTEAPI_DEBUG not set?"
-    session_ids = [x for x in strategy.cache if 'session' in x]
+    session_ids = [x for x in strategy.cache if "session" in x]
     assert len(session_ids) == 1
     session_id = session_ids[0]
     session = strategy.cache[session_id]
@@ -81,11 +86,16 @@ def test_pipeing_strategies(
     import json
 
     import requests
-
     from oteapi.plugins import load_strategies
+
     load_strategies()
     from otelib.backends.python import DataResource, Filter
 
+    # Need to manually clear the cache before starting test
+    from otelib.backends.python.base import Cache
+
+    cache = Cache()
+    cache.clear()
 
     # Session content
     session_test_content = testdata("filter")
@@ -113,7 +123,7 @@ def test_pipeing_strategies(
     assert (
         pipeline._session_id
     ), f"Session ID not found in {pipeline} ! Is OTEAPI_DEBUG not set?"
-    session_ids = [x for x in pipeline.cache if 'session' in x]
+    session_ids = [x for x in pipeline.cache if "session" in x]
     assert len(session_ids) == 1
     session_id = session_ids[0]
     session = pipeline.cache[session_id]
@@ -124,6 +134,9 @@ def test_pipeing_strategies(
     ###
     ## Reverse the pipeline and try again
     ###
+    # Need to manually clear the cache before starting test
+    cache = Cache()
+    cache.clear()
 
     data_resource = DataResource(server_url)
     filter = Filter(server_url)
@@ -147,7 +160,7 @@ def test_pipeing_strategies(
     assert (
         pipeline._session_id
     ), f"Session ID not found in {pipeline} ! Is OTEAPI_DEBUG not set?"
-    session_ids = [x for x in pipeline.cache if 'session' in x]
+    session_ids = [x for x in pipeline.cache if "session" in x]
     assert len(session_ids) == 1
     session_id = session_ids[0]
     session = pipeline.cache[session_id]

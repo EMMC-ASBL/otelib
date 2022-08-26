@@ -1,15 +1,13 @@
 """Common strategy for Download, Parse and Resource strategies."""
-from .base import BasePythonStrategy 
-
-
 import json
-from oteapi.models import ResourceConfig, AttrDict
 from uuid import uuid4
+
+from oteapi.models import AttrDict, ResourceConfig
+from oteapi.plugins import create_strategy
 
 from otelib.exceptions import ApiError
 
-from oteapi.plugins import create_strategy
-
+from .base import BasePythonStrategy
 
 
 class DataResource(BasePythonStrategy):
@@ -20,7 +18,7 @@ class DataResource(BasePythonStrategy):
         session_id = kwargs.pop("session_id", None)
         data = ResourceConfig(**kwargs)
 
-        resource_id = 'dataresource-'+str(uuid4())
+        resource_id = "dataresource-" + str(uuid4())
         self.id = resource_id
         self.cache[resource_id] = data.json()
 
@@ -32,7 +30,7 @@ class DataResource(BasePythonStrategy):
             else:
                 session[list_key] = [resource_id]
 
-        return 
+        return
 
     def fetch(self, session_id: str) -> bytes:
         resource_id = self.id
@@ -42,7 +40,9 @@ class DataResource(BasePythonStrategy):
 
         if config.downloadUrl and config.mediaType:
             # Download strategy
-            session_update = create_strategy("download", config).get(session=session_data)
+            session_update = create_strategy("download", config).get(
+                session=session_data
+            )
             if session_update and session_id:
                 self.cache[session_id].update(session_update)
 
@@ -53,10 +53,12 @@ class DataResource(BasePythonStrategy):
 
         elif config.accessUrl and config.accessService:
             # Resource strategy
-            session_update = create_strategy("resource", config).get(session=session_data)
+            session_update = create_strategy("resource", config).get(
+                session=session_data
+            )
             if session_update and session_id:
                 self.cache[session_id].update(session_update)
-        
+
         return AttrDict(**session_update).json()
 
     def initialize(self, session_id: str) -> bytes:
@@ -67,7 +69,7 @@ class DataResource(BasePythonStrategy):
             session_data = self.cache[session_id]
         else:
             session_data = None
-        
+
         if config.downloadUrl and config.mediaType:
             # Download strategy
             session_update = create_strategy("download", config).initialize(
@@ -90,5 +92,5 @@ class DataResource(BasePythonStrategy):
             )
             if session_update and session_id:
                 self.cache[session_id].update(session_update)
-            
+
         return AttrDict(**session_update).json()

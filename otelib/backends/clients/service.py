@@ -1,4 +1,11 @@
-from otelib.backends.services import DataResource, Filter, Function, Mapping, Transformation
+from otelib.backends.services import (
+    DataResource,
+    Filter,
+    Function,
+    Mapping,
+    Transformation,
+)
+
 
 class OTEServiceClient:
     """The OTEClient object representing a remote OTE REST API.

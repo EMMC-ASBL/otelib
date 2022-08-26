@@ -2,7 +2,13 @@
 import sys
 from typing import TYPE_CHECKING
 
-from otelib.backends.python import DataResource, Filter, Function, Mapping, Transformation
+from otelib.backends.python import (
+    DataResource,
+    Filter,
+    Function,
+    Mapping,
+    Transformation,
+)
 
 if TYPE_CHECKING:  # pragma: no cover
     from pathlib import Path

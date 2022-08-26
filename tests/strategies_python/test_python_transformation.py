@@ -13,7 +13,7 @@ def test_create() -> None:
     """Test `Transformation.create()`."""
     from otelib.backends.python.transformation import Transformation
 
-    transformation = Transformation('python')
+    transformation = Transformation("python")
 
     assert transformation.id is None
 
@@ -31,11 +31,13 @@ def test_fetch(
     """Test `Transformation.fetch()`."""
     import json
 
-    from otelib.backends.python.transformation import Transformation
     from oteapi.plugins import load_strategies
+
+    from otelib.backends.python.transformation import Transformation
+
     load_strategies()
 
-    transformation = Transformation('python')
+    transformation = Transformation("python")
 
     # We must first create the resource - getting a resource ID
     transformation.create(
@@ -54,7 +56,7 @@ def test_initialize() -> None:
 
     from otelib.backends.python.transformation import Transformation
 
-    transformation = Transformation('python')
+    transformation = Transformation("python")
 
     # We must first create the resource - getting a resource ID
     transformation.create(

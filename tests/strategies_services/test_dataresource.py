@@ -40,8 +40,8 @@ def test_create_fails(
     server_url: str,
 ) -> None:
     """Check `DataResource.create()` raises `ApiError` upon request failure."""
-    from otelib.exceptions import ApiError
     from otelib.backends.services.dataresource import DataResource
+    from otelib.exceptions import ApiError
 
     mock_ote_response(
         method="post",
@@ -107,8 +107,8 @@ def test_fetch_fails(
     server_url: str,
 ) -> None:
     """Check `DataResource.fetch()` raises `ApiError` upon request failure."""
-    from otelib.exceptions import ApiError
     from otelib.backends.services.dataresource import DataResource
+    from otelib.exceptions import ApiError
 
     mock_ote_response(
         method="post",
@@ -177,8 +177,8 @@ def test_initialize_fails(
     server_url: str,
 ) -> None:
     """Check `DataResource.fetch()` raises `ApiError` upon request failure."""
-    from otelib.exceptions import ApiError
     from otelib.backends.services.dataresource import DataResource
+    from otelib.exceptions import ApiError
 
     mock_ote_response(
         method="post",

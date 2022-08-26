@@ -13,8 +13,7 @@ def test_create() -> None:
     """Test `Function.create()`."""
     from otelib.backends.python.function import Function
 
-
-    function = Function('python')
+    function = Function("python")
 
     assert function.id is None
 
@@ -33,7 +32,7 @@ def test_fetch() -> None:
 
     from otelib.backends.python.function import Function
 
-    function = Function('python')
+    function = Function("python")
 
     # We must first create the resource - getting a resource ID
     function.create(
@@ -54,8 +53,7 @@ def test_initialize() -> None:
 
     from otelib.backends.python.function import Function
 
-
-    function = Function('python')
+    function = Function("python")
 
     # We must first create the resource - getting a resource ID
     function.create(
@@ -64,5 +62,5 @@ def test_initialize() -> None:
 
     content = function.initialize(session_id=None)
 
-    testdata={}
+    testdata = {}
     assert json.loads(content) == testdata("function")

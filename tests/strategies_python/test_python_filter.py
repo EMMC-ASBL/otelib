@@ -16,7 +16,7 @@ def test_create(
     """Test `Filter.create()`."""
     from otelib.backends.python.filter import Filter
 
-    filter = Filter('python')
+    filter = Filter("python")
 
     assert filter.id is None
 
@@ -33,12 +33,14 @@ def test_fetch(
 ) -> None:
     """Test `Filter.fetch()`."""
     import json
+
     from oteapi.plugins import load_strategies
+
     load_strategies()
 
     from otelib.backends.python.filter import Filter
 
-    filter = Filter('python')
+    filter = Filter("python")
 
     # We must first create the resource - getting a resource ID
     filter.create(
@@ -59,7 +61,7 @@ def test_initialize(
 
     from otelib.backends.python.filter import Filter
 
-    filter = Filter('python')
+    filter = Filter("python")
 
     # We must first create the resource - getting a resource ID
     filter.create(

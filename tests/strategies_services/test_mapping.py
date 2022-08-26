@@ -42,8 +42,8 @@ def test_create_fails(
     testdata: "Callable[[Union[ResourceType, str]], dict]",
 ) -> None:
     """Check `Mapping.create()` raises `ApiError` upon request failure."""
-    from otelib.exceptions import ApiError
     from otelib.backends.services.mapping import Mapping
+    from otelib.exceptions import ApiError
 
     mock_ote_response(
         method="post",
@@ -110,8 +110,8 @@ def test_fetch_fails(
     testdata: "Callable[[Union[ResourceType, str]], dict]",
 ) -> None:
     """Check `Mapping.fetch()` raises `ApiError` upon request failure."""
-    from otelib.exceptions import ApiError
     from otelib.backends.services.mapping import Mapping
+    from otelib.exceptions import ApiError
 
     mock_ote_response(
         method="post",
@@ -182,8 +182,8 @@ def test_initialize_fails(
     testdata: "Callable[[Union[ResourceType, str]], dict]",
 ) -> None:
     """Check `Mapping.fetch()` raises `ApiError` upon request failure."""
-    from otelib.exceptions import ApiError
     from otelib.backends.services.mapping import Mapping
+    from otelib.exceptions import ApiError
 
     mock_ote_response(
         method="post",

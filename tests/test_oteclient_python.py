@@ -26,15 +26,15 @@ def test_create_strategies(
     """Test creating any strategy and calling it's `get()` method."""
 
     from oteapi.plugins import load_strategies
+
     load_strategies()
     import json
 
     from otelib.client import OTEPythonClient
-    client = OTEPythonClient('python')
+
+    client = OTEPythonClient("python")
     if strategy == "function":
         pytest.skip("No function strategy exists in oteapi-core yet.")
-
-
 
     created_strategy: "AbstractStrategy" = getattr(client, f"create_{strategy}")(
         **create_kwargs
@@ -47,14 +47,14 @@ def test_create_strategies(
         assert json.loads(content) == testdata(strategy)
 
     ## The testdata should always be in the full session
-    #assert (
+    # assert (
     #    created_strategy._session_id
-    #), f"Session ID not found in {strategy} ! Is OTEAPI_DEBUG not set?"
-    #content_session = requests.get(
+    # ), f"Session ID not found in {strategy} ! Is OTEAPI_DEBUG not set?"
+    # content_session = requests.get(
     #    f"{created_strategy.url}{created_strategy.settings.prefix}"
     #    f"/session/{created_strategy._session_id}"
-    #)
-    #session: "Dict[str, Any]" = content_session.json()
-    #for key, value in testdata(strategy).items():
+    # )
+    # session: "Dict[str, Any]" = content_session.json()
+    # for key, value in testdata(strategy).items():
     #    assert key in session
     #    assert value == session[key]

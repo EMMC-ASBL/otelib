@@ -1,12 +1,12 @@
 """Transformation strategy."""
-from .base import BasePythonStrategy
-
-
 import json
 from uuid import uuid4
 
-from oteapi.models import TransformationConfig, AttrDict
+from oteapi.models import AttrDict, TransformationConfig
 from oteapi.plugins import create_strategy
+
+from .base import BasePythonStrategy
+
 
 class Transformation(BasePythonStrategy):
     """Context class for the data resource strategy interfaces for managing i/o
@@ -16,7 +16,7 @@ class Transformation(BasePythonStrategy):
         session_id = kwargs.pop("session_id", None)
         data = TransformationConfig(**kwargs)
 
-        resource_id = 'transformation-'+str(uuid4())
+        resource_id = "transformation-" + str(uuid4())
         self.id = resource_id
         self.cache[resource_id] = data.json()
 
@@ -28,7 +28,7 @@ class Transformation(BasePythonStrategy):
             else:
                 session[list_key] = [resource_id]
 
-        return 
+        return
 
     def fetch(self, session_id: str) -> bytes:
         resource_id = self.id
@@ -51,10 +51,9 @@ class Transformation(BasePythonStrategy):
             session_data = self.cache[session_id]
         else:
             session_data = None
-        
+
         strategy = create_strategy("transformation", config)
         session_update = strategy.initialize(session=session_data)
         if session_update and session_id:
             self.cache[session_id].update(session_update)
         return AttrDict(**session_update).json()
-

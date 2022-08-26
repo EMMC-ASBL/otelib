@@ -3,6 +3,7 @@ import requests
 from oteapi.models import FilterConfig
 
 from otelib.exceptions import ApiError
+
 from .abc import AbstractStrategy
 
 

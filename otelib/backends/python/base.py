@@ -3,25 +3,26 @@ import json
 import os
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
-
+from uuid import uuid4
 
 from otelib.exceptions import ApiError
 from otelib.pipe import Pipe
 from otelib.settings import Settings
-from uuid import uuid4
 
 if TYPE_CHECKING:  # pragma: no cover
     from pathlib import Path
     from typing import Optional
 
-class Singleton(object):
-  def __new__(cls):
-    if not hasattr(cls, 'instance'):
-      cls.instance = super(Singleton, cls).__new__(cls)
-    return cls.instance
 
-#Note this is a buggy way of having the Cache in memory
-#most notably, it is hard to 'clear' the contents 
+class Singleton(object):
+    def __new__(cls):
+        if not hasattr(cls, "instance"):
+            cls.instance = super(Singleton, cls).__new__(cls)
+        return cls.instance
+
+
+# Note this is a buggy way of having the Cache in memory
+# most notably, it is hard to 'clear' the contents
 class Cache(Singleton, dict):
     pass
 
@@ -40,7 +41,10 @@ class BasePythonStrategy(ABC):
     """
 
     def __init__(
-        self, url: "Optional[str]" = None, py_exec: "Optional[Path]" = None
+        self,
+        url: "Optional[str]" = None,
+        py_exec: "Optional[Path]" = None,
+        clear_cache=True,
     ) -> None:
         """Initiates a strategy."""
         if not url and not py_exec or all((url, py_exec)):
@@ -52,7 +56,9 @@ class BasePythonStrategy(ABC):
         self.id: "Optional[str]" = None  # pylint: disable=invalid-name
 
         # Maybe there is a smarter way to have a persistant cache...
-        self.cache = Cache() 
+        self.cache = Cache()
+        # if clear_cache:
+        #    self.cache.clear()
 
         # For debugging/testing
         self.debug: bool = bool(os.getenv("OTELIB_DEBUG", ""))
@@ -137,7 +143,7 @@ class BasePythonStrategy(ABC):
         self.settings = Settings()
 
         if session_id is None:
-            session_id = 'session-'+str(uuid4())
+            session_id = "session-" + str(uuid4())
             self.cache[session_id] = {}
 
         if self.debug:

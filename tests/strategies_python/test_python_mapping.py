@@ -15,7 +15,7 @@ def test_create(
     """Test `Mapping.create()`."""
     from otelib.backends.python.mapping import Mapping
 
-    mapping = Mapping('python')
+    mapping = Mapping("python")
 
     assert mapping.id is None
 
@@ -34,10 +34,11 @@ def test_fetch(
     import json
 
     from oteapi.plugins import load_strategies
+
     load_strategies()
     from otelib.backends.python.mapping import Mapping
 
-    mapping = Mapping('python')
+    mapping = Mapping("python")
 
     # We must first create the resource - getting a resource ID
     mapping.create(
@@ -58,7 +59,7 @@ def test_initialize(
 
     from otelib.backends.python.mapping import Mapping
 
-    mapping = Mapping('python')
+    mapping = Mapping("python")
 
     # We must first create the resource - getting a resource ID
     mapping.create(

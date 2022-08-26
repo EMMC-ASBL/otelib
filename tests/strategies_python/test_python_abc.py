@@ -32,12 +32,10 @@ def test_get(
     import json
 
     import requests
-
     from oteapi.plugins import load_strategies
+
     load_strategies()
     from otelib.backends import python as strategies
-
-
 
     strategy_name_map = {"dataresource": "DataResource"}
 
@@ -45,7 +43,7 @@ def test_get(
         strategies, strategy_name_map.get(strategy_name, strategy_name.capitalize())
     )(server_url)
 
-    # This is a kind of hacky way to clear the cache and should probably 
+    # This is a kind of hacky way to clear the cache and should probably
     # be done in an automatic fashion
     strategy.cache.clear()
 
@@ -63,7 +61,7 @@ def test_get(
     assert (
         strategy._session_id
     ), f"Session ID not found in {strategy_name} ! Is OTEAPI_DEBUG not set?"
-    session_ids = [x for x in strategy.cache if 'session' in x]
+    session_ids = [x for x in strategy.cache if "session" in x]
     assert len(session_ids) == 1
     session_id = session_ids[0]
     session = strategy.cache[session_id]
@@ -74,4 +72,3 @@ def test_get(
             continue
         assert key in session
         assert value == session[key]
-    
