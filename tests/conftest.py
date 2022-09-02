@@ -115,6 +115,7 @@ def client(server_url: str) -> "OTEClient":
 
 @pytest.fixture
 def mock_session(
+    backend: str,
     requests_mock: "Mocker",
     client: "OTEClient",
     ids: "Callable[[Union[ResourceType, str]], str]",
@@ -126,7 +127,8 @@ def mock_session(
     """
     from otelib.settings import Settings
 
-    if "example" in server_url:
+    # For now I need python backend to run test for real
+    if "example" in server_url and backend != "python":
         requests_mock.post(
             f"{client.url}{Settings().prefix}/session",
             json={"session_id": ids("session")},
