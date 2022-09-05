@@ -89,7 +89,8 @@ def test_create_strategies(
     ), f"Session ID not found in {strategy} ! Is OTEAPI_DEBUG not set?"
     content_session = requests.get(
         f"{created_strategy.url}{created_strategy.settings.prefix}"
-        f"/session/{created_strategy._session_id}"
+        f"/session/{created_strategy._session_id}",
+        timeout=30,
     )
     session: "Dict[str, Any]" = content_session.json()
     for key, value in testdata(strategy).items():

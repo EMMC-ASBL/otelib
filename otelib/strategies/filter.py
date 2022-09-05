@@ -17,6 +17,7 @@ class Filter(AbstractStrategy):
             f"{self.url}{self.settings.prefix}/filter",
             json=data.dict(),
             params={"session_id": session_id} if session_id else {},
+            timeout=self.settings.timeout,
         )
         if not response.ok:
             raise ApiError(
@@ -32,6 +33,7 @@ class Filter(AbstractStrategy):
         response = requests.get(
             f"{self.url}{self.settings.prefix}/filter/{self.id}",
             params={"session_id": session_id},
+            timeout=self.settings.timeout,
         )
         if response.ok:
             return response.content
@@ -46,6 +48,7 @@ class Filter(AbstractStrategy):
         response = requests.post(
             f"{self.url}{self.settings.prefix}/filter/{self.id}/initialize",
             params={"session_id": session_id},
+            timeout=self.settings.timeout,
         )
         if response.ok:
             return response.content
