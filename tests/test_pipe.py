@@ -102,7 +102,8 @@ def test_pipe(
         strategy._session_id
     ), f"Session ID not found in {strategy_name} ! Is OTEAPI_DEBUG not set?"
     content_session = requests.get(
-        f"{strategy.url}{strategy.settings.prefix}" f"/session/{strategy._session_id}"
+        f"{strategy.url}{strategy.settings.prefix}/session/{strategy._session_id}",
+        timeout=30,
     )
     session: "Dict[str, Any]" = content_session.json()
     for key, value in testdata(strategy_name).items():
@@ -196,7 +197,8 @@ def test_pipeing_strategies(
         pipeline._session_id
     ), f"Session ID not found in {pipeline} ! Is OTEAPI_DEBUG not set?"
     content_session = requests.get(
-        f"{pipeline.url}{pipeline.settings.prefix}/session/{pipeline._session_id}"
+        f"{pipeline.url}{pipeline.settings.prefix}/session/{pipeline._session_id}",
+        timeout=30,
     )
     session: "Dict[str, Any]" = content_session.json()
     for key, value in session_test_content.items():
@@ -230,7 +232,8 @@ def test_pipeing_strategies(
         pipeline._session_id
     ), f"Session ID not found in {pipeline} ! Is OTEAPI_DEBUG not set?"
     content_session = requests.get(
-        f"{pipeline.url}{pipeline.settings.prefix}" f"/session/{pipeline._session_id}"
+        f"{pipeline.url}{pipeline.settings.prefix}/session/{pipeline._session_id}",
+        timeout=30,
     )
     session: "Dict[str, Any]" = content_session.json()
     for key, value in session_test_content.items():

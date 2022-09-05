@@ -121,7 +121,9 @@ class AbstractStrategy(ABC):
 
         if session_id is None:
             response = requests.post(
-                f"{self.url}{self.settings.prefix}/session", json={}
+                f"{self.url}{self.settings.prefix}/session",
+                json={},
+                timeout=self.settings.timeout,
             )
             if not response.ok:
                 raise ApiError(
