@@ -137,10 +137,8 @@ def test_get(
         session = strategy.cache[session_id]
 
     for key, value in testdata(strategy_name).items():
-        if strategy_name == "mapping":
-            # Due to some technicalities I haven't yet figured out
-            # the session stores tuples, while json response uses lists
-            continue
+        if strategy_name == "mapping" and backend == "python":
+            pytest.skip("Issues with tuple/list conversion json for python backend")
         assert key in session
         assert value == session[key]
 
