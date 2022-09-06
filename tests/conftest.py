@@ -115,7 +115,6 @@ def client(server_url: str) -> "OTEClient":
 
 @pytest.fixture
 def mock_session(
-    backend: str,
     requests_mock: "Mocker",
     client: "OTEClient",
     ids: "Callable[[Union[ResourceType, str]], str]",
