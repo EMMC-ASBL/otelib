@@ -117,6 +117,7 @@ def test_fetch(
         method="get",
         endpoint=f"/dataresource/{ids('dataresource')}",
         return_json=testdata("dataresource"),
+        backend=backend,
     )
 
     data_resource = DataResource(server_url)
@@ -167,7 +168,12 @@ def test_fetch_fails(
         data_resource.fetch(session_id=123)
 
 
+@pytest.mark.parametrize(
+    "backend",
+    ["services","python"]
+)
 def test_initialize(
+    backend: str,
     mock_ote_response: "OTEResponse",
     ids: "Callable[[Union[ResourceType, str]], str]",
     server_url: str,
@@ -175,18 +181,29 @@ def test_initialize(
     """Test `DataResource.fetch()`."""
     import json
 
-    from otelib.backends.services.dataresource import DataResource
+    if backend == "services":
+        from otelib.backends.services.dataresource import DataResource
+    elif backend == "python":
+        from otelib.backends.python.dataresource import DataResource
+        from otelib.backends import python as strategies
+        server_url = "python"
+        from oteapi.plugins import load_strategies
+        load_strategies()
+        from otelib.backends.python.base import Cache
+        Cache().clear() # Cleanup the cache from other tests
 
     mock_ote_response(
         method="post",
         endpoint="/dataresource",
         return_json={"resource_id": ids("dataresource")},
+        backend=backend,
     )
 
     mock_ote_response(
         method="post",
         endpoint=f"/dataresource/{ids('dataresource')}/initialize",
         return_json={},
+        backend=backend,
     )
 
     data_resource = DataResource(server_url)
