@@ -56,50 +56,47 @@ def test_get(
 
 
 
-    if backend == "services":
-        ## create()
-        mock_ote_response(
-            method="post",
-            endpoint=f"/{strategy_name}",
-            return_json={
-                f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # pylint: disable=line-too-long
-                "_id": ids(strategy_name)
-            },
-        )
+    ## create()
+    mock_ote_response(
+        method="post",
+        endpoint=f"/{strategy_name}",
+        return_json={
+            f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # pylint: disable=line-too-long
+            "_id": ids(strategy_name)
+        },
+    )
 
-        # initialize()
-        # The filter and mapping returns everything from their `initialize()` method.
-        mock_ote_response(
-            method="post",
-            endpoint=f"/{strategy_name}/{ids(strategy_name)}/initialize",
-            params={"session_id": ids("session")},
-            return_json=(
-                testdata(strategy_name) if strategy_name in ("filter", "mapping") else {}
-            ),
-        )
+    # initialize()
+    # The filter and mapping returns everything from their `initialize()` method.
+    mock_ote_response(
+        method="post",
+        endpoint=f"/{strategy_name}/{ids(strategy_name)}/initialize",
+        params={"session_id": ids("session")},
+        return_json=(
+            testdata(strategy_name) if strategy_name in ("filter", "mapping") else {}
+        ),
+    )
 
-        # fetch()
-        # The data resource and transformation returns everything from their `get()`
-        # method.
-        mock_ote_response(
-            method="get",
-            endpoint=f"/{strategy_name}/{ids(strategy_name)}",
-            params={"session_id": ids("session")},
-            return_json=(
-                testdata(strategy_name)
-                if strategy_name in ("dataresource", "transformation")
-                else {}
-            ),
-        )
+    # fetch()
+    # The data resource and transformation returns everything from their `get()`
+    # method.
+    mock_ote_response(
+        method="get",
+        endpoint=f"/{strategy_name}/{ids(strategy_name)}",
+        params={"session_id": ids("session")},
+        return_json=(
+            testdata(strategy_name)
+            if strategy_name in ("dataresource", "transformation")
+            else {}
+        ),
+    )
 
-        # Session content
-        mock_ote_response(
-            method="get",
-            endpoint=f"/session/{ids('session')}",
-            return_json=testdata(strategy_name),
-        )
-    elif backend == "python":
-        del mock_ote_response
+    # Session content
+    mock_ote_response(
+        method="get",
+        endpoint=f"/session/{ids('session')}",
+        return_json=testdata(strategy_name),
+    )
 
     strategy_name_map = {"dataresource": "DataResource"}
 
