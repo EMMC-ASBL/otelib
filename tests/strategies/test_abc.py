@@ -64,6 +64,7 @@ def test_get(
             f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # pylint: disable=line-too-long
             "_id": ids(strategy_name)
         },
+        backend=backend,
     )
 
     # initialize()
@@ -75,6 +76,7 @@ def test_get(
         return_json=(
             testdata(strategy_name) if strategy_name in ("filter", "mapping") else {}
         ),
+        backend=backend,
     )
 
     # fetch()
@@ -89,6 +91,7 @@ def test_get(
             if strategy_name in ("dataresource", "transformation")
             else {}
         ),
+        backend=backend,
     )
 
     # Session content
@@ -96,6 +99,7 @@ def test_get(
         method="get",
         endpoint=f"/session/{ids('session')}",
         return_json=testdata(strategy_name),
+        backend=backend,
     )
 
     strategy_name_map = {"dataresource": "DataResource"}

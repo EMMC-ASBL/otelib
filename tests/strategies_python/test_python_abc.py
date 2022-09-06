@@ -33,7 +33,6 @@ def test_get(
 
     import requests
     from oteapi.plugins import load_strategies
-
     load_strategies()
     from otelib.backends import python as strategies
 
