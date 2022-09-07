@@ -9,10 +9,7 @@ if TYPE_CHECKING:
     from tests.conftest import OTEResponse, ResourceType
 
 
-@pytest.mark.parametrize(
-    "backend",
-    ["services","python"]
-)
+@pytest.mark.parametrize("backend", ["services", "python"])
 def test_create(
     backend: str,
     mock_ote_response: "OTEResponse",
@@ -25,11 +22,14 @@ def test_create(
         from otelib.backends.services.function import Function
     elif backend == "python":
         from otelib.backends.python.function import Function
+
         server_url = "python"
         from oteapi.plugins import load_strategies
+
         load_strategies()
         from otelib.backends.python.base import Cache
-        Cache().clear() # Cleanup the cache from other tests
+
+        Cache().clear()  # Cleanup the cache from other tests
 
     mock_ote_response(
         method="post",
@@ -81,10 +81,7 @@ def test_create_fails(
     assert function.id is None
 
 
-@pytest.mark.parametrize(
-    "backend",
-    ["services","python"]
-)
+@pytest.mark.parametrize("backend", ["services", "python"])
 def test_fetch(
     backend: str,
     mock_ote_response: "OTEResponse",
@@ -97,18 +94,21 @@ def test_fetch(
         pytest.skip("No function strategy exists in oteapi-core yet.")
 
     import json
+
     if backend == "services":
         from otelib.backends.services.function import Function
     elif backend == "python":
         pytest.skip("No function strategy exists in oteapi-core yet.")
         # the following code will be needed once we can run this
         from otelib.backends.python.function import Function
+
         server_url = "python"
         from oteapi.plugins import load_strategies
+
         load_strategies()
         from otelib.backends.python.base import Cache
-        Cache().clear() # Cleanup the cache from other tests
 
+        Cache().clear()  # Cleanup the cache from other tests
 
     mock_ote_response(
         method="post",
@@ -173,10 +173,7 @@ def test_fetch_fails(
         function.fetch(session_id=123)
 
 
-@pytest.mark.parametrize(
-    "backend",
-    ["services","python"]
-)
+@pytest.mark.parametrize("backend", ["services", "python"])
 def test_initialize(
     backend: str,
     mock_ote_response: "OTEResponse",
@@ -195,11 +192,14 @@ def test_initialize(
     elif backend == "python":
         pytest.skip("No function strategy exists in oteapi-core yet.")
         from otelib.backends.python.function import Function
+
         server_url = "python"
         from oteapi.plugins import load_strategies
+
         load_strategies()
         from otelib.backends.python.base import Cache
-        Cache().clear() # Cleanup the cache from other tests
+
+        Cache().clear()  # Cleanup the cache from other tests
 
     mock_ote_response(
         method="post",

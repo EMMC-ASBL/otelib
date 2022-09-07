@@ -13,10 +13,7 @@ if TYPE_CHECKING:
     from tests.conftest import OTEResponse, ResourceType
 
 
-@pytest.mark.parametrize(
-    "backend",
-    ["services","python"]
-)
+@pytest.mark.parametrize("backend", ["services", "python"])
 @pytest.mark.parametrize(
     "strategy,create_kwargs",
     strategy_create_kwargs(),
@@ -41,19 +38,21 @@ def test_create_strategies(
     import requests
 
     if backend == "python":
-        # This is probably not the most elegant way to 
+        # This is probably not the most elegant way to
         # switch clients...
         from otelib.client import OTEPythonClient
+
         client = OTEPythonClient("python")
 
         from oteapi.plugins import load_strategies
+
         load_strategies()
 
         from otelib.backends.python.base import Cache
-        Cache().clear() # Cleanup the cache from other tests
+
+        Cache().clear()  # Cleanup the cache from other tests
         if strategy == "function":
             pytest.skip("No function strategy exists in oteapi-core yet.")
-
 
     # create()
     mock_ote_response(

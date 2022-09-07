@@ -9,10 +9,7 @@ if TYPE_CHECKING:
     from tests.conftest import OTEResponse, ResourceType
 
 
-@pytest.mark.parametrize(
-    "backend",
-    ["services","python"]
-)
+@pytest.mark.parametrize("backend", ["services", "python"])
 def test_create(
     backend: str,
     mock_ote_response: "OTEResponse",
@@ -25,11 +22,14 @@ def test_create(
         from otelib.backends.services.mapping import Mapping
     elif backend == "python":
         from otelib.backends.python.mapping import Mapping
+
         server_url = "python"
         from oteapi.plugins import load_strategies
+
         load_strategies()
         from otelib.backends.python.base import Cache
-        Cache().clear() # Cleanup the cache from other tests
+
+        Cache().clear()  # Cleanup the cache from other tests
 
     mock_ote_response(
         method="post",
@@ -81,10 +81,7 @@ def test_create_fails(
     assert mapping.id is None
 
 
-@pytest.mark.parametrize(
-    "backend",
-    ["services","python"]
-)
+@pytest.mark.parametrize("backend", ["services", "python"])
 def test_fetch(
     backend: str,
     mock_ote_response: "OTEResponse",
@@ -99,11 +96,14 @@ def test_fetch(
         from otelib.backends.services.mapping import Mapping
     elif backend == "python":
         from otelib.backends.python.mapping import Mapping
+
         server_url = "python"
         from oteapi.plugins import load_strategies
+
         load_strategies()
         from otelib.backends.python.base import Cache
-        Cache().clear() # Cleanup the cache from other tests
+
+        Cache().clear()  # Cleanup the cache from other tests
 
     mock_ote_response(
         method="post",
@@ -168,10 +168,7 @@ def test_fetch_fails(
         mapping.fetch(session_id=123)
 
 
-@pytest.mark.parametrize(
-    "backend",
-    ["services","python"]
-)
+@pytest.mark.parametrize("backend", ["services", "python"])
 def test_initialize(
     backend: str,
     mock_ote_response: "OTEResponse",
@@ -186,11 +183,14 @@ def test_initialize(
         from otelib.backends.services.mapping import Mapping
     elif backend == "python":
         from otelib.backends.python.mapping import Mapping
+
         server_url = "python"
         from oteapi.plugins import load_strategies
+
         load_strategies()
         from otelib.backends.python.base import Cache
-        Cache().clear() # Cleanup the cache from other tests
+
+        Cache().clear()  # Cleanup the cache from other tests
 
     mock_ote_response(
         method="post",

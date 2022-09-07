@@ -3,7 +3,6 @@
 from typing import TYPE_CHECKING
 
 import pytest
-from tests.conftest import mock_ote_response
 from utils import strategy_create_kwargs
 
 if TYPE_CHECKING:
@@ -15,10 +14,7 @@ if TYPE_CHECKING:
     from tests.conftest import OTEResponse, ResourceType
 
 
-@pytest.mark.parametrize(
-    "backend",
-    ["services","python"]
-)
+@pytest.mark.parametrize("backend", ["services", "python"])
 @pytest.mark.parametrize(
     "strategy_name,create_kwargs",
     strategy_create_kwargs(),
@@ -46,15 +42,16 @@ def test_get(
         from otelib.backends import services as strategies
     elif backend == "python":
         from otelib.backends import python as strategies
+
         server_url = "python"
 
         from oteapi.plugins import load_strategies
+
         load_strategies()
 
         from otelib.backends.python.base import Cache
-        Cache().clear() # Cleanup the cache from other tests
 
-
+        Cache().clear()  # Cleanup the cache from other tests
 
     ## create()
     mock_ote_response(
@@ -108,7 +105,6 @@ def test_get(
         strategies, strategy_name_map.get(strategy_name, strategy_name.capitalize())
     )(server_url)
 
-
     # We must create the strategy - getting a strategy ID
     strategy.create(**create_kwargs)
     assert strategy.id
@@ -124,7 +120,6 @@ def test_get(
         strategy._session_id
     ), f"Session ID not found in {strategy_name} ! Is OTEAPI_DEBUG not set?"
 
-    
     if backend == "services":
         content_session = requests.get(
             f"{strategy.url}{strategy.settings.prefix}/session/{strategy._session_id}"
@@ -142,7 +137,7 @@ def test_get(
         assert key in session
         assert value == session[key]
 
-    #for key, value in testdata(strategy_name).items():
+    # for key, value in testdata(strategy_name).items():
     #    assert key in session
     #    assert value == session[key]
 

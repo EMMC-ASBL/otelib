@@ -10,10 +10,7 @@ if TYPE_CHECKING:
     from tests.conftest import OTEResponse, ResourceType
 
 
-@pytest.mark.parametrize(
-    "backend",
-    ["services","python"]
-)
+@pytest.mark.parametrize("backend", ["services", "python"])
 def test_create(
     backend: str,
     mock_ote_response: "OTEResponse",
@@ -23,14 +20,17 @@ def test_create(
 ) -> None:
     """Test `Filter.create()`."""
     if backend == "services":
-        from otelib.backends.services.filter import Filter 
+        from otelib.backends.services.filter import Filter
     elif backend == "python":
-        from otelib.backends.python.filter import Filter 
+        from otelib.backends.python.filter import Filter
+
         server_url = "python"
         from oteapi.plugins import load_strategies
+
         load_strategies()
         from otelib.backends.python.base import Cache
-        Cache().clear() # Cleanup the cache from other tests
+
+        Cache().clear()  # Cleanup the cache from other tests
 
     mock_ote_response(
         method="post",
@@ -81,10 +81,7 @@ def test_create_fails(
     assert filter.id is None
 
 
-@pytest.mark.parametrize(
-    "backend",
-    ["services","python"]
-)
+@pytest.mark.parametrize("backend", ["services", "python"])
 def test_fetch(
     backend: str,
     mock_ote_response: "OTEResponse",
@@ -94,16 +91,19 @@ def test_fetch(
 ) -> None:
     """Test `Filter.fetch()`."""
     import json
+
     if backend == "services":
-        from otelib.backends.services.filter import Filter 
+        from otelib.backends.services.filter import Filter
     elif backend == "python":
-        from otelib.backends.python.filter import Filter 
+        from otelib.backends.python.filter import Filter
+
         server_url = "python"
         from oteapi.plugins import load_strategies
+
         load_strategies()
         from otelib.backends.python.base import Cache
-        Cache().clear() # Cleanup the cache from other tests
 
+        Cache().clear()  # Cleanup the cache from other tests
 
     mock_ote_response(
         method="post",
@@ -168,10 +168,7 @@ def test_fetch_fails(
         filter.fetch(session_id=123)
 
 
-@pytest.mark.parametrize(
-    "backend",
-    ["services","python"]
-)
+@pytest.mark.parametrize("backend", ["services", "python"])
 def test_initialize(
     backend: str,
     mock_ote_response: "OTEResponse",
@@ -181,15 +178,19 @@ def test_initialize(
 ) -> None:
     """Test `Filter.fetch()`."""
     import json
+
     if backend == "services":
-        from otelib.backends.services.filter import Filter 
+        from otelib.backends.services.filter import Filter
     elif backend == "python":
-        from otelib.backends.python.filter import Filter 
+        from otelib.backends.python.filter import Filter
+
         server_url = "python"
         from oteapi.plugins import load_strategies
+
         load_strategies()
         from otelib.backends.python.base import Cache
-        Cache().clear() # Cleanup the cache from other tests
+
+        Cache().clear()  # Cleanup the cache from other tests
 
     mock_ote_response(
         method="post",
