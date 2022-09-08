@@ -35,7 +35,7 @@ class AbstractStrategy(ABC):
         if not url and not py_exec or all((url, py_exec)):
             raise ValueError("Either url or py_exec must be specified, not both.")
 
-        self.url: str = url
+        self.url: "Optional[str]" = url
         self.settings: Settings = Settings()
         self.input_pipe: "Optional[Pipe]" = None
         self.id: "Optional[str]" = None  # pylint: disable=invalid-name

@@ -50,7 +50,7 @@ class BasePythonStrategy(ABC):
         if not url and not py_exec or all((url, py_exec)):
             raise ValueError("Either url or py_exec must be specified, not both.")
 
-        self.url: str = url
+        self.url: "Optional[str]" = url
         self.settings: Settings = Settings()
         self.input_pipe: "Optional[Pipe]" = None
         self.id: "Optional[str]" = None  # pylint: disable=invalid-name
@@ -109,7 +109,7 @@ class BasePythonStrategy(ABC):
         """
         self.input_pipe = input_pipe
 
-    def __rshift__(self, other: "AbstractStrategy") -> "AbstractStrategy":
+    def __rshift__(self, other: "BasePythonStrategy") -> "BasePythonStrategy":
         """Implements strategy concatenation using the `>>` symbol.
 
         Parameters:

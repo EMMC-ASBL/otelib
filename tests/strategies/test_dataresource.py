@@ -21,7 +21,6 @@ def test_create(
     if backend == "services":
         from otelib.backends.services.dataresource import DataResource
     elif backend == "python":
-        from otelib.backends import python as strategies
         from otelib.backends.python.dataresource import DataResource
 
         server_url = "python"
@@ -94,7 +93,6 @@ def test_fetch(
     if backend == "services":
         from otelib.backends.services.dataresource import DataResource
     elif backend == "python":
-        from otelib.backends import python as strategies
         from otelib.backends.python.dataresource import DataResource
 
         server_url = "python"
@@ -180,7 +178,6 @@ def test_initialize(
     if backend == "services":
         from otelib.backends.services.dataresource import DataResource
     elif backend == "python":
-        from otelib.backends import python as strategies
         from otelib.backends.python.dataresource import DataResource
 
         server_url = "python"

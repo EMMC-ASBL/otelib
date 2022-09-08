@@ -139,7 +139,7 @@ def test_pipe(
 
 @pytest.mark.parametrize("backend", ["services", "python"])
 @pytest.mark.usefixtures("mock_session")
-def test_pipeing_strategies(
+def test_pipeing_strategies(  # pylint: disable=too-many-statements
     backend: str,
     mock_ote_response: "OTEResponse",
     ids: "Callable[[Union[ResourceType, str]], str]",

@@ -5,7 +5,7 @@ from otelib.backends.clients.service import OTEServiceClient
 
 
 class OTEClient:
-    def __new__(self, url: str) -> None:
+    def __new__(self, url: str):
         """Initiates an OTEAPI Service client.
 
         The `url` is the base URL of the OTEAPI Service.

@@ -1,11 +1,11 @@
 """Base class for strategies."""
 import json
 import os
+from abc import ABC
 from typing import TYPE_CHECKING
 
 import requests
 
-from otelib.backends.strategies import AbstractBaseStrategy
 from otelib.exceptions import ApiError
 from otelib.pipe import Pipe
 from otelib.settings import Settings
@@ -15,7 +15,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from typing import Any, Optional, Union
 
 
-class BaseStrategy(AbstractBaseStrategy):
+class BaseStrategy(ABC):
     """Base class for Service strategies.
 
     Parameters:
@@ -80,7 +80,7 @@ class BaseStrategy(AbstractBaseStrategy):
         id_name = (
             "resource" if strategy_type.value == "dataresource" else strategy_type.value
         )
-        self.id: str = response_json.pop(f"{id_name}_id")
+        self.id = response_json.pop(f"{id_name}_id")
 
     def fetch(self, session_id: str) -> bytes:
         return self._fetch(

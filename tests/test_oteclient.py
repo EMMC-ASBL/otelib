@@ -1,5 +1,5 @@
 """Test OTE Client."""
-# pylint: disable=protected-access,invalid-name,too-many-arguments
+# pylint: disable=protected-access,invalid-name,too-many-arguments,too-many-locals
 from typing import TYPE_CHECKING
 
 import pytest
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     ids=[_[0] for _ in strategy_create_kwargs()],
 )
 @pytest.mark.usefixtures("mock_session")
-def test_create_strategies(
+def test_create_strategies(  #
     backend: str,
     client: "OTEClient",
     ids: "Callable[[Union[ResourceType, str]], str]",
@@ -111,8 +111,10 @@ def test_create_strategies(
         created_strategy._session_id
     ), f"Session ID not found in {created_strategy} ! Is OTEAPI_DEBUG not set?"
     if backend == "services":
+        strategy_prefix = created_strategy.settings.prefix
+        startegy_sessionid = created_strategy._session_id
         content_session = requests.get(
-            f"{created_strategy.url}{created_strategy.settings.prefix}/session/{created_strategy._session_id}"
+            f"{created_strategy.url}{strategy_prefix}/session/{startegy_sessionid}"
         )
         session: "Dict[str, Any]" = content_session.json()
     elif backend == "python":
