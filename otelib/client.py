@@ -1,7 +1,7 @@
 """OTE Client."""
 
-from otelib.backends.clients.python import OTEPythonClient
-from otelib.backends.clients.service import OTEServiceClient
+from otelib.backends.python.client import OTEPythonClient
+from otelib.backends.services.client import OTEServiceClient
 
 
 class OTEClient:
