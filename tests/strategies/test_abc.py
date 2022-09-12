@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
     from requests_mock import Mocker
 
-    from otelib.backends.services.abc import AbstractStrategy
+    from otelib.backends.services.base import AbstractServicesStrategy
     from tests.conftest import OTEResponse, ResourceType
 
 
@@ -101,7 +101,7 @@ def test_get(
 
     strategy_name_map = {"dataresource": "DataResource"}
 
-    strategy: "AbstractStrategy" = getattr(
+    strategy: "AbstractServicesStrategy" = getattr(
         strategies, strategy_name_map.get(strategy_name, strategy_name.capitalize())
     )(server_url)
 
@@ -181,7 +181,7 @@ def test_get_fails(
 
     strategy_name_map = {"dataresource": "DataResource"}
 
-    strategy: "AbstractStrategy" = getattr(
+    strategy: "AbstractServicesStrategy" = getattr(
         strategies, strategy_name_map.get(strategy_name, strategy_name.capitalize())
     )(server_url)
 

@@ -4,10 +4,10 @@ from oteapi.models import FilterConfig
 
 from otelib.exceptions import ApiError
 
-from .abc import AbstractStrategy
+from .base import AbstractServicesStrategy
 
 
-class Filter(AbstractStrategy):
+class Filter(AbstractServicesStrategy):
     """Context class for the Filter Strategy Interfaces"""
 
     def create(self, **kwargs) -> None:

@@ -4,10 +4,10 @@ from oteapi.models import TransformationConfig
 
 from otelib.exceptions import ApiError
 
-from .abc import AbstractStrategy
+from .base import AbstractServicesStrategy
 
 
-class Transformation(AbstractStrategy):
+class Transformation(AbstractServicesStrategy):
     """Context class for the Transformation Strategy Interfaces."""
 
     def create(self, **kwargs) -> None:

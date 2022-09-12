@@ -4,10 +4,10 @@ from oteapi.models import MappingConfig
 
 from otelib.exceptions import ApiError
 
-from .abc import AbstractStrategy
+from .base import AbstractServicesStrategy
 
 
-class Mapping(AbstractStrategy):
+class Mapping(AbstractServicesStrategy):
     """Context class for the Mapping Strategy Interfaces"""
 
     def create(self, **kwargs) -> None:

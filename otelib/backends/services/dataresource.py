@@ -4,10 +4,10 @@ from oteapi.models import ResourceConfig
 
 from otelib.exceptions import ApiError
 
-from .abc import AbstractStrategy
+from .base import AbstractServicesStrategy
 
 
-class DataResource(AbstractStrategy):
+class DataResource(AbstractServicesStrategy):
     """Context class for the data resource strategy interfaces for managing i/o
     operations."""
 

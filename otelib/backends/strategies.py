@@ -2,6 +2,8 @@
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
+from otelib.pipe import Pipe
+
 if TYPE_CHECKING:  # pragma: no cover
     from typing import Optional
 
@@ -26,7 +28,7 @@ class AbstractBaseStrategy(ABC):
             session_id: The ID of the session shared by the pipeline.
 
         Returns:
-            The response from the OTEAPI Service.
+            The result of calling the `get()` method on the current strategy
 
         """
 
@@ -63,8 +65,17 @@ class AbstractBaseStrategy(ABC):
 
         """
 
-    @abstractmethod
-    def __rshift__(self, other: "AbstractBaseStrategy") -> "AbstractBaseStrategy":
+    def _set_input(self, input_pipe: "Optional[Pipe]") -> None:
+        """Used by `__rshift__` to set the input pipe.
+
+        Parameters:
+            input_pipe: A pipe representing the strategy that is "piped" into this
+                strategy.
+
+        """
+        self.input_pipe = input_pipe
+
+    def __rshift__(self, other: "AbstractBaseStrategy") -> "AbstractBaseStrategy":  # type: ignore[override]
         """Implements strategy concatenation using the `>>` symbol.
 
         Parameters:
@@ -74,3 +85,6 @@ class AbstractBaseStrategy(ABC):
             The next strategy this one is "piped" into.
 
         """
+        pipe = Pipe(self)
+        other._set_input(pipe)
+        return other

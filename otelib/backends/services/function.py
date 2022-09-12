@@ -4,10 +4,10 @@ from oteapi.models import FunctionConfig
 
 from otelib.exceptions import ApiError
 
-from .abc import AbstractStrategy
+from .base import AbstractServicesStrategy
 
 
-class Function(AbstractStrategy):
+class Function(AbstractServicesStrategy):
     """Context class for the Function Strategy Interface."""
 
     def create(self, **kwargs) -> None:
