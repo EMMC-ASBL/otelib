@@ -1,14 +1,14 @@
 """Abstract Base Class (abc) for strategies."""
 import json
 import os
-from abc import abstractmethod
 from typing import TYPE_CHECKING
 
 import requests
+from oteapi.models.genericconfig import GenericConfig
 
 from otelib.backends.strategies import AbstractBaseStrategy
 from otelib.exceptions import ApiError
-from otelib.pipe import Pipe
+from otelib.pipe import Pipe  # pylint: disable=unused-import
 from otelib.settings import Settings
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -29,6 +29,7 @@ class AbstractServicesStrategy(AbstractBaseStrategy):
 
     """
 
+    # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         url: "Optional[str]" = None,
@@ -41,10 +42,67 @@ class AbstractServicesStrategy(AbstractBaseStrategy):
         self.settings: Settings = Settings()
         self.input_pipe: "Optional[Pipe]" = None
         self.id: "Optional[str]" = None  # pylint: disable=invalid-name
+        self.requests_timeout = 30
+
+        # Maybe there is a smarter way of doing abstract attributes
+        self.strategy_name: str = ""
+        self.strategy_config: GenericConfig = GenericConfig
 
         # For debugging/testing
         self.debug: bool = bool(os.getenv("OTELIB_DEBUG", ""))
         self._session_id: "Optional[str]" = None
+
+    def create(self, **kwargs) -> None:
+        session_id = kwargs.pop("session_id", None)
+        data = self.strategy_config(**kwargs)
+
+        response = requests.post(
+            f"{self.url}{self.settings.prefix}/{self.strategy_name}",
+            json=data.dict(),
+            params={"session_id": session_id} if session_id else {},
+            timeout=self.requests_timeout,
+        )
+        if not response.ok:
+            raise ApiError(
+                f"Cannot create {self.strategy_name}: {data!r}"
+                f"{' content=' + str(response.content) if self.debug else ''}",
+                status=response.status_code,
+            )
+
+        response_json: dict = response.json()
+        self.id = response_json.pop(self.strategy_name + "_id")
+
+    def fetch(self, session_id: str) -> bytes:
+        response = requests.get(
+            f"{self.url}{self.settings.prefix}/{self.strategy_name}/{self.id}",
+            params={"session_id": session_id},
+            timeout=self.requests_timeout,
+        )
+        if response.ok:
+            return response.content
+        raise ApiError(
+            f"Cannot fetch {self.strategy_name}: session_id={session_id!r} "
+            f"{self.strategy_name}_id={self.id!r}"
+            f"{' content=' + str(response.content) if self.debug else ''}",
+            status=response.status_code,
+        )
+
+    def initialize(self, session_id: str) -> bytes:
+        post_path = f"{self.url}{self.settings.prefix}"
+        post_path += f"/{self.strategy_name}/{self.id}/initialize"
+        response = requests.post(
+            post_path,
+            params={"session_id": session_id},
+            timeout=self.requests_timeout,
+        )
+        if response.ok:
+            return response.content
+        raise ApiError(
+            f"Cannot initialize {self.strategy_name}: session_id={session_id!r} "
+            f"{self.strategy_name}_id={self.id!r}"
+            f"{' content=' + str(response.content) if self.debug else ''}",
+            status=response.status_code,
+        )
 
     def get(self, session_id: "Optional[str]" = None) -> bytes:
         """Executes a pipeline.
@@ -67,7 +125,9 @@ class AbstractServicesStrategy(AbstractBaseStrategy):
 
         if session_id is None:
             response = requests.post(
-                f"{self.url}{self.settings.prefix}/session", json={}
+                f"{self.url}{self.settings.prefix}/session",
+                json={},
+                timeout=self.requests_timeout,
             )
             if not response.ok:
                 raise ApiError(

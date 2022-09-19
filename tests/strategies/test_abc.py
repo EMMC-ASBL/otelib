@@ -122,7 +122,8 @@ def test_get(
 
     if backend == "services":
         content_session = requests.get(
-            f"{strategy.url}{strategy.settings.prefix}/session/{strategy._session_id}"
+            f"{strategy.url}{strategy.settings.prefix}/session/{strategy._session_id}",
+            timeout=30,
         )
         session: "Dict[str, Any]" = content_session.json()
     elif backend == "python":

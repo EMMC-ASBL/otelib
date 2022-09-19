@@ -122,7 +122,8 @@ def test_pipe(
     # The testdata should always be in the full session
     if backend == "services":
         content_session = requests.get(
-            f"{strategy.url}{strategy.settings.prefix}/session/{strategy._session_id}"
+            f"{strategy.url}{strategy.settings.prefix}/session/{strategy._session_id}",
+            timeout=30,
         )
         session: "Dict[str, Any]" = content_session.json()
     elif backend == "python":
@@ -247,7 +248,8 @@ def test_pipeing_strategies(  # pylint: disable=too-many-statements
 
     if backend == "services":
         content_session = requests.get(
-            f"{pipeline.url}{pipeline.settings.prefix}/session/{pipeline._session_id}"
+            f"{pipeline.url}{pipeline.settings.prefix}/session/{pipeline._session_id}",
+            timeout=30,
         )
         session: "Dict[str, Any]" = content_session.json()
     elif backend == "python":
@@ -290,7 +292,8 @@ def test_pipeing_strategies(  # pylint: disable=too-many-statements
 
     if backend == "services":
         content_session = requests.get(
-            f"{pipeline.url}{pipeline.settings.prefix}/session/{pipeline._session_id}"
+            f"{pipeline.url}{pipeline.settings.prefix}/session/{pipeline._session_id}",
+            timeout=30,
         )
         session: "Dict[str, Any]" = content_session.json()
     elif backend == "python":

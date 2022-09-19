@@ -1,18 +1,26 @@
 """Common strategy for Download, Parse and Resource strategies."""
 import json
+from typing import TYPE_CHECKING
 from uuid import uuid4
 
 from oteapi.models import AttrDict, ResourceConfig
 from oteapi.plugins import create_strategy
 
-from otelib.exceptions import ApiError
-
 from .base import BasePythonStrategy
 
+if TYPE_CHECKING:  # pragma: no cover
+    from typing import Optional
 
+
+# pylint: disable=duplicate-code
 class DataResource(BasePythonStrategy):
     """Context class for the data resource strategy interfaces for managing i/o
     operations."""
+
+    def __init__(self, url: "Optional[str]" = None, **kwargs) -> None:
+        super().__init__(url, **kwargs)
+        self.strategy_name = "dataresource"
+        self.strategy_config = ResourceConfig
 
     def create(self, **kwargs) -> None:
         session_id = kwargs.pop("session_id", None)
@@ -29,8 +37,6 @@ class DataResource(BasePythonStrategy):
                 session[list_key].extend([resource_id])
             else:
                 session[list_key] = [resource_id]
-
-        return
 
     def fetch(self, session_id: str) -> bytes:
         resource_id = self.id

@@ -114,7 +114,8 @@ def test_create_strategies(  #
         strategy_prefix = created_strategy.settings.prefix
         startegy_sessionid = created_strategy._session_id
         content_session = requests.get(
-            f"{created_strategy.url}{strategy_prefix}/session/{startegy_sessionid}"
+            f"{created_strategy.url}{strategy_prefix}/session/{startegy_sessionid}",
+            timeout=30,
         )
         session: "Dict[str, Any]" = content_session.json()
     elif backend == "python":

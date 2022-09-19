@@ -1,60 +1,19 @@
 """Mapping strategy."""
-import json
-from uuid import uuid4
+from typing import TYPE_CHECKING
 
-from oteapi.models import AttrDict, MappingConfig
-from oteapi.plugins import create_strategy
+from oteapi.models import MappingConfig
 
 from .base import BasePythonStrategy
 
+if TYPE_CHECKING:  # pragma: no cover
+    from typing import Optional
+
 
 class Mapping(BasePythonStrategy):
-    """Context class for the data resource strategy interfaces for managing i/o
+    """Context class for the mapping strategy interfaces for managing i/o
     operations."""
 
-    def create(self, **kwargs) -> None:
-        session_id = kwargs.pop("session_id", None)
-        data = MappingConfig(**kwargs)
-
-        resource_id = "mapping-" + str(uuid4())
-        self.id = resource_id
-        self.cache[resource_id] = data.json()
-
-        if session_id:
-            session = self.cache[session_id]
-            list_key = "mapping_info"
-            if list_key in session:
-                session[list_key].extend([resource_id])
-            else:
-                session[list_key] = [resource_id]
-
-        return
-
-    def fetch(self, session_id: str) -> bytes:
-        resource_id = self.id
-
-        config = MappingConfig(**json.loads(self.cache[resource_id]))
-        session_data = None if not session_id else self.cache[session_id]
-        session_update = create_strategy("mapping", config)
-        session_update = session_update.get(session=session_data)
-
-        if session_update and session_id:
-            self.cache[session_id].update(session_update)
-
-        return AttrDict(**session_update).json()
-
-    def initialize(self, session_id: str) -> bytes:
-        resource_id = self.id
-
-        config = MappingConfig(**json.loads(self.cache[resource_id]))
-        if session_id:
-            session_data = self.cache[session_id]
-        else:
-            session_data = None
-
-        strategy = create_strategy("mapping", config)
-        session_update = strategy.initialize(session=session_data)
-        if session_update and session_id:
-            self.cache[session_id].update(session_update)
-
-        return AttrDict(**session_update).json()
+    def __init__(self, url: "Optional[str]" = None, **kwargs) -> None:
+        super().__init__(url, **kwargs)
+        self.strategy_name = "mapping"
+        self.strategy_config = MappingConfig

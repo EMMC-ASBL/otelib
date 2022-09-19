@@ -1,3 +1,4 @@
+"""Client for python backend."""
 from otelib.backends.python import (
     DataResource,
     Filter,
@@ -7,8 +8,9 @@ from otelib.backends.python import (
 )
 
 
+# pylint: disable=duplicate-code
 class OTEPythonClient:
-    """The OTEClient object representing a remote OTE REST API.
+    """The Python version of the OTEClient object representing a remote OTE REST API.
 
     Parameters:
         url (str): The base URL of the OTEAPI Service.

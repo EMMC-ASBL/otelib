@@ -73,9 +73,11 @@ class AbstractBaseStrategy(ABC):
                 strategy.
 
         """
-        self.input_pipe = input_pipe
+        self.input_pipe = input_pipe  # pylint: disable=attribute-defined-outside-init
 
-    def __rshift__(self, other: "AbstractBaseStrategy") -> "AbstractBaseStrategy":  # type: ignore[override]
+    def __rshift__(
+        self, other: "AbstractBaseStrategy"
+    ) -> "AbstractBaseStrategy":  # type: ignore[override]
         """Implements strategy concatenation using the `>>` symbol.
 
         Parameters:

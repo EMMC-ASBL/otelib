@@ -1,12 +1,14 @@
 """Abstract Base Class (abc) for strategies."""
 import json
 import os
-from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
+from oteapi.models import AttrDict
+from oteapi.models.genericconfig import GenericConfig
+from oteapi.plugins import create_strategy
+
 from otelib.backends.strategies import AbstractBaseStrategy
-from otelib.exceptions import ApiError
 from otelib.settings import Settings
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -16,17 +18,21 @@ if TYPE_CHECKING:  # pragma: no cover
     from otelib.pipe import Pipe
 
 
-class Singleton(object):
+class Singleton:
+    """
+    Initializes a singleton object
+    """
+
     def __new__(cls):
         if not hasattr(cls, "instance"):
             cls.instance = super(Singleton, cls).__new__(cls)
         return cls.instance
 
 
-# Note this is a buggy way of having the Cache in memory
-# most notably, it is hard to 'clear' the contents
 class Cache(Singleton, dict):
-    pass
+    """
+    Singleton dictionary class. Can be cleared with the .clear() method
+    """
 
 
 class BasePythonStrategy(AbstractBaseStrategy):
@@ -42,29 +48,76 @@ class BasePythonStrategy(AbstractBaseStrategy):
 
     """
 
+    # pylint: disable=too-many-instance-attributes
+    # pylint: disable=duplicate-code
     def __init__(
         self,
         url: "Optional[str]" = None,
-        py_exec: "Optional[Path]" = None,
-        clear_cache=True,
     ) -> None:
         """Initiates a strategy."""
-        if not url and not py_exec or all((url, py_exec)):
-            raise ValueError("Either url or py_exec must be specified, not both.")
+        if not url:
+            raise ValueError("Url (python) must be specified.")
 
         self.url: "Optional[str]" = url
         self.settings: Settings = Settings()
         self.input_pipe: "Optional[Pipe]" = None
         self.id: "Optional[str]" = None  # pylint: disable=invalid-name
 
+        # Maybe there is a smarter way of doing abstract attributes
+        self.strategy_name: str = ""
+        self.strategy_config: GenericConfig = GenericConfig
+
         # Maybe there is a smarter way to have a persistant cache...
         self.cache = Cache()
-        # if clear_cache:
-        #    self.cache.clear()
 
         # For debugging/testing
         self.debug: bool = bool(os.getenv("OTELIB_DEBUG", ""))
         self._session_id: "Optional[str]" = None
+
+    def create(self, **kwargs) -> None:
+        session_id = kwargs.pop("session_id", None)
+        data = self.strategy_config(**kwargs)
+
+        resource_id = self.strategy_name + "-" + str(uuid4())
+        self.id = resource_id
+        self.cache[resource_id] = data.json()
+
+        if session_id:
+            session = self.cache[session_id]
+            list_key = self.strategy_name + "_info"
+            if list_key in session:
+                session[list_key].extend([resource_id])
+            else:
+                session[list_key] = [resource_id]
+
+    def fetch(self, session_id: str) -> bytes:
+        resource_id = self.id
+
+        config = self.strategy_config(**json.loads(self.cache[resource_id]))
+        session_data = None if not session_id else self.cache[session_id]
+        session_update = create_strategy(self.strategy_name, config)
+        session_update = session_update.get(session=session_data)
+
+        if session_update and session_id:
+            self.cache[session_id].update(session_update)
+
+        return AttrDict(**session_update).json()
+
+    def initialize(self, session_id: str) -> bytes:
+        resource_id = self.id
+
+        config = self.strategy_config(**json.loads(self.cache[resource_id]))
+        if session_id:
+            session_data = self.cache[session_id]
+        else:
+            session_data = None
+
+        strategy = create_strategy(self.strategy_name, config)
+        session_update = strategy.initialize(session=session_data)
+        if session_update and session_id:
+            self.cache[session_id].update(session_update)
+
+        return AttrDict(**session_update).json()
 
     def get(self, session_id: "Optional[str]" = None) -> bytes:
         """Executes a pipeline.

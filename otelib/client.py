@@ -5,7 +5,17 @@ from otelib.backends.services.client import OTEServiceClient
 
 
 class OTEClient:
-    def __new__(self, url: str):
+    """The OTEClient object representing a remote OTE REST API.
+
+    Parameters:
+        url (str): The base URL of the OTEAPI Service.
+
+    Attributes:
+        url (str): The base URL of the OTEAPI Service.
+
+    """
+
+    def __new__(cls, url: str):
         """Initiates an OTEAPI Service client.
 
         The `url` is the base URL of the OTEAPI Service.
@@ -13,5 +23,4 @@ class OTEClient:
         """
         if url == "python":
             return OTEPythonClient(url)
-        else:
-            return OTEServiceClient(url)
+        return OTEServiceClient(url)
