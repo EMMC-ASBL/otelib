@@ -12,7 +12,5 @@ if TYPE_CHECKING:  # pragma: no cover
 class Transformation(AbstractServicesStrategy):
     """Context class for the Transformation Strategy Interfaces"""
 
-    def __init__(self, url: "Optional[str]" = None, **kwargs) -> None:
-        super().__init__(url, **kwargs)
-        self.strategy_name = "transformation"
-        self.strategy_config = TransformationConfig
+    strategy_name = "transformation"
+    strategy_config = TransformationConfig

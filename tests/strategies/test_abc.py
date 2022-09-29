@@ -109,6 +109,9 @@ def test_get(
     strategy.create(**create_kwargs)
     assert strategy.id
 
+    # There must be a strategy name associated with the strategy
+    assert strategy.strategy_name == strategy_name
+
     content = strategy.get()
     if strategy_name in ("filter", "mapping"):
         assert json.loads(content) == {}

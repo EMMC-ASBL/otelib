@@ -29,6 +29,10 @@ class AbstractServicesStrategy(AbstractBaseStrategy):
 
     """
 
+    # Maybe there is a smarter way of doing abstract attributes
+    strategy_name: str = ""
+    strategy_config: GenericConfig = GenericConfig
+
     # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
@@ -43,10 +47,6 @@ class AbstractServicesStrategy(AbstractBaseStrategy):
         self.input_pipe: "Optional[Pipe]" = None
         self.id: "Optional[str]" = None  # pylint: disable=invalid-name
         self.requests_timeout = 30
-
-        # Maybe there is a smarter way of doing abstract attributes
-        self.strategy_name: str = ""
-        self.strategy_config: GenericConfig = GenericConfig
 
         # For debugging/testing
         self.debug: bool = bool(os.getenv("OTELIB_DEBUG", ""))

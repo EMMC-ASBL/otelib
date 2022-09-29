@@ -16,10 +16,8 @@ class DataResource(AbstractServicesStrategy):
     """Context class for the data resource strategy interfaces for managing i/o
     operations."""
 
-    def __init__(self, url: "Optional[str]" = None, **kwargs) -> None:
-        super().__init__(url, **kwargs)
-        self.strategy_name = "dataresource"
-        self.strategy_config = ResourceConfig
+    strategy_name = "dataresource"
+    strategy_config = ResourceConfig
 
     def create(self, **kwargs) -> None:
         session_id = kwargs.pop("session_id", None)

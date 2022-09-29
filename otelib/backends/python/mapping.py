@@ -13,7 +13,5 @@ class Mapping(BasePythonStrategy):
     """Context class for the mapping strategy interfaces for managing i/o
     operations."""
 
-    def __init__(self, url: "Optional[str]" = None, **kwargs) -> None:
-        super().__init__(url, **kwargs)
-        self.strategy_name = "mapping"
-        self.strategy_config = MappingConfig
+    strategy_name = "mapping"
+    strategy_config = MappingConfig

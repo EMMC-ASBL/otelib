@@ -48,6 +48,11 @@ class BasePythonStrategy(AbstractBaseStrategy):
 
     """
 
+    strategy_name: str = ""
+    strategy_config: GenericConfig = GenericConfig
+
+    cache = Cache()
+
     # pylint: disable=too-many-instance-attributes
     # pylint: disable=duplicate-code
     def __init__(
@@ -62,13 +67,6 @@ class BasePythonStrategy(AbstractBaseStrategy):
         self.settings: Settings = Settings()
         self.input_pipe: "Optional[Pipe]" = None
         self.id: "Optional[str]" = None  # pylint: disable=invalid-name
-
-        # Maybe there is a smarter way of doing abstract attributes
-        self.strategy_name: str = ""
-        self.strategy_config: GenericConfig = GenericConfig
-
-        # Maybe there is a smarter way to have a persistant cache...
-        self.cache = Cache()
 
         # For debugging/testing
         self.debug: bool = bool(os.getenv("OTELIB_DEBUG", ""))

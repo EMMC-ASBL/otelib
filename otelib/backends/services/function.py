@@ -12,7 +12,5 @@ if TYPE_CHECKING:  # pragma: no cover
 class Function(AbstractServicesStrategy):
     """Context class for the Function Strategy Interfaces"""
 
-    def __init__(self, url: "Optional[str]" = None, **kwargs) -> None:
-        super().__init__(url, **kwargs)
-        self.strategy_name = "function"
-        self.strategy_config = FunctionConfig
+    strategy_name = "function"
+    strategy_config = FunctionConfig
