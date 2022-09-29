@@ -78,13 +78,13 @@ class BasePythonStrategy(AbstractBaseStrategy):
         session_id = kwargs.pop("session_id", None)
         data = self.strategy_config(**kwargs)
 
-        resource_id = self.strategy_name + "-" + str(uuid4())
+        resource_id = f"{self.strategy_name}-{str(uuid4())}"
         self.id = resource_id
         self.cache[resource_id] = data.json()
 
         if session_id:
             session = self.cache[session_id]
-            list_key = self.strategy_name + "_info"
+            list_key = f"{self.strategy_name}_info"
             if list_key in session:
                 session[list_key].extend([resource_id])
             else:
@@ -139,7 +139,7 @@ class BasePythonStrategy(AbstractBaseStrategy):
         self.settings = Settings()
 
         if session_id is None:
-            session_id = "session-" + str(uuid4())
+            session_id = f"session-{str(uuid4())}"
             self.cache[session_id] = {}
 
         if self.debug:

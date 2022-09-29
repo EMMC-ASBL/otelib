@@ -65,12 +65,12 @@ class AbstractServicesStrategy(AbstractBaseStrategy):
         if not response.ok:
             raise ApiError(
                 f"Cannot create {self.strategy_name}: {data!r}"
-                f"{' content=' + str(response.content) if self.debug else ''}",
+                f"content={str(response.content) if self.debug else ''}",
                 status=response.status_code,
             )
 
         response_json: dict = response.json()
-        self.id = response_json.pop(self.strategy_name + "_id")
+        self.id = response_json.pop(f"{self.strategy_name}_id")
 
     def fetch(self, session_id: str) -> bytes:
         response = requests.get(
@@ -83,13 +83,15 @@ class AbstractServicesStrategy(AbstractBaseStrategy):
         raise ApiError(
             f"Cannot fetch {self.strategy_name}: session_id={session_id!r} "
             f"{self.strategy_name}_id={self.id!r}"
-            f"{' content=' + str(response.content) if self.debug else ''}",
+            f"content={str(response.content) if self.debug else ''}",
             status=response.status_code,
         )
 
     def initialize(self, session_id: str) -> bytes:
-        post_path = f"{self.url}{self.settings.prefix}"
-        post_path += f"/{self.strategy_name}/{self.id}/initialize"
+        post_path = (
+            f"{self.url}{self.settings.prefix}"
+            f"/{self.strategy_name}/{self.id}/initialize"
+        )
         response = requests.post(
             post_path,
             params={"session_id": session_id},
@@ -100,7 +102,7 @@ class AbstractServicesStrategy(AbstractBaseStrategy):
         raise ApiError(
             f"Cannot initialize {self.strategy_name}: session_id={session_id!r} "
             f"{self.strategy_name}_id={self.id!r}"
-            f"{' content=' + str(response.content) if self.debug else ''}",
+            f"content={str(response.content) if self.debug else ''}",
             status=response.status_code,
         )
 
@@ -132,7 +134,7 @@ class AbstractServicesStrategy(AbstractBaseStrategy):
             if not response.ok:
                 raise ApiError(
                     f"Cannot create session: {response.status_code}"
-                    f"{' content=' + str(response.content) if self.debug else ''}",
+                    f"content={str(response.content) if self.debug else ''}",
                     status=response.status_code,
                 )
             session_id = json.loads(response.text)["session_id"]

@@ -26,7 +26,7 @@ class DataResource(BasePythonStrategy):
         session_id = kwargs.pop("session_id", None)
         data = ResourceConfig(**kwargs)
 
-        resource_id = "dataresource-" + str(uuid4())
+        resource_id = f"dataresource-{str(uuid4())}"
         self.id = resource_id
         self.cache[resource_id] = data.json()
 
