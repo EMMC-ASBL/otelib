@@ -1,4 +1,4 @@
-"""Abstract Base Class (abc) for strategies."""
+"""Base class for strategies in the service/REST API backend."""
 import json
 import os
 from typing import TYPE_CHECKING
@@ -16,7 +16,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from typing import Optional
 
 
-class AbstractServicesStrategy(AbstractBaseStrategy):
+class BaseServicesStrategy(AbstractBaseStrategy):
     """Abstract class for strategies.
 
     Parameters:

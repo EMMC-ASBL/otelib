@@ -6,13 +6,13 @@ from oteapi.models import ResourceConfig
 
 from otelib.exceptions import ApiError
 
-from .base import AbstractServicesStrategy
+from otelib.backends.services.base import BaseServicesStrategy
 
 if TYPE_CHECKING:  # pragma: no cover
     from typing import Optional
 
 # pylint: disable=duplicate-code
-class DataResource(AbstractServicesStrategy):
+class DataResource(BaseServicesStrategy):
     """Context class for the data resource strategy interfaces for managing i/o
     operations."""
 

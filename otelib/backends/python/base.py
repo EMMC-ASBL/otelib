@@ -1,4 +1,4 @@
-"""Abstract Base Class (abc) for strategies."""
+"""Base class for strategies in the Python backend."""
 import json
 import os
 from typing import TYPE_CHECKING
@@ -36,13 +36,13 @@ class Cache(Singleton, dict):
 
 
 class BasePythonStrategy(AbstractBaseStrategy):
-    """Abstract class for strategies for the python backend.
+    """Base class for strategies for the python backend.
 
     Parameters:
-        url (str): The base URL of the OTEAPI Service.
+        url (str): Must be set to `"python"` or a `ValueError` is raised.
 
     Attributes:
-        url (str): The base URL of the OTEAPI Service.
+        url (str): This is always `"python"` for the Python backend.
         settings (otelib.settings.Settings): OTEAPI Service settings.
         input_pipe (Optional[Pipe]): An input pipeline.
 
@@ -53,8 +53,7 @@ class BasePythonStrategy(AbstractBaseStrategy):
 
     cache = Cache()
 
-    # pylint: disable=too-many-instance-attributes
-    # pylint: disable=duplicate-code
+    # pylint: disable=too-many-instance-attributes,duplicate-code
     def __init__(
         self,
         url: "Optional[str]" = None,
