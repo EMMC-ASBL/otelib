@@ -11,7 +11,6 @@ if TYPE_CHECKING:  # pragma: no cover
     from typing import Optional
 
 
-# pylint: disable=duplicate-code
 class DataResource(BasePythonStrategy):
     """Context class for the data resource strategy interfaces for managing i/o
     operations."""

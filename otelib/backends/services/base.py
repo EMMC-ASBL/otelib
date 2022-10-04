@@ -8,7 +8,7 @@ from oteapi.models.genericconfig import GenericConfig
 
 from otelib.backends.strategies import AbstractBaseStrategy
 from otelib.exceptions import ApiError
-from otelib.pipe import Pipe  # pylint: disable=unused-import
+from otelib.pipe import Pipe
 from otelib.settings import Settings
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -32,7 +32,6 @@ class BaseServicesStrategy(AbstractBaseStrategy):
     strategy_name: str
     strategy_config: GenericConfig
 
-    # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         url: "Optional[str]" = None,

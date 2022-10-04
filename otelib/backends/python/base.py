@@ -51,7 +51,6 @@ class BasePythonStrategy(AbstractBaseStrategy):
 
     cache = Cache()
 
-    # pylint: disable=too-many-instance-attributes,duplicate-code
     def __init__(
         self,
         interpreter: "Optional[str]" = None,

@@ -10,7 +10,7 @@ from otelib.exceptions import ApiError
 if TYPE_CHECKING:  # pragma: no cover
     from typing import Optional
 
-# pylint: disable=duplicate-code
+
 class DataResource(BaseServicesStrategy):
     """Context class for the data resource strategy interfaces for managing i/o
     operations."""
