@@ -13,10 +13,10 @@ class OTEPythonClient:
     """The Python version of the OTEClient object.
 
     Parameters:
-        url (str): The base URL of the OTEAPI Service.
+        Interpreter (str): Interpreter for the python backend.
 
     Attributes:
-        url (str): The base URL of the OTEAPI Service.
+        Interpreter (str): Interpreter for the python backend.
 
     """
 
@@ -27,6 +27,10 @@ class OTEPythonClient:
         currently only 'python' is supported
         """
         self.interpreter: str = interpreter
+        if interpreter != "python":
+            raise NotImplementedError(
+                "Only python interpreter supported for python backend"
+            )
 
     def create_dataresource(self, **kwargs) -> DataResource:
         """Create a new data resource.

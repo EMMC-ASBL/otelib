@@ -126,7 +126,6 @@ def mock_session(
     """
     from otelib.settings import Settings
 
-    # For now I need python backend to run test for real
     if "example" in server_url:
         requests_mock.post(
             f"{client.url}{Settings().prefix}/session",

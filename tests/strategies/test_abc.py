@@ -113,6 +113,7 @@ def test_get(
     assert strategy.strategy_name == strategy_name
 
     content = strategy.get()
+    assert isinstance(content, bytes)
     if strategy_name in ("filter", "mapping"):
         assert json.loads(content) == {}
     else:

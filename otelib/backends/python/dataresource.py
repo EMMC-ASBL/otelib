@@ -1,7 +1,6 @@
 """Common strategy for Download, Parse and Resource strategies."""
 import json
 from typing import TYPE_CHECKING
-from uuid import uuid4
 
 from oteapi.models import AttrDict, ResourceConfig
 from oteapi.plugins import create_strategy
@@ -20,26 +19,10 @@ class DataResource(BasePythonStrategy):
     strategy_name = "dataresource"
     strategy_config = ResourceConfig
 
-    def create(self, **kwargs) -> None:
-        session_id = kwargs.pop("session_id", None)
-        data = ResourceConfig(**kwargs)
-
-        resource_id = f"dataresource-{str(uuid4())}"
-        self.id = resource_id
-        self.cache[resource_id] = data.json()
-
-        if session_id:
-            session = self.cache[session_id]
-            list_key = "resource_info"
-            if list_key in session:
-                session[list_key].extend([resource_id])
-            else:
-                session[list_key] = [resource_id]
-
     def fetch(self, session_id: str) -> bytes:
         resource_id = self.id
 
-        config = ResourceConfig(**json.loads(self.cache[resource_id]))
+        config = self.strategy_config(**json.loads(self.cache[resource_id]))
         session_data = None if not session_id else self.cache[session_id]
 
         if config.downloadUrl and config.mediaType:
@@ -68,7 +51,7 @@ class DataResource(BasePythonStrategy):
     def initialize(self, session_id: str) -> bytes:
         resource_id = self.id
 
-        config = ResourceConfig(**json.loads(self.cache[resource_id]))
+        config = self.strategy_config(**json.loads(self.cache[resource_id]))
         if session_id:
             session_data = self.cache[session_id]
         else:

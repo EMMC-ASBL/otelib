@@ -38,16 +38,16 @@ class BasePythonStrategy(AbstractBaseStrategy):
     """Base class for strategies for the python backend.
 
     Parameters:
-        url (str): Must be set to `"python"` or a `ValueError` is raised.
+        interpreter (str): Must be set to `"python"` or a `ValueError` is raised.
 
     Attributes:
-        url (str): This is always `"python"` for the Python backend.
+        interpreter (str): This is always `"python"` for the Python backend.
         input_pipe (Optional[Pipe]): An input pipeline.
 
     """
 
-    strategy_name: str = ""
-    strategy_config: GenericConfig = GenericConfig
+    strategy_name: str
+    strategy_config: GenericConfig
 
     cache = Cache()
 
@@ -58,9 +58,15 @@ class BasePythonStrategy(AbstractBaseStrategy):
     ) -> None:
         """Initiates a strategy."""
         if not interpreter:
-            raise ValueError("Url (python) must be specified.")
+            raise ValueError("Interpreter (python) must be specified.")
 
         self.interpreter: "Optional[str]" = interpreter
+
+        if interpreter != "python":
+            raise NotImplementedError(
+                "Only python interpreter supported for python backend"
+            )
+
         self.input_pipe: "Optional[Pipe]" = None
         self.id: "Optional[str]" = None  # pylint: disable=invalid-name
 
@@ -93,7 +99,7 @@ class BasePythonStrategy(AbstractBaseStrategy):
         if session_update and session_id:
             self.cache[session_id].update(session_update)
 
-        return AttrDict(**session_update).json()
+        return bytes(AttrDict(**session_update).json())
 
     def initialize(self, session_id: str) -> bytes:
         config = self.strategy_config(**json.loads(self.cache[self.id]))
@@ -107,7 +113,7 @@ class BasePythonStrategy(AbstractBaseStrategy):
         if session_update and session_id:
             self.cache[session_id].update(session_update)
 
-        return AttrDict(**session_update).json()
+        return bytes(AttrDict(**session_update).json())
 
     def get(self, session_id: "Optional[str]" = None) -> bytes:
         """Executes a pipeline.

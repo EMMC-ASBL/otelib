@@ -29,9 +29,8 @@ class BaseServicesStrategy(AbstractBaseStrategy):
 
     """
 
-    # Maybe there is a smarter way of doing abstract attributes
-    strategy_name: str = ""
-    strategy_config: GenericConfig = GenericConfig
+    strategy_name: str
+    strategy_config: GenericConfig
 
     # pylint: disable=too-many-instance-attributes
     def __init__(
@@ -46,7 +45,6 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         self.settings: Settings = Settings()
         self.input_pipe: "Optional[Pipe]" = None
         self.id: "Optional[str]" = None  # pylint: disable=invalid-name
-        self.requests_timeout = 30
 
         # For debugging/testing
         self.debug: bool = bool(os.getenv("OTELIB_DEBUG", ""))
@@ -60,7 +58,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
             f"{self.url}{self.settings.prefix}/{self.strategy_name}",
             json=data.dict(),
             params={"session_id": session_id} if session_id else {},
-            timeout=self.requests_timeout,
+            timeout=self.settings.timeout,
         )
         if not response.ok:
             raise ApiError(
@@ -76,7 +74,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         response = requests.get(
             f"{self.url}{self.settings.prefix}/{self.strategy_name}/{self.id}",
             params={"session_id": session_id},
-            timeout=self.requests_timeout,
+            timeout=self.settings.timeout,
         )
         if response.ok:
             return response.content
@@ -95,7 +93,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         response = requests.post(
             post_path,
             params={"session_id": session_id},
-            timeout=self.requests_timeout,
+            timeout=self.settings.timeout,
         )
         if response.ok:
             return response.content
@@ -123,13 +121,12 @@ class BaseServicesStrategy(AbstractBaseStrategy):
             The output from `fetch()`.
 
         """
-        self.settings = Settings()
 
         if session_id is None:
             response = requests.post(
                 f"{self.url}{self.settings.prefix}/session",
                 json={},
-                timeout=self.requests_timeout,
+                timeout=self.settings.timeout,
             )
             if not response.ok:
                 raise ApiError(
