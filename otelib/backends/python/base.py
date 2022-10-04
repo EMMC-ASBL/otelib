@@ -9,7 +9,6 @@ from oteapi.models.genericconfig import GenericConfig
 from oteapi.plugins import create_strategy
 
 from otelib.backends.strategies import AbstractBaseStrategy
-from otelib.settings import Settings
 
 if TYPE_CHECKING:  # pragma: no cover
     from pathlib import Path
@@ -43,7 +42,6 @@ class BasePythonStrategy(AbstractBaseStrategy):
 
     Attributes:
         url (str): This is always `"python"` for the Python backend.
-        settings (otelib.settings.Settings): OTEAPI Service settings.
         input_pipe (Optional[Pipe]): An input pipeline.
 
     """
@@ -56,14 +54,13 @@ class BasePythonStrategy(AbstractBaseStrategy):
     # pylint: disable=too-many-instance-attributes,duplicate-code
     def __init__(
         self,
-        url: "Optional[str]" = None,
+        interpreter: "Optional[str]" = None,
     ) -> None:
         """Initiates a strategy."""
-        if not url:
+        if not interpreter:
             raise ValueError("Url (python) must be specified.")
 
-        self.url: "Optional[str]" = url
-        self.settings: Settings = Settings()
+        self.interpreter: "Optional[str]" = interpreter
         self.input_pipe: "Optional[Pipe]" = None
         self.id: "Optional[str]" = None  # pylint: disable=invalid-name
 
@@ -75,22 +72,20 @@ class BasePythonStrategy(AbstractBaseStrategy):
         session_id = kwargs.pop("session_id", None)
         data = self.strategy_config(**kwargs)
 
-        resource_id = f"{self.strategy_name}-{str(uuid4())}"
-        self.id = resource_id
-        self.cache[resource_id] = data.json()
+        self.id = f"{self.strategy_name}-{str(uuid4())}"
+        self.id = self.id
+        self.cache[self.id] = data.json()
 
         if session_id:
             session = self.cache[session_id]
             list_key = f"{self.strategy_name}_info"
             if list_key in session:
-                session[list_key].extend([resource_id])
+                session[list_key].extend([self.id])
             else:
-                session[list_key] = [resource_id]
+                session[list_key] = [self.id]
 
     def fetch(self, session_id: str) -> bytes:
-        resource_id = self.id
-
-        config = self.strategy_config(**json.loads(self.cache[resource_id]))
+        config = self.strategy_config(**json.loads(self.cache[self.id]))
         session_data = None if not session_id else self.cache[session_id]
         session_update = create_strategy(self.strategy_name, config)
         session_update = session_update.get(session=session_data)
@@ -101,9 +96,7 @@ class BasePythonStrategy(AbstractBaseStrategy):
         return AttrDict(**session_update).json()
 
     def initialize(self, session_id: str) -> bytes:
-        resource_id = self.id
-
-        config = self.strategy_config(**json.loads(self.cache[resource_id]))
+        config = self.strategy_config(**json.loads(self.cache[self.id]))
         if session_id:
             session_data = self.cache[session_id]
         else:
@@ -133,8 +126,6 @@ class BasePythonStrategy(AbstractBaseStrategy):
             The output from `fetch()`.
 
         """
-        self.settings = Settings()
-
         if session_id is None:
             session_id = f"session-{str(uuid4())}"
             self.cache[session_id] = {}

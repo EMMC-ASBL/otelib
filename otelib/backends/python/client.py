@@ -20,12 +20,13 @@ class OTEPythonClient:
 
     """
 
-    def __init__(self, url: str) -> None:
+    def __init__(self, interpreter: str) -> None:
         """Initiates an OTEAPI Service client.
 
-        The `url` is the base URL of the OTEAPI Service.
+        The `interpreter` indicates which intepreter to use for the python backend
+        currently only 'python' is supported
         """
-        self.url: str = url
+        self.interpreter: str = interpreter
 
     def create_dataresource(self, **kwargs) -> DataResource:
         """Create a new data resource.
@@ -36,7 +37,7 @@ class OTEPythonClient:
             The newly created data resource.
 
         """
-        data_resource = DataResource(self.url)
+        data_resource = DataResource(self.interpreter)
         data_resource.create(**kwargs)
         return data_resource
 
@@ -49,7 +50,7 @@ class OTEPythonClient:
             The newly created transformation.
 
         """
-        transformation = Transformation(self.url)
+        transformation = Transformation(self.interpreter)
         transformation.create(**kwargs)
         return transformation
 
@@ -62,7 +63,7 @@ class OTEPythonClient:
             The newly created filter.
 
         """
-        filter_ = Filter(self.url)
+        filter_ = Filter(self.interpreter)
         filter_.create(**kwargs)
         return filter_
 
@@ -75,7 +76,7 @@ class OTEPythonClient:
             The newly created mapping.
 
         """
-        mapping = Mapping(self.url)
+        mapping = Mapping(self.interpreter)
         mapping.create(**kwargs)
         return mapping
 
@@ -88,6 +89,6 @@ class OTEPythonClient:
             The newly created function.
 
         """
-        function_ = Function(self.url)
+        function_ = Function(self.interpreter)
         function_.create(**kwargs)
         return function_
