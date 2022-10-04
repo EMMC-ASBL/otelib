@@ -3,13 +3,13 @@ from typing import TYPE_CHECKING
 
 from oteapi.models import FunctionConfig
 
-from .base import AbstractServicesStrategy
+from otelib.backends.services.base import BaseServicesStrategy
 
 if TYPE_CHECKING:  # pragma: no cover
     from typing import Optional
 
 
-class Function(AbstractServicesStrategy):
+class Function(BaseServicesStrategy):
     """Context class for the Function Strategy Interfaces"""
 
     strategy_name = "function"

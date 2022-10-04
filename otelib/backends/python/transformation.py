@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 
 from oteapi.models import TransformationConfig
 
-from .base import BasePythonStrategy
+from otelib.backends.python.base import BasePythonStrategy
 
 if TYPE_CHECKING:  # pragma: no cover
     from typing import Optional

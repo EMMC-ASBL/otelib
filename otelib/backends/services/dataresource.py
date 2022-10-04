@@ -4,9 +4,8 @@ from typing import TYPE_CHECKING
 import requests
 from oteapi.models import ResourceConfig
 
-from otelib.exceptions import ApiError
-
 from otelib.backends.services.base import BaseServicesStrategy
+from otelib.exceptions import ApiError
 
 if TYPE_CHECKING:  # pragma: no cover
     from typing import Optional
