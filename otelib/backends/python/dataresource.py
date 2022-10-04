@@ -46,7 +46,7 @@ class DataResource(BasePythonStrategy):
             if session_update and session_id:
                 self.cache[session_id].update(session_update)
 
-        return AttrDict(**session_update).json()
+        return bytes(AttrDict(**session_update).json(), encoding="utf-8")
 
     def initialize(self, session_id: str) -> bytes:
         resource_id = self.id
@@ -80,4 +80,4 @@ class DataResource(BasePythonStrategy):
             if session_update and session_id:
                 self.cache[session_id].update(session_update)
 
-        return AttrDict(**session_update).json()
+        return bytes(AttrDict(**session_update).json(), encoding="utf-8")

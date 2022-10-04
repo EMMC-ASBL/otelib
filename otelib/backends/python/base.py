@@ -99,7 +99,7 @@ class BasePythonStrategy(AbstractBaseStrategy):
         if session_update and session_id:
             self.cache[session_id].update(session_update)
 
-        return bytes(AttrDict(**session_update).json())
+        return bytes(AttrDict(**session_update).json(), encoding="utf-8")
 
     def initialize(self, session_id: str) -> bytes:
         config = self.strategy_config(**json.loads(self.cache[self.id]))
@@ -113,7 +113,7 @@ class BasePythonStrategy(AbstractBaseStrategy):
         if session_update and session_id:
             self.cache[session_id].update(session_update)
 
-        return bytes(AttrDict(**session_update).json())
+        return bytes(AttrDict(**session_update).json(), encoding="utf-8")
 
     def get(self, session_id: "Optional[str]" = None) -> bytes:
         """Executes a pipeline.
