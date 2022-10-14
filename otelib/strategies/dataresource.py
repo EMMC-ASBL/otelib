@@ -17,6 +17,7 @@ class DataResource(AbstractStrategy):
         response = requests.post(
             f"{self.url}{self.settings.prefix}/dataresource",
             json=data.dict(),
+            headers=self.headers,
             params={"session_id": session_id},
             timeout=self.settings.timeout,
         )
@@ -35,6 +36,7 @@ class DataResource(AbstractStrategy):
         response = requests.get(
             f"{self.url}{self.settings.prefix}/dataresource/{self.id}",
             params={"session_id": session_id},
+            headers=self.headers,
             timeout=self.settings.timeout,
         )
         if response.ok:
@@ -51,6 +53,7 @@ class DataResource(AbstractStrategy):
             f"{self.url}{self.settings.prefix}/dataresource/{self.id}/initialize",
             params={"session_id": session_id},
             timeout=self.settings.timeout,
+            headers=self.headers,
         )
         if response.ok:
             return response.content

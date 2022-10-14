@@ -16,6 +16,7 @@ class Mapping(AbstractStrategy):
         response = requests.post(
             f"{self.url}{self.settings.prefix}/mapping",
             json=data.dict(),
+            headers=self.headers,
             params={"session_id": session_id},
             timeout=self.settings.timeout,
         )
@@ -33,6 +34,7 @@ class Mapping(AbstractStrategy):
         response = requests.get(
             f"{self.url}{self.settings.prefix}/mapping/{self.id}",
             params={"session_id": session_id},
+            headers=self.headers,
             timeout=self.settings.timeout,
         )
         if response.ok:
@@ -48,6 +50,7 @@ class Mapping(AbstractStrategy):
         response = requests.post(
             f"{self.url}{self.settings.prefix}/mapping/{self.id}/initialize",
             params={"session_id": session_id},
+            headers=self.headers,
             timeout=self.settings.timeout,
         )
         if response.ok:

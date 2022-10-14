@@ -27,12 +27,13 @@ class AbstractStrategy(ABC):
 
     """
 
-    def __init__(self, url: str) -> None:
+    def __init__(self, url: str, headers: dict) -> None:
         """Initiates a strategy.
 
         The `url` is the base URL of the OTEAPI Service.
         """
         self.url: str = url
+        self.headers: dict = headers
         self.settings: Settings = Settings()
         self.input_pipe: "Optional[Pipe]" = None
         self.id: "Optional[str]" = None  # pylint: disable=invalid-name
@@ -123,6 +124,7 @@ class AbstractStrategy(ABC):
             response = requests.post(
                 f"{self.url}{self.settings.prefix}/session",
                 json={},
+                headers=self.headers,
                 timeout=self.settings.timeout,
             )
             if not response.ok:

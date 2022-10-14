@@ -13,12 +13,13 @@ class OTEClient:
 
     """
 
-    def __init__(self, url: str) -> None:
+    def __init__(self, url: str, headers: dict=None) -> None:
         """Initiates an OTEAPI Service client.
 
         The `url` is the base URL of the OTEAPI Service.
         """
         self.url: str = url
+        self.headers: dict = headers
 
     def create_dataresource(self, **kwargs) -> DataResource:
         """Create a new data resource.
@@ -29,7 +30,7 @@ class OTEClient:
             The newly created data resource.
 
         """
-        data_resource = DataResource(self.url)
+        data_resource = DataResource(self.url, self.headers)
         data_resource.create(**kwargs)
         return data_resource
 
@@ -42,7 +43,7 @@ class OTEClient:
             The newly created transformation.
 
         """
-        transformation = Transformation(self.url)
+        transformation = Transformation(self.url, self.headers)
         transformation.create(**kwargs)
         return transformation
 
@@ -55,7 +56,7 @@ class OTEClient:
             The newly created filter.
 
         """
-        filter_ = Filter(self.url)
+        filter_ = Filter(self.url, self.headers)
         filter_.create(**kwargs)
         return filter_
 
@@ -68,7 +69,7 @@ class OTEClient:
             The newly created mapping.
 
         """
-        mapping = Mapping(self.url)
+        mapping = Mapping(self.url, self.headers)
         mapping.create(**kwargs)
         return mapping
 
@@ -81,6 +82,6 @@ class OTEClient:
             The newly created function.
 
         """
-        function_ = Function(self.url)
+        function_ = Function(self.url, self.headers)
         function_.create(**kwargs)
         return function_
