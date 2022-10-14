@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from tests.conftest import OTEResponse, ResourceType
 
 
+@pytest.mark.parametrize("backend", ["services", "python"])
 @pytest.mark.parametrize(
     "strategy_name,create_kwargs",
     strategy_create_kwargs(),
@@ -19,6 +20,7 @@ if TYPE_CHECKING:
 )
 @pytest.mark.usefixtures("mock_session")
 def test_pipe(
+    backend: str,
     mock_ote_response: "OTEResponse",
     ids: "Callable[[Union[ResourceType, str]], str]",
     testdata: "Callable[[Union[ResourceType, str]], dict]",
@@ -34,8 +36,24 @@ def test_pipe(
 
     import requests
 
-    from otelib import strategies
     from otelib.pipe import Pipe
+
+    if backend == "services":
+        from otelib.backends import services as strategies
+    elif backend == "python":
+        if strategy_name == "function":
+            pytest.skip("No function strategy exists in oteapi-core yet.")
+        from otelib.backends import python as strategies
+
+        server_url = "python"
+
+        from oteapi.plugins import load_strategies
+
+        load_strategies()
+
+        from otelib.backends.python.base import Cache
+
+        Cache().clear()  # Cleanup the cache from other tests
 
     # create()
     mock_ote_response(
@@ -45,6 +63,7 @@ def test_pipe(
             f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # pylint: disable=line-too-long
             "_id": ids(strategy_name)
         },
+        backend=backend,
     )
 
     # initialize()
@@ -56,6 +75,7 @@ def test_pipe(
         return_json=(
             testdata(strategy_name) if strategy_name in ("filter", "mapping") else {}
         ),
+        backend=backend,
     )
 
     # fetch()
@@ -70,6 +90,7 @@ def test_pipe(
             if strategy_name in ("dataresource", "transformation")
             else {}
         ),
+        backend=backend,
     )
 
     # Session content
@@ -77,6 +98,7 @@ def test_pipe(
         method="get",
         endpoint=f"/session/{ids('session')}",
         return_json=testdata(strategy_name),
+        backend=backend,
     )
 
     strategy_name_map = {"dataresource": "DataResource"}
@@ -98,21 +120,28 @@ def test_pipe(
         assert json.loads(content) == testdata(strategy_name)
 
     # The testdata should always be in the full session
-    assert (
-        strategy._session_id
-    ), f"Session ID not found in {strategy_name} ! Is OTEAPI_DEBUG not set?"
-    content_session = requests.get(
-        f"{strategy.url}{strategy.settings.prefix}/session/{strategy._session_id}",
-        timeout=30,
-    )
-    session: "Dict[str, Any]" = content_session.json()
+    if backend == "services":
+        content_session = requests.get(
+            f"{strategy.url}{strategy.settings.prefix}/session/{strategy._session_id}",
+            timeout=30,
+        )
+        session: "Dict[str, Any]" = content_session.json()
+    elif backend == "python":
+        session_ids = [x for x in strategy.cache if "session" in x]
+        assert len(session_ids) == 1
+        session_id = session_ids[0]
+        session = strategy.cache[session_id]
     for key, value in testdata(strategy_name).items():
+        if strategy_name == "mapping" and backend == "python":
+            pytest.skip("Issues with tuple/list conversion json for python backend")
         assert key in session
         assert value == session[key]
 
 
+@pytest.mark.parametrize("backend", ["services", "python"])
 @pytest.mark.usefixtures("mock_session")
-def test_pipeing_strategies(
+def test_pipeing_strategies(  # pylint: disable=too-many-statements
+    backend: str,
     mock_ote_response: "OTEResponse",
     ids: "Callable[[Union[ResourceType, str]], str]",
     testdata: "Callable[[Union[ResourceType, str]], dict]",
@@ -123,18 +152,33 @@ def test_pipeing_strategies(
 
     import requests
 
-    from otelib.strategies import DataResource, Filter
+    if backend == "services":
+        from otelib.backends.services import DataResource, Filter
+    elif backend == "python":
+        from otelib.backends.python import DataResource, Filter
+
+        server_url = "python"
+
+        from oteapi.plugins import load_strategies
+
+        load_strategies()
+
+        from otelib.backends.python.base import Cache
+
+        Cache().clear()  # Cleanup the cache from other tests
 
     # create()
     mock_ote_response(
         method="post",
         endpoint="/dataresource",
         return_json={"resource_id": ids("dataresource")},
+        backend=backend,
     )
     mock_ote_response(
         method="post",
         endpoint="/filter",
         return_json={"filter_id": ids("filter")},
+        backend=backend,
     )
 
     # initialize()
@@ -143,12 +187,14 @@ def test_pipeing_strategies(
         endpoint=f"/dataresource/{ids('dataresource')}/initialize",
         params={"session_id": ids("session")},
         return_json={},
+        backend=backend,
     )
     mock_ote_response(
         method="post",
         endpoint=f"/filter/{ids('filter')}/initialize",
         params={"session_id": ids("session")},
         return_json=testdata("filter"),
+        backend=backend,
     )
 
     # fetch()
@@ -157,12 +203,14 @@ def test_pipeing_strategies(
         endpoint=f"/dataresource/{ids('dataresource')}",
         params={"session_id": ids("session")},
         return_json=testdata("dataresource"),
+        backend=backend,
     )
     mock_ote_response(
         method="get",
         endpoint=f"/filter/{ids('filter')}",
         params={"session_id": ids("session")},
         return_json={},
+        backend=backend,
     )
 
     # Session content
@@ -172,6 +220,7 @@ def test_pipeing_strategies(
         method="get",
         endpoint=f"/session/{ids('session')}",
         return_json=session_test_content,
+        backend=backend,
     )
 
     data_resource = DataResource(server_url)
@@ -196,11 +245,18 @@ def test_pipeing_strategies(
     assert (
         pipeline._session_id
     ), f"Session ID not found in {pipeline} ! Is OTEAPI_DEBUG not set?"
-    content_session = requests.get(
-        f"{pipeline.url}{pipeline.settings.prefix}/session/{pipeline._session_id}",
-        timeout=30,
-    )
-    session: "Dict[str, Any]" = content_session.json()
+
+    if backend == "services":
+        content_session = requests.get(
+            f"{pipeline.url}{pipeline.settings.prefix}/session/{pipeline._session_id}",
+            timeout=30,
+        )
+        session: "Dict[str, Any]" = content_session.json()
+    elif backend == "python":
+        session_ids = [x for x in pipeline.cache if "session" in x]
+        assert len(session_ids) == 1
+        session_id = session_ids[0]
+        session = pipeline.cache[session_id]
     for key, value in session_test_content.items():
         assert key in session
         assert value == session[key]
@@ -208,6 +264,8 @@ def test_pipeing_strategies(
     ##
     # Reverse the pipeline and try again
     ##
+    if backend == "python":
+        Cache().clear()  # Cleanup the cache from other tests
 
     data_resource = DataResource(server_url)
     filter = Filter(server_url)
@@ -231,11 +289,18 @@ def test_pipeing_strategies(
     assert (
         pipeline._session_id
     ), f"Session ID not found in {pipeline} ! Is OTEAPI_DEBUG not set?"
-    content_session = requests.get(
-        f"{pipeline.url}{pipeline.settings.prefix}/session/{pipeline._session_id}",
-        timeout=30,
-    )
-    session: "Dict[str, Any]" = content_session.json()
+
+    if backend == "services":
+        content_session = requests.get(
+            f"{pipeline.url}{pipeline.settings.prefix}/session/{pipeline._session_id}",
+            timeout=30,
+        )
+        session: "Dict[str, Any]" = content_session.json()
+    elif backend == "python":
+        session_ids = [x for x in pipeline.cache if "session" in x]
+        assert len(session_ids) == 1
+        session_id = session_ids[0]
+        session = pipeline.cache[session_id]
     for key, value in session_test_content.items():
         assert key in session
         assert value == session[key]

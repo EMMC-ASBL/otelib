@@ -149,6 +149,7 @@ def mock_ote_response(
         method: "Union[HTTPMethod, str]",
         endpoint: str,
         status_code: int = 200,
+        backend: "Optional[str]" = None,
         params: "Optional[Union[Dict[str, Any], str]]" = None,
         headers: "Optional[dict]" = None,
         return_content: "Optional[bytes]" = None,
@@ -161,7 +162,7 @@ def mock_ote_response(
         It will only be ensured that the `endpoint` starts with a forward slash.
         If it does not, one will be added. Otherwise, `endpoint` is not manipulated.
         """
-        if "example" not in server_url:
+        if "example" not in server_url or backend == "python":
             # Make sure the requests are done for real.
             requests_mock.real_http = True
             return

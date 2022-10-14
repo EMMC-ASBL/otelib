@@ -1,60 +1,70 @@
-"""Function strategy."""
+"""Common strategy for Download, Prase and Resource strategies."""
+from typing import TYPE_CHECKING
+
 import requests
-from oteapi.models import FunctionConfig
+from oteapi.models import ResourceConfig
 
+from otelib.backends.services.base import BaseServicesStrategy
 from otelib.exceptions import ApiError
-from otelib.strategies.abc import AbstractStrategy
+
+if TYPE_CHECKING:  # pragma: no cover
+    from typing import Optional
 
 
-class Function(AbstractStrategy):
-    """Context class for the Function Strategy Interface."""
+class DataResource(BaseServicesStrategy):
+    """Context class for the data resource strategy interfaces for managing i/o
+    operations."""
+
+    strategy_name = "dataresource"
+    strategy_config = ResourceConfig
 
     def create(self, **kwargs) -> None:
         session_id = kwargs.pop("session_id", None)
-        data = FunctionConfig(**kwargs)
+        data = ResourceConfig(**kwargs)
 
         response = requests.post(
-            f"{self.url}{self.settings.prefix}/function",
+            f"{self.url}{self.settings.prefix}/dataresource",
             json=data.dict(),
             params={"session_id": session_id},
             timeout=self.settings.timeout,
         )
         if not response.ok:
             raise ApiError(
-                f"Cannot create function: {data.functionType!r}"
+                f"Cannot create data resouce: downloadUrl={data.downloadUrl} "
+                f"accessService={data.accessService} mediaType={data.mediaType}"
                 f"{' content=' + str(response.content) if self.debug else ''}",
                 status=response.status_code,
             )
 
         response_json: dict = response.json()
-        self.id = response_json.pop("function_id")
+        self.id = response_json.pop("resource_id")
 
     def fetch(self, session_id: str) -> bytes:
         response = requests.get(
-            f"{self.url}{self.settings.prefix}/function/{self.id}",
+            f"{self.url}{self.settings.prefix}/dataresource/{self.id}",
             params={"session_id": session_id},
             timeout=self.settings.timeout,
         )
         if response.ok:
             return response.content
         raise ApiError(
-            f"Cannot fetch function: session_id={session_id!r} "
-            f"function_id={self.id!r}"
+            f"Cannot fetch data resource: session_id={session_id!r} "
+            f"resource_id={self.id!r}"
             f"{' content=' + str(response.content) if self.debug else ''}",
             status=response.status_code,
         )
 
     def initialize(self, session_id: str) -> bytes:
         response = requests.post(
-            f"{self.url}{self.settings.prefix}/function/{self.id}/initialize",
+            f"{self.url}{self.settings.prefix}/dataresource/{self.id}/initialize",
             params={"session_id": session_id},
             timeout=self.settings.timeout,
         )
         if response.ok:
             return response.content
         raise ApiError(
-            f"Cannot initialize function: session_id={session_id!r} "
-            f"function_id={self.id!r}"
+            f"Cannot initialize data resource: session_id={session_id!r} "
+            f"resource_id={self.id!r}"
             f"{' content=' + str(response.content) if self.debug else ''}",
             status=response.status_code,
         )

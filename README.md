@@ -87,8 +87,8 @@ data_resource = client.create_dataresource(
     downloadUrl="https://jpeg.org/images/jpegsystems-home.jpg",
     mediaType="image/jpeg",
 )
-mapping = client.create_mapping(mappingType="mapping/demo")
-transformation = client.create_transformation(transformation_type="script/dummy")
+mapping = client.create_mapping(mappingType="triples")
+transformation = client.create_transformation(transformation_type="celery/remote")
 ```
 
 Before you easily and elegant can combine them into a pipeline:
@@ -119,6 +119,9 @@ filter3 = client.create_filter(filterType="filter/blur")
 pipeline2 = pipeline >> filter2
 pipeline3 = pipeline >> filter3
 ```
+
+> **Note**: The `filter/blur` filter strategy does not exist in the core OTEAPI package.
+> This strategy should come from another plugin package.
 
 As well as merged:
 
