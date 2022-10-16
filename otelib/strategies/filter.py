@@ -14,7 +14,7 @@ class Filter(AbstractStrategy):
         data = FilterConfig(**kwargs)
 
         response = requests.post(
-            f"{self.url}{self.settings.prefix}/filter",
+            f"{self.url}{self.settings.prefix}/filter/",
             json=data.dict(),
             headers=self.headers,
             params={"session_id": session_id} if session_id else {},
@@ -32,7 +32,7 @@ class Filter(AbstractStrategy):
 
     def fetch(self, session_id: str) -> bytes:
         response = requests.get(
-            f"{self.url}{self.settings.prefix}/filter/{self.id}",
+            f"{self.url}{self.settings.prefix}/filter/{self.id}/",
             params={"session_id": session_id},
             headers=self.headers,
             timeout=self.settings.timeout,
@@ -48,7 +48,7 @@ class Filter(AbstractStrategy):
 
     def initialize(self, session_id: str) -> bytes:
         response = requests.post(
-            f"{self.url}{self.settings.prefix}/filter/{self.id}/initialize",
+            f"{self.url}{self.settings.prefix}/filter/{self.id}/initialize/",
             params={"session_id": session_id},
             headers=self.headers,
             timeout=self.settings.timeout,

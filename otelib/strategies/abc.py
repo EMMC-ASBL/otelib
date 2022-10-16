@@ -11,7 +11,7 @@ from otelib.pipe import Pipe
 from otelib.settings import Settings
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Optional
+    from typing import Any, Dict, Optional
 
 
 class AbstractStrategy(ABC):
@@ -27,16 +27,16 @@ class AbstractStrategy(ABC):
 
     """
 
-    def __init__(self, url: str, headers: dict) -> None:
+    def __init__(self, url: str, headers: dict = None) -> None:
         """Initiates a strategy.
 
         The `url` is the base URL of the OTEAPI Service.
         """
         self.url: str = url
-        self.headers: dict = headers
         self.settings: Settings = Settings()
         self.input_pipe: "Optional[Pipe]" = None
         self.id: "Optional[str]" = None  # pylint: disable=invalid-name
+        self.headers: "Optional[Dict[Any, Any]]" = headers
 
         # For debugging/testing
         self.debug: bool = bool(os.getenv("OTELIB_DEBUG", ""))
@@ -122,7 +122,7 @@ class AbstractStrategy(ABC):
 
         if session_id is None:
             response = requests.post(
-                f"{self.url}{self.settings.prefix}/session",
+                f"{self.url}{self.settings.prefix}/session/",
                 json={},
                 headers=self.headers,
                 timeout=self.settings.timeout,

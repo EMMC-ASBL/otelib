@@ -1,5 +1,14 @@
 """OTE Client."""
+import os
+from typing import TYPE_CHECKING
+
+from otelib.exceptions import AuthorizationError
+from otelib.settings import DEFAULT_HOST
 from otelib.strategies import DataResource, Filter, Function, Mapping, Transformation
+from otelib.utils import import_from_environ
+
+if TYPE_CHECKING:  # pragma: no cover
+    from typing import Any, Dict, Optional
 
 
 class OTEClient:
@@ -13,13 +22,26 @@ class OTEClient:
 
     """
 
-    def __init__(self, url: str, headers: dict=None) -> None:
+    def __init__(
+        self, url: str = None, auth_function=None, headers: dict = None
+    ) -> None:
         """Initiates an OTEAPI Service client.
 
         The `url` is the base URL of the OTEAPI Service.
         """
-        self.url: str = url
-        self.headers: dict = headers
+
+        self.url: str = url or os.environ.get("OTEAPI_SERVICE") or DEFAULT_HOST
+        self.headers: "Optional[Dict[Any, Any]]" = headers
+        self._auth = auth_function
+
+    def login(self, *args, **kwargs):
+        """call the function for fetching an access token
+        and add it to the header of each http-request for the
+        client."""
+        func = import_from_environ() or self._auth
+        if not func:
+            raise AuthorizationError("function for authorization not defined")
+        self.headers = func(*args, **kwargs)
 
     def create_dataresource(self, **kwargs) -> DataResource:
         """Create a new data resource.
@@ -30,7 +52,7 @@ class OTEClient:
             The newly created data resource.
 
         """
-        data_resource = DataResource(self.url, self.headers)
+        data_resource = DataResource(self.url, headers=self.headers)
         data_resource.create(**kwargs)
         return data_resource
 
@@ -43,7 +65,7 @@ class OTEClient:
             The newly created transformation.
 
         """
-        transformation = Transformation(self.url, self.headers)
+        transformation = Transformation(self.url, headers=self.headers)
         transformation.create(**kwargs)
         return transformation
 
@@ -56,7 +78,7 @@ class OTEClient:
             The newly created filter.
 
         """
-        filter_ = Filter(self.url, self.headers)
+        filter_ = Filter(self.url, headers=self.headers)
         filter_.create(**kwargs)
         return filter_
 
@@ -69,7 +91,7 @@ class OTEClient:
             The newly created mapping.
 
         """
-        mapping = Mapping(self.url, self.headers)
+        mapping = Mapping(self.url, headers=self.headers)
         mapping.create(**kwargs)
         return mapping
 
@@ -82,6 +104,6 @@ class OTEClient:
             The newly created function.
 
         """
-        function_ = Function(self.url, self.headers)
+        function_ = Function(self.url, headers=self.headers)
         function_.create(**kwargs)
         return function_

@@ -5,6 +5,10 @@ class BaseOtelibException(Exception):
     """A base OTElib exception."""
 
 
+class AuthorizationError(BaseOtelibException):
+    """Raise any error related to authorization"""
+
+
 class ApiError(BaseOtelibException):
     """An API Error Exception"""
 

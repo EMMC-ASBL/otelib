@@ -14,7 +14,7 @@ class Transformation(AbstractStrategy):
         data = TransformationConfig(**kwargs)
 
         response = requests.post(
-            f"{self.url}{self.settings.prefix}/transformation",
+            f"{self.url}{self.settings.prefix}/transformation/",
             json=data.dict(),
             headers=self.headers,
             params={"session_id": session_id},
@@ -32,7 +32,7 @@ class Transformation(AbstractStrategy):
 
     def fetch(self, session_id: str) -> bytes:
         response = requests.get(
-            f"{self.url}{self.settings.prefix}/transformation/{self.id}",
+            f"{self.url}{self.settings.prefix}/transformation/{self.id}/",
             params={"session_id": session_id},
             headers=self.headers,
             timeout=self.settings.timeout,
@@ -48,7 +48,7 @@ class Transformation(AbstractStrategy):
 
     def initialize(self, session_id: str) -> bytes:
         response = requests.post(
-            f"{self.url}{self.settings.prefix}/transformation/{self.id}/initialize",
+            f"{self.url}{self.settings.prefix}/transformation/{self.id}/initialize/",
             params={"session_id": session_id},
             headers=self.headers,
             timeout=self.settings.timeout,
