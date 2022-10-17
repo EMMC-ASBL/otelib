@@ -1,4 +1,6 @@
 """Client for python backend."""
+import warnings
+
 from otelib.backends.python import (
     DataResource,
     Filter,
@@ -20,7 +22,7 @@ class OTEPythonClient:
 
     """
 
-    def __init__(self, interpreter: str) -> None:
+    def __init__(self, interpreter: str, **kwargs) -> None:
         """Initiates an OTEAPI Service client.
 
         The `interpreter` indicates which intepreter to use for the python backend
@@ -31,6 +33,8 @@ class OTEPythonClient:
             raise NotImplementedError(
                 "Only python interpreter supported for python backend"
             )
+        if kwargs:
+            warnings.warn(f"Unused kwargs {tuple(kwargs)} when initializing OTEClient.")
 
     def create_dataresource(self, **kwargs) -> DataResource:
         """Create a new data resource.

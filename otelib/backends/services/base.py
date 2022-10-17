@@ -15,6 +15,8 @@ if TYPE_CHECKING:  # pragma: no cover
     from pathlib import Path
     from typing import Optional
 
+    from requests.auth import HTTPBasicAuth
+
 
 class BaseServicesStrategy(AbstractBaseStrategy):
     """Abstract class for strategies.
@@ -35,12 +37,14 @@ class BaseServicesStrategy(AbstractBaseStrategy):
     def __init__(
         self,
         url: "Optional[str]" = None,
+        auth: "Optional[HTTPBasicAuth]" = None,
     ) -> None:
         """Initiates a strategy."""
         if not url:
             raise ValueError("Url must be specified.")
 
-        self.url: "Optional[str]" = url
+        self.url = url
+        self.auth = auth
         self.settings: Settings = Settings()
         self.input_pipe: "Optional[Pipe]" = None
         self.id: "Optional[str]" = None  # pylint: disable=invalid-name
@@ -58,6 +62,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
             json=data.dict(),
             params={"session_id": session_id} if session_id else {},
             timeout=self.settings.timeout,
+            auth=self.auth,
         )
         if not response.ok:
             raise ApiError(
@@ -74,6 +79,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
             f"{self.url}{self.settings.prefix}/{self.strategy_name}/{self.id}",
             params={"session_id": session_id},
             timeout=self.settings.timeout,
+            auth=self.auth,
         )
         if response.ok:
             return response.content
@@ -93,6 +99,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
             post_path,
             params={"session_id": session_id},
             timeout=self.settings.timeout,
+            auth=self.auth,
         )
         if response.ok:
             return response.content
@@ -126,6 +133,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
                 f"{self.url}{self.settings.prefix}/session",
                 json={},
                 timeout=self.settings.timeout,
+                auth=self.auth,
             )
             if not response.ok:
                 raise ApiError(

@@ -27,6 +27,7 @@ class DataResource(BaseServicesStrategy):
             json=data.dict(),
             params={"session_id": session_id},
             timeout=self.settings.timeout,
+            auth=self.auth,
         )
         if not response.ok:
             raise ApiError(
@@ -44,6 +45,7 @@ class DataResource(BaseServicesStrategy):
             f"{self.url}{self.settings.prefix}/dataresource/{self.id}",
             params={"session_id": session_id},
             timeout=self.settings.timeout,
+            auth=self.auth,
         )
         if response.ok:
             return response.content
@@ -59,6 +61,7 @@ class DataResource(BaseServicesStrategy):
             f"{self.url}{self.settings.prefix}/dataresource/{self.id}/initialize",
             params={"session_id": session_id},
             timeout=self.settings.timeout,
+            auth=self.auth,
         )
         if response.ok:
             return response.content
