@@ -26,7 +26,7 @@ jobs:
       python_version_pylint_safety: "3.9"
       pylint_runs: |
         --rcfile=pyproject.toml --ignore-paths=tests/ --extension-pkg-whitelist='pydantic' otelib
-        --rcfile=pyproject.toml --extension-pkg-whitelist='pydantic' --disable=import-outside-toplevel,redefined-outer-name,duplicate-code,import-error tests
+        --rcfile=pyproject.toml --extension-pkg-whitelist='pydantic' --disable=import-outside-toplevel,redefined-outer-name,duplicate-code,import-error --rescursive=yes tests
 
       # safety
       run_safety: true

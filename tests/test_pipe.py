@@ -8,8 +8,12 @@ from utils import strategy_create_kwargs
 if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Union
 
-    from otelib.strategies.abc import AbstractStrategy
-    from tests.conftest import OTEResponse, ResourceType
+    from otelib.backends.python.base import BasePythonStrategy
+    from otelib.backends.services.base import BaseServicesStrategy
+
+    from .conftest import OTEResponse, ResourceType
+
+    BaseStrategy = Union[BasePythonStrategy, BaseServicesStrategy]
 
 
 @pytest.mark.parametrize("backend", ["services", "python"])
@@ -103,7 +107,7 @@ def test_pipe(
 
     strategy_name_map = {"dataresource": "DataResource"}
 
-    strategy: "AbstractStrategy" = getattr(
+    strategy: "BaseStrategy" = getattr(
         strategies, strategy_name_map.get(strategy_name, strategy_name.capitalize())
     )(server_url)
 
