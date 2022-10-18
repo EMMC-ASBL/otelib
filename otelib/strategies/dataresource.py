@@ -15,7 +15,7 @@ class DataResource(AbstractStrategy):
         data = ResourceConfig(**kwargs)
 
         response = requests.post(
-            f"{self.url}{self.settings.prefix}/dataresource/",
+            f"{self.url}{self.settings.prefix}/dataresource",
             json=data.dict(),
             headers=self.headers,
             params={"session_id": session_id},
@@ -34,7 +34,7 @@ class DataResource(AbstractStrategy):
 
     def fetch(self, session_id: str) -> bytes:
         response = requests.get(
-            f"{self.url}{self.settings.prefix}/dataresource/{self.id}/",
+            f"{self.url}{self.settings.prefix}/dataresource/{self.id}",
             params={"session_id": session_id},
             headers=self.headers,
             timeout=self.settings.timeout,
@@ -50,10 +50,10 @@ class DataResource(AbstractStrategy):
 
     def initialize(self, session_id: str) -> bytes:
         response = requests.post(
-            f"{self.url}{self.settings.prefix}/dataresource/{self.id}/initialize/",
+            f"{self.url}{self.settings.prefix}/dataresource/{self.id}/initialize",
+            headers=self.headers,
             params={"session_id": session_id},
             timeout=self.settings.timeout,
-            headers=self.headers,
         )
         if response.ok:
             return response.content

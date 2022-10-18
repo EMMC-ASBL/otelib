@@ -14,7 +14,7 @@ class Function(AbstractStrategy):
         data = FunctionConfig(**kwargs)
 
         response = requests.post(
-            f"{self.url}{self.settings.prefix}/function/",
+            f"{self.url}{self.settings.prefix}/function",
             json=data.dict(),
             headers=self.headers,
             params={"session_id": session_id},
@@ -32,7 +32,7 @@ class Function(AbstractStrategy):
 
     def fetch(self, session_id: str) -> bytes:
         response = requests.get(
-            f"{self.url}{self.settings.prefix}/function/{self.id}/",
+            f"{self.url}{self.settings.prefix}/function/{self.id}",
             params={"session_id": session_id},
             headers=self.headers,
             timeout=self.settings.timeout,
@@ -48,7 +48,7 @@ class Function(AbstractStrategy):
 
     def initialize(self, session_id: str) -> bytes:
         response = requests.post(
-            f"{self.url}{self.settings.prefix}/function/{self.id}/initialize/",
+            f"{self.url}{self.settings.prefix}/function/{self.id}/initialize",
             params={"session_id": session_id},
             headers=self.headers,
             timeout=self.settings.timeout,
