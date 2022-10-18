@@ -15,7 +15,7 @@ class DataResource(AbstractStrategy):
         data = ResourceConfig(**kwargs)
 
         response = requests.post(
-            f"{self.url}{self.settings.prefix}/dataresource",
+            f"{self.url}{self.settings.prefix}/dataresource/",
             json=data.dict(),
             headers=self.headers,
             params={"session_id": session_id},

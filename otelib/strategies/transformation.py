@@ -14,7 +14,7 @@ class Transformation(AbstractStrategy):
         data = TransformationConfig(**kwargs)
 
         response = requests.post(
-            f"{self.url}{self.settings.prefix}/transformation",
+            f"{self.url}{self.settings.prefix}/transformation/",
             json=data.dict(),
             headers=self.headers,
             params={"session_id": session_id},

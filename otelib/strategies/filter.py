@@ -14,7 +14,7 @@ class Filter(AbstractStrategy):
         data = FilterConfig(**kwargs)
 
         response = requests.post(
-            f"{self.url}{self.settings.prefix}/filter",
+            f"{self.url}{self.settings.prefix}/filter/",
             json=data.dict(),
             headers=self.headers,
             params={"session_id": session_id} if session_id else {},

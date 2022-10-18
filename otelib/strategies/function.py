@@ -14,7 +14,7 @@ class Function(AbstractStrategy):
         data = FunctionConfig(**kwargs)
 
         response = requests.post(
-            f"{self.url}{self.settings.prefix}/function",
+            f"{self.url}{self.settings.prefix}/function/",
             json=data.dict(),
             headers=self.headers,
             params={"session_id": session_id},

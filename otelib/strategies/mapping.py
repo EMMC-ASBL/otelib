@@ -14,7 +14,7 @@ class Mapping(AbstractStrategy):
         data = MappingConfig(**kwargs)
 
         response = requests.post(
-            f"{self.url}{self.settings.prefix}/mapping",
+            f"{self.url}{self.settings.prefix}/mapping/",
             json=data.dict(),
             headers=self.headers,
             params={"session_id": session_id},
