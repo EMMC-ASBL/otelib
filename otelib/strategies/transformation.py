@@ -46,6 +46,38 @@ class Transformation(AbstractStrategy):
             status=response.status_code,
         )
 
+    def status(self, session_id: str) -> bytes:
+        response = requests.get(
+            f"{self.url}{self.settings.prefix}/transformation/{self.id}/status",
+            params={"session_id": session_id},
+            headers=self.headers,
+            timeout=self.settings.timeout,
+        )
+        if response.ok:
+            return response.content
+        raise ApiError(
+            f"Cannot fetch transformation status: session_id={session_id!r} "
+            f"transformation_id={self.id!r}"
+            f"{' content=' + str(response.content) if self.debug else ''}",
+            status=response.status_code,
+        )
+
+    def run(self, session_id: str) -> bytes:
+        response = requests.get(
+            f"{self.url}{self.settings.prefix}/transformation/{self.id}/execute",
+            params={"session_id": session_id},
+            headers=self.headers,
+            timeout=self.settings.timeout,
+        )
+        if response.ok:
+            return response.content
+        raise ApiError(
+            f"Cannot execute transformation: session_id={session_id!r} "
+            f"transformation_id={self.id!r}"
+            f"{' content=' + str(response.content) if self.debug else ''}",
+            status=response.status_code,
+        )
+
     def initialize(self, session_id: str) -> bytes:
         response = requests.post(
             f"{self.url}{self.settings.prefix}/transformation/{self.id}/initialize",
