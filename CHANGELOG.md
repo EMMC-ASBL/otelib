@@ -1,5 +1,52 @@
 # Changelog
 
+## [Unreleased](https://github.com/EMMC-ASBL/otelib/tree/HEAD)
+
+[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.2.0...HEAD)
+
+**Closed issues:**
+
+- Update pylint options [\#79](https://github.com/EMMC-ASBL/otelib/issues/79)
+
+## [v0.2.0](https://github.com/EMMC-ASBL/otelib/tree/v0.2.0) (2022-10-28)
+
+[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.1.0...v0.2.0)
+
+**Implemented enhancements:**
+
+- Implement direct Python API usage [\#52](https://github.com/EMMC-ASBL/otelib/issues/52)
+
+**Fixed bugs:**
+
+- CI docker service connection issues [\#40](https://github.com/EMMC-ASBL/otelib/issues/40)
+
+**Closed issues:**
+
+- I think this part, which is repeated over and over can be simplified, but I'll have to think more about it. Perhaps this could be part of a separate issue and PR? :\) [\#65](https://github.com/EMMC-ASBL/otelib/issues/65)
+
+**Merged pull requests:**
+
+- Use recursive option for pylint-tests in CI [\#80](https://github.com/EMMC-ASBL/otelib/pull/80) ([CasperWA](https://github.com/CasperWA))
+- \[Auto-generated\] Update dependencies [\#71](https://github.com/EMMC-ASBL/otelib/pull/71) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#70](https://github.com/EMMC-ASBL/otelib/pull/70) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#64](https://github.com/EMMC-ASBL/otelib/pull/64) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#63](https://github.com/EMMC-ASBL/otelib/pull/63) ([TEAM4-0](https://github.com/TEAM4-0))
+- Split client backends - add Python backend [\#60](https://github.com/EMMC-ASBL/otelib/pull/60) ([daniel-sintef](https://github.com/daniel-sintef))
+- Use docker instead of docker-compose for CI [\#58](https://github.com/EMMC-ASBL/otelib/pull/58) ([CasperWA](https://github.com/CasperWA))
+- \[Auto-generated\] Update dependencies [\#57](https://github.com/EMMC-ASBL/otelib/pull/57) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#55](https://github.com/EMMC-ASBL/otelib/pull/55) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#53](https://github.com/EMMC-ASBL/otelib/pull/53) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#49](https://github.com/EMMC-ASBL/otelib/pull/49) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#47](https://github.com/EMMC-ASBL/otelib/pull/47) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#45](https://github.com/EMMC-ASBL/otelib/pull/45) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#44](https://github.com/EMMC-ASBL/otelib/pull/44) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#43](https://github.com/EMMC-ASBL/otelib/pull/43) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#39](https://github.com/EMMC-ASBL/otelib/pull/39) ([TEAM4-0](https://github.com/TEAM4-0))
+- Added PR template with checklist for reviewers. [\#37](https://github.com/EMMC-ASBL/otelib/pull/37) ([francescalb](https://github.com/francescalb))
+- \[Auto-generated\] Update dependencies [\#36](https://github.com/EMMC-ASBL/otelib/pull/36) ([TEAM4-0](https://github.com/TEAM4-0))
+- Update README.md [\#34](https://github.com/EMMC-ASBL/otelib/pull/34) ([quaat](https://github.com/quaat))
+- \[Auto-generated\] Update dependencies [\#32](https://github.com/EMMC-ASBL/otelib/pull/32) ([TEAM4-0](https://github.com/TEAM4-0))
+
 ## [v0.1.0](https://github.com/EMMC-ASBL/otelib/tree/v0.1.0) (2022-03-15)
 
 [Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/8ff7c18ed6a0eeac9129d57fe0f201f645cce82c...v0.1.0)
