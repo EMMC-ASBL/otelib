@@ -10,13 +10,15 @@ from typing import TYPE_CHECKING
 from invoke import task
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Tuple
+    from typing import Optional, Tuple
 
 
 TOP_DIR = Path(__file__).parent.resolve()
 
 
-def update_file(filename: Path, sub_line: "Tuple[str, str]", strip: str = None) -> None:
+def update_file(
+    filename: Path, sub_line: "Tuple[str, str]", strip: "Optional[str]" = None
+) -> None:
     """Utility function for tasks to read, update, and write files"""
     lines = [
         re.sub(sub_line[0], sub_line[1], line.rstrip(strip))
