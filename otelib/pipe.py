@@ -5,6 +5,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from typing import Optional
 
     from oteapi.models import AttrDict
+
     from otelib.strategies.abc import AbstractStrategy
 
 
