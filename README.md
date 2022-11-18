@@ -1,5 +1,12 @@
 # OTELib
 
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/otelib?logo=pypi)](https://pypi.org/project/otelib)
+[![PyPI](https://img.shields.io/pypi/v/otelib?logo=pypi)](https://pypi.org/project/otelib)
+[![Codecov master](https://img.shields.io/codecov/c/github/EMMC-ASBL/otelib/master?logo=codecov)](https://app.codecov.io/gh/EMMC-ASBL/otelib)
+[![CI - Tests](https://github.com/EMMC-ASBL/otelib/actions/workflows/ci_tests.yml/badge.svg?branch=master)](https://github.com/EMMC-ASBL/otelib/actions/workflows/ci_tests.yml?query=branch%3Amaster)
+[![GitHub commit activity](https://img.shields.io/github/commit-activity/m/EMMC-ASBL/otelib?logo=github)](https://github.com/EMMC-ASBL/otelib/pulse)
+[![GitHub last commit](https://img.shields.io/github/last-commit/EMMC-ASBL/otelib?logo=github)](https://github.com/EMMC-ASBL/otelib/pulse)
+
 OTELib is a small Python library on top of the OTEAPI, that provides a simple and pythonic interface to the REST services.
 
 It makes it very simple to configure, set up and run a pipeline based on the pipes and filter design pattern.
@@ -80,8 +87,8 @@ data_resource = client.create_dataresource(
     downloadUrl="https://jpeg.org/images/jpegsystems-home.jpg",
     mediaType="image/jpeg",
 )
-mapping = client.create_mapping(mappingType="mapping/demo")
-transformation = client.create_transformation(transformation_type="script/dummy")
+mapping = client.create_mapping(mappingType="triples")
+transformation = client.create_transformation(transformation_type="celery/remote")
 ```
 
 Before you easily and elegant can combine them into a pipeline:
@@ -113,6 +120,9 @@ pipeline2 = pipeline >> filter2
 pipeline3 = pipeline >> filter3
 ```
 
+> **Note**: The `filter/blur` filter strategy does not exist in the core OTEAPI package.
+> This strategy should come from another plugin package.
+
 As well as merged:
 
 ```python
@@ -131,3 +141,13 @@ If a session is not provided when you call the `get()` method, a new _session_ w
 ## License
 
 OTELib is released under the [MIT license](LICENSE) with copyright &copy; SINTEF.
+
+## Acknowledgment
+
+OTEAPI Core has been supported by the following projects:
+
+* **OntoTrans** (2020-2024) that receives funding from the European Union’s Horizon 2020 Research and Innovation Programme, under Grant Agreement no. 862136.
+
+* **VIPCOAT** (2021-2025) receives funding from the European Union’s Horizon 2020 Research and Innovation Programme - DT-NMBP-11-2020 Open Innovation Platform for Materials Modelling, under Grant Agreement no: 952903.
+
+* **OpenModel** (2021-2025) receives funding from the European Union’s Horizon 2020 Research and Innovation Programme - DT-NMBP-11-2020 Open Innovation Platform for Materials Modelling, under Grant Agreement no: 953167.

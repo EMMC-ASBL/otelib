@@ -17,9 +17,9 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Set up Python 3.9
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
-        python-version: 3.9
+        python-version: "3.9"
 
     - name: Install dependencies
       run: |
@@ -46,9 +46,9 @@ jobs:
         fetch-depth: 2
 
     - name: Set up Python 3.9
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
-        python-version: 3.9
+        python-version: "3.9"
 
     - name: Install dependencies
       run: |
@@ -59,10 +59,10 @@ jobs:
         pip install safety
 
     - name: Run pylint
-      run: pylint --rcfile=pyproject.toml --ignore-paths=tests/ --extension-pkg-whitelist='pydantic' -- *.py otelib
+      run: pylint --rcfile=pyproject.toml --ignore-paths=tests/ --extension-pkg-whitelist='pydantic' *.py otelib
 
     - name: Run pylint - tests
-      run: pylint --rcfile=pyproject.toml --extension-pkg-whitelist='pydantic' --disable=C0415,W0621 -- tests
+      run: pylint --rcfile=pyproject.toml --extension-pkg-whitelist='pydantic' --disable=import-outside-toplevel,redefined-outer-name,duplicate-code,import-error --recursive=yes tests
 
     # Ignore ID 44715 for now.
     # See this NumPy issue for more information: https://github.com/numpy/numpy/issues/19038
@@ -88,7 +88,7 @@ jobs:
         fetch-depth: 2
 
     - name: Set up Python ${{ matrix.python-version}}
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version}}
 
@@ -103,7 +103,7 @@ jobs:
 
     - name: Upload coverage to Codecov
       if: matrix.python-version == 3.9 && github.repository == 'EMMC-ASBL/otelib'
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v3
       with:
         files: coverage.xml
         flags: ${{ matrix.os[1] }}
@@ -116,9 +116,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions/setup-python@v3
+      - uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: "3.9"
 
       - name: Install dependencies
         run: |
@@ -131,11 +131,18 @@ jobs:
   pytest-real-backend:
     runs-on: ubuntu-latest
     name: pytest-real backend
-    # timeout-minutes: 15
 
     env:
       PORT: 8080
       OTEAPI_prefix: "/api/v1"
+
+    services:
+      redis:
+        image: redis:latest
+        volumes:
+          - redis-persist:/data
+        ports:
+          - "6379:6379"
 
     steps:
     - uses: actions/checkout@v3
@@ -143,9 +150,9 @@ jobs:
         fetch-depth: 2
 
     - name: Set up Python 3.9
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
-        python-version: 3.9
+        python-version: "3.9"
 
     - name: Install python dependencies
       run: |
@@ -155,9 +162,17 @@ jobs:
 
     - name: Run OTE server
       run: |
-        docker-compose -f .github/utils/docker-compose.yml up &
+        docker pull ghcr.io/emmc-asbl/oteapi:${DOCKER_OTEAPI_VERSION}
+        docker run \
+          --env "OTEAPI_REDIS_TYPE=redis" \
+          --env "OTEAPI_REDIS_HOST=localhost" \
+          --env "OTEAPI_REDIS_PORT=6379" \
+          --env "OTEAPI_prefix=${OTEAPI_prefix}" \
+          --network "host" \
+          ghcr.io/emmc-asbl/oteapi:${DOCKER_OTEAPI_VERSION} &
+
         .github/utils/wait_for_it.sh localhost:${PORT} -t 240
-        sleep 15
+        sleep 5
       env:
         DOCKER_OTEAPI_VERSION: latest
 

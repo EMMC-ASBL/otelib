@@ -1,192 +1,131 @@
 """Test OTE Client."""
-# pylint: disable=protected-access,invalid-name
+# pylint: disable=protected-access,invalid-name,too-many-arguments,too-many-locals
 from typing import TYPE_CHECKING
 
 import pytest
+from utils import strategy_create_kwargs
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Dict, Optional, Union
+    from typing import Any, Callable, Dict, Union
 
     from otelib.client import OTEClient
-    from tests.conftest import HTTPMethod, ResourceType
-
-    OTEResponse = Callable[
-        [
-            Union[HTTPMethod, str],
-            str,
-            Optional[Union[Dict[str, Any], str]],
-            Optional[Union[dict, str]],
-            Optional[OTEClient],
-        ],
-        None,
-    ]
+    from otelib.strategies.abc import AbstractStrategy
+    from tests.conftest import OTEResponse, ResourceType
 
 
-@pytest.fixture
-def testdata(
-    resource_type_cls: "ResourceType",
-) -> "Callable[[Union[ResourceType, str]], dict]":
-    """Test data for OTE resource."""
-    ResourceType = resource_type_cls
-
-    def _testdata(resource_type: "Union[ResourceType, str]") -> dict:
-        """Return test data for a given resource."""
-        resource_type = ResourceType(resource_type)
-        if resource_type == ResourceType.RESOURCE:
-            resource_type = ResourceType.DATARESOURCE
-        if resource_type == ResourceType.SESSION:
-            raise ValueError("No test data available for a session.")
-
-        return {
-            ResourceType.DATARESOURCE: {
-                "content": {
-                    "firstName": "Joe",
-                    "lastName": "Jackson",
-                    "gender": "male",
-                    "age": 28,
-                    "address": {
-                        "streetAddress": "101",
-                        "city": "San Diego",
-                        "state": "CA",
-                    },
-                    "phoneNumbers": [{"type": "home", "number": "7349282382"}],
-                }
-            },
-            ResourceType.FILTER: {"sqlquery": "DROP TABLE myTable;"},
-            ResourceType.MAPPING: {},
-            ResourceType.TRANSFORMATION: {},
-        }[resource_type]
-
-    return _testdata
-
-
+@pytest.mark.parametrize("backend", ["services", "python"])
+@pytest.mark.parametrize(
+    "strategy,create_kwargs",
+    strategy_create_kwargs(),
+    ids=[_[0] for _ in strategy_create_kwargs()],
+)
 @pytest.mark.usefixtures("mock_session")
-def test_create_dataresource(
+def test_create_strategies(  #
+    backend: str,
     client: "OTEClient",
     ids: "Callable[[Union[ResourceType, str]], str]",
     mock_ote_response: "OTEResponse",
     testdata: "Callable[[Union[ResourceType, str]], dict]",
+    strategy: str,
+    create_kwargs: "Dict[str, Any]",
 ) -> None:
-    """Test creating a dataresource."""
+    """Test creating any strategy and calling it's `get()` method."""
+    if strategy == "function" and "example" not in client.url:
+        pytest.skip("No function strategy exists in oteapi-core yet.")
+
     import json
 
     import requests
 
-    # DataResource.create()
+    if backend == "python":
+        # This is probably not the most elegant way to
+        # switch clients...
+        from otelib.client import OTEPythonClient
+
+        client = OTEPythonClient("python")
+
+        from oteapi.plugins import load_strategies
+
+        load_strategies()
+
+        from otelib.backends.python.base import Cache
+
+        Cache().clear()  # Cleanup the cache from other tests
+        if strategy == "function":
+            pytest.skip("No function strategy exists in oteapi-core yet.")
+
+    # create()
     mock_ote_response(
         method="post",
-        endpoint="/dataresource",
-        return_json={"resource_id": ids("dataresource")},
+        endpoint=f"/{strategy}",
+        return_json={
+            f"{strategy[len('data'):] if strategy.startswith('data') else strategy}"
+            "_id": ids(strategy)
+        },
+        backend=backend,
     )
 
-    # DataResource.initialize()
+    # initialize()
+    # The filter and mapping returns everything from their `initialize()` method.
     mock_ote_response(
         method="post",
-        endpoint=f"/dataresource/{ids('dataresource')}/initialize",
+        endpoint=f"/{strategy}/{ids(strategy)}/initialize",
         params={"session_id": ids("session")},
-        return_json={},
+        return_json=(testdata(strategy) if strategy in ("filter", "mapping") else {}),
+        backend=backend,
     )
 
-    # DataResource.fetch()
+    # fetch()
+    # The data resource and transformation returns everything from their `get()`
+    # method.
     mock_ote_response(
         method="get",
-        endpoint=f"/dataresource/{ids('dataresource')}",
+        endpoint=f"/{strategy}/{ids(strategy)}",
         params={"session_id": ids("session")},
-        return_json=testdata("dataresource"),
+        return_json=(
+            testdata(strategy) if strategy in ("dataresource", "transformation") else {}
+        ),
+        backend=backend,
     )
 
     # Session content
     mock_ote_response(
         method="get",
         endpoint=f"/session/{ids('session')}",
-        return_json=testdata("dataresource"),
+        return_json=testdata(strategy),
+        backend=backend,
     )
 
-    dataresource = client.create_dataresource(
-        downloadUrl="https://filesamples.com/samples/code/json/sample2.json",
-        mediaType="application/json",
+    created_strategy: "AbstractStrategy" = getattr(client, f"create_{strategy}")(
+        **create_kwargs
     )
 
-    # The data resource returns everything from it's `get()` method.
-    # However, it should return anything from its `initalize()` method.
-    content = dataresource.get()
-    assert json.loads(content) == testdata("dataresource")
+    content = created_strategy.get()
+    if strategy in ("filter", "mapping"):
+        assert json.loads(content) == {}
+    else:
+        assert json.loads(content) == testdata(strategy)
 
     # The testdata should always be in the full session
     assert (
-        dataresource._session_id
-    ), "Session ID not found in filter ! Is OTEAPI_DEBUG not set?"
-    content_session = requests.get(
-        f"{dataresource.url}{dataresource.settings.prefix}"
-        f"/session/{dataresource._session_id}"
-    )
-    session: "Dict[str, Any]" = content_session.json()
-    for key, value in testdata("dataresource").items():
-        assert key in session
-        assert value == session[key]
+        created_strategy._session_id
+    ), f"Session ID not found in {created_strategy} ! Is OTEAPI_DEBUG not set?"
+    if backend == "services":
+        strategy_prefix = created_strategy.settings.prefix
+        startegy_sessionid = created_strategy._session_id
+        content_session = requests.get(
+            f"{created_strategy.url}{strategy_prefix}/session/{startegy_sessionid}",
+            timeout=30,
+        )
+        session: "Dict[str, Any]" = content_session.json()
+    elif backend == "python":
+        session_ids = [x for x in created_strategy.cache if "session" in x]
+        assert len(session_ids) == 1
+        session_id = session_ids[0]
+        session = created_strategy.cache[session_id]
 
-
-@pytest.mark.usefixtures("mock_session")
-def test_create_filter(
-    client: "OTEClient",
-    ids: "Callable[[Union[ResourceType, str]], str]",
-    mock_ote_response: "OTEResponse",
-    testdata: "Callable[[Union[ResourceType, str]], dict]",
-) -> None:
-    """Test creating a filter."""
-    import json
-
-    import requests
-
-    # Filter.create()
-    mock_ote_response(
-        method="post",
-        endpoint="/filter",
-        return_json={"filter_id": ids("filter")},
-    )
-
-    # Filter.initialize()
-    mock_ote_response(
-        method="post",
-        endpoint=f"/filter/{ids('filter')}/initialize",
-        params={"session_id": ids("session")},
-        return_json=testdata("filter"),
-    )
-
-    # Filter.fetch()
-    mock_ote_response(
-        method="get",
-        endpoint=f"/filter/{ids('filter')}",
-        params={"session_id": ids("session")},
-        return_json={},
-    )
-
-    # Session content
-    mock_ote_response(
-        method="get",
-        endpoint=f"/session/{ids('session')}",
-        return_json=testdata("filter"),
-    )
-
-    # pylint: disable=redefined-builtin
-    filter = client.create_filter(
-        filterType="filter/sql",
-        query=testdata("filter")["sqlquery"],
-    )
-
-    # The filter does not return anything from it's `get()` method.
-    # Rather it returns its filter in the `initalize()` method.
-    # The returned value from `initialize()` can be found in the session.
-    content = filter.get()
-    assert json.loads(content) == {}
-
-    assert (
-        filter._session_id
-    ), "Session ID not found in filter ! Is OTEAPI_DEBUG not set?"
-    content_session = requests.get(
-        f"{filter.url}{filter.settings.prefix}/session/{filter._session_id}"
-    )
-    session: "Dict[str, Any]" = content_session.json()
-    for key, value in testdata("filter").items():
+    for key, value in testdata(strategy).items():
+        if strategy == "mapping" and backend == "python":
+            pytest.skip("Issues with tuple/list conversion json for python backend")
         assert key in session
         assert value == session[key]
