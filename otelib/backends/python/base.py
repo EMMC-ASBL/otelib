@@ -28,7 +28,7 @@ class Singleton:
         return cls.instance
 
 
-class Cache(Singleton, AttrDict):
+class Cache(Singleton, dict):
     """
     Singleton dictionary class. Can be cleared with the .clear() method
     """
@@ -133,7 +133,7 @@ class BasePythonStrategy(AbstractBaseStrategy):
         """
         if session_id is None:
             session_id = f"session-{str(uuid4())}"
-            self.cache[session_id] = {}
+            self.cache[session_id] = AttrDict()
 
         if self.debug:
             self._session_id = session_id
