@@ -28,7 +28,7 @@ class Singleton:
         return cls.instance
 
 
-class Cache(Singleton, dict):
+class Cache(Singleton, AttrDict):
     """
     Singleton dictionary class. Can be cleared with the .clear() method
     """
