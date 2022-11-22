@@ -8,66 +8,37 @@ on:
       - 'push-action/**'  # Allow pushing to protected branches (using CasperWA/push-protected)
 
 jobs:
+  basic:
+    name: External
+    uses: SINTEF/ci-cd/.github/workflows/ci_tests.yml@v1
+    with:
+      # General settings
+      install_extras: "[dev]"
+      run_build_docs: false
 
-  pre-commit:
-    runs-on: ubuntu-latest
-    # timeout-minutes: 2
+      # pre-commit
+      run_pre-commit: true
+      python_version_pre-commit: "3.9"
+      skip_pre-commit_hooks: pylint,pylint-tests
 
-    steps:
-    - uses: actions/checkout@v3
+      # pylint
+      run_pylint: true
+      python_version_pylint_safety: "3.9"
+      pylint_runs: |
+        --rcfile=pyproject.toml --ignore-paths=tests/ --extension-pkg-whitelist='pydantic' otelib
+        --rcfile=pyproject.toml --extension-pkg-whitelist='pydantic' --disable=import-outside-toplevel,redefined-outer-name,duplicate-code,import-error --recursive=yes tests
 
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.9"
+      # safety
+      run_safety: true
+      # Ignore ID 44715 for now.
+      # See this NumPy issue for more information: https://github.com/numpy/numpy/issues/19038
+      safety_options: --ignore=44715
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -U setuptools wheel
-
-        while IFS="" read -r line || [ -n "${line}" ]; do
-          if [[ "${line}" =~ ^pre-commit.*$ ]]; then
-            pre_commit="${line}"
-          fi
-        done < requirements_dev.txt
-
-        pip install ${pre_commit}
-
-    - name: Test with pre-commit
-      run: SKIP=pylint,pylint-tests pre-commit run --all-files
-
-  pylint-safety:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 2
-
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.9"
-
-    - name: Install dependencies
-      run: |
-        python -m pip install -U pip
-        pip install -U setuptools wheel
-        pip install -U -r requirements.txt -r requirements_dev.txt
-        pip install -e .  # Ensure imports work for pylint
-        pip install safety
-
-    - name: Run pylint
-      run: pylint --rcfile=pyproject.toml --ignore-paths=tests/ --extension-pkg-whitelist='pydantic' *.py otelib
-
-    - name: Run pylint - tests
-      run: pylint --rcfile=pyproject.toml --extension-pkg-whitelist='pydantic' --disable=import-outside-toplevel,redefined-outer-name,duplicate-code,import-error --recursive=yes tests
-
-    # Ignore ID 44715 for now.
-    # See this NumPy issue for more information: https://github.com/numpy/numpy/issues/19038
-    - name: Run safety
-      run: pip freeze | safety check --stdin --ignore 44715
+      # Build package
+      run_build_package: true
+      python_version_package: "3.9"
+      build_libs: flit
+      build_cmd: flit build
 
   pytest:
     name: pytest (${{ matrix.os[1] }}, py${{ matrix.python-version }})
@@ -107,26 +78,6 @@ jobs:
       with:
         files: coverage.xml
         flags: ${{ matrix.os[1] }}
-
-  build-package:
-    name: Build distribution package
-    runs-on: ubuntu-latest
-    # timeout-minutes: 5
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-python@v4
-        with:
-          python-version: "3.9"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install -U pip
-          pip install -U setuptools wheel build
-
-      - name: Check building distribution
-        run: python -m build
 
   pytest-real-backend:
     runs-on: ubuntu-latest

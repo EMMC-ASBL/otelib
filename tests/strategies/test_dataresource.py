@@ -6,7 +6,7 @@ import pytest
 if TYPE_CHECKING:
     from typing import Callable, Union
 
-    from tests.conftest import OTEResponse, ResourceType
+    from ..conftest import OTEResponse, ResourceType
 
 
 @pytest.mark.parametrize("backend", ["services", "python"])

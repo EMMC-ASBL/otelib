@@ -8,9 +8,15 @@ from utils import strategy_create_kwargs
 if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Union
 
-    from otelib.client import OTEClient
-    from otelib.strategies.abc import AbstractStrategy
-    from tests.conftest import OTEResponse, ResourceType
+    from otelib.backends.python.base import BasePythonStrategy
+    from otelib.backends.python.client import OTEPythonClient
+    from otelib.backends.services.base import BaseServicesStrategy
+    from otelib.backends.services.client import OTEServiceClient
+
+    from .conftest import OTEResponse, ResourceType
+
+    BaseStrategy = Union[BasePythonStrategy, BaseServicesStrategy]
+    OTEClient = Union[OTEPythonClient, OTEServiceClient]
 
 
 @pytest.mark.parametrize("backend", ["services", "python"])
@@ -20,7 +26,7 @@ if TYPE_CHECKING:
     ids=[_[0] for _ in strategy_create_kwargs()],
 )
 @pytest.mark.usefixtures("mock_session")
-def test_create_strategies(  #
+def test_create_strategies(
     backend: str,
     client: "OTEClient",
     ids: "Callable[[Union[ResourceType, str]], str]",
@@ -30,7 +36,7 @@ def test_create_strategies(  #
     create_kwargs: "Dict[str, Any]",
 ) -> None:
     """Test creating any strategy and calling it's `get()` method."""
-    if strategy == "function" and "example" not in client.url:
+    if strategy == "function" and "example" not in getattr(client, "url"):
         pytest.skip("No function strategy exists in oteapi-core yet.")
 
     import json
@@ -96,7 +102,7 @@ def test_create_strategies(  #
         backend=backend,
     )
 
-    created_strategy: "AbstractStrategy" = getattr(client, f"create_{strategy}")(
+    created_strategy: "BaseStrategy" = getattr(client, f"create_{strategy}")(
         **create_kwargs
     )
 

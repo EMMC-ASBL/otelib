@@ -11,7 +11,6 @@ from oteapi.plugins import create_strategy
 from otelib.backends.strategies import AbstractBaseStrategy
 
 if TYPE_CHECKING:  # pragma: no cover
-    from pathlib import Path
     from typing import Optional
 
     from otelib.pipe import Pipe
