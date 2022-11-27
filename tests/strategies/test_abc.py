@@ -10,8 +10,12 @@ if TYPE_CHECKING:
 
     from requests_mock import Mocker
 
-    from otelib.backends.services.base import AbstractServicesStrategy
-    from tests.conftest import OTEResponse, ResourceType
+    from otelib.backends.python.base import BasePythonStrategy
+    from otelib.backends.services.base import BaseServicesStrategy
+
+    from ..conftest import OTEResponse, ResourceType
+
+    BaseStrategy = Union[BasePythonStrategy, BaseServicesStrategy]
 
 
 @pytest.mark.parametrize("backend", ["services", "python"])
@@ -101,7 +105,7 @@ def test_get(
 
     strategy_name_map = {"dataresource": "DataResource"}
 
-    strategy: "AbstractServicesStrategy" = getattr(
+    strategy: "BaseStrategy" = getattr(
         strategies, strategy_name_map.get(strategy_name, strategy_name.capitalize())
     )(server_url)
 
@@ -186,7 +190,7 @@ def test_get_fails(
 
     strategy_name_map = {"dataresource": "DataResource"}
 
-    strategy: "AbstractServicesStrategy" = getattr(
+    strategy: "BaseStrategy" = getattr(
         strategies, strategy_name_map.get(strategy_name, strategy_name.capitalize())
     )(server_url)
 
