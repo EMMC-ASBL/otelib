@@ -73,6 +73,10 @@ class BasePythonStrategy(AbstractBaseStrategy):
         self._session_id: "Optional[str]" = None
 
     def create(self, **kwargs) -> None:
+        """Create a strategy.
+
+        It should post the configuration for the created strategy.
+        """
         session_id = kwargs.pop("session_id", None)
         data = self.strategy_config(**kwargs)
 
@@ -89,6 +93,16 @@ class BasePythonStrategy(AbstractBaseStrategy):
                 session[list_key] = [self.id]
 
     def fetch(self, session_id: str) -> bytes:
+        """Returns the result of the current strategy.
+
+        This method is called by `get()` while propagating up the pipeline.
+
+        Parameters:
+            session_id: The ID of the session shared by the pipeline.
+
+        Returns:
+            The session represented in json encoded as bytes.
+        """
         config = self.strategy_config(**json.loads(self.cache[self.id]))
         session_data = None if not session_id else self.cache[session_id]
         session_update = create_strategy(self.strategy_name, config)
@@ -100,6 +114,16 @@ class BasePythonStrategy(AbstractBaseStrategy):
         return bytes(AttrDict(**session_update).json(), encoding="utf-8")
 
     def initialize(self, session_id: str) -> bytes:
+        """Initialise the current strategy.
+
+        This method is called by `get()` when propagating down the pipeline.
+
+        Parameters:
+            session_id: The ID of the session shared by the pipeline.
+
+        Returns:
+            The session represented in json encoded as bytes.
+        """
         config = self.strategy_config(**json.loads(self.cache[self.id]))
         if session_id:
             session_data = self.cache[session_id]
