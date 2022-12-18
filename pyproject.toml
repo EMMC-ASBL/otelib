@@ -25,7 +25,7 @@ requires-python = "~=3.9"
 dynamic = ["version"]
 
 dependencies = [
-    "oteapi-core >=0.1.2,<1",
+    "oteapi-core >=0.2.1,<1",
 ]
 
 [project.optional-dependencies]
