@@ -1,14 +1,15 @@
 """OTE Client."""
-import os
+from importlib import import_module
 from typing import TYPE_CHECKING
 
 from otelib.exceptions import AuthorizationError
-from otelib.settings import DEFAULT_HOST
+from otelib.settings import Settings
 from otelib.strategies import DataResource, Filter, Function, Mapping, Transformation
-from otelib.utils import import_from_environ
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Any, Dict, Optional
+    from typing import Any, Callable, Dict, Optional, Union
+
+settings = Settings()
 
 
 class OTEClient:
@@ -30,15 +31,28 @@ class OTEClient:
         The `url` is the base URL of the OTEAPI Service.
         """
 
-        self.url: str = url or os.environ.get("OTEAPI_SERVICE") or DEFAULT_HOST
+        self.url: str = url or settings.default_host
         self.headers: "Optional[Dict[Any, Any]]" = headers
         self._auth = auth_function
+
+    def _auth_func_from_settings(self) -> "Union[Callable, None]":
+        if settings.auth_function:
+            module, _, funcname = settings.auth_function.replace(" ", str()).rpartition(
+                "."
+            )
+            try:
+                func = getattr(import_module(module), funcname)
+            except Exception as error:
+                raise error
+        else:
+            func = None
+        return func
 
     def login(self, *args, **kwargs):
         """call the function for fetching an access token
         and add it to the header of each http-request for the
         client."""
-        func = import_from_environ() or self._auth
+        func = self._auth_func_from_settings() or self._auth
         if not func:
             raise AuthorizationError("function for authorization not defined")
         self.headers = func(*args, **kwargs)

@@ -47,6 +47,16 @@ class Transformation(AbstractStrategy):
         )
 
     def status(self, session_id: str) -> bytes:
+        """Get the status of the current transformation strategy.
+
+        This method is **not** called when propagating down the pipeline.
+
+        Parameters:
+            session_id: The ID of the session shared by the pipeline.
+
+        Returns:
+            The response from the OTEAPI Service.
+        """
         response = requests.get(
             f"{self.url}{self.settings.prefix}/transformation/{self.id}/status",
             params={"session_id": session_id},
@@ -63,6 +73,16 @@ class Transformation(AbstractStrategy):
         )
 
     def run(self, session_id: str) -> bytes:
+        """Run the current transformation strategy.
+
+        This method is **not** called when propagating down the pipeline.
+
+        Parameters:
+            session_id: The ID of the session shared by the pipeline.
+
+        Returns:
+            The response from the OTEAPI Service.
+        """
         response = requests.get(
             f"{self.url}{self.settings.prefix}/transformation/{self.id}/execute",
             params={"session_id": session_id},
