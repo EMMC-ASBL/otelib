@@ -14,7 +14,7 @@ class Settings(BaseModel):
         (3.0, 27.0), description="Tuple for URL connect and read timeouts in seconds."
     )
 
-    default_host: str = Field(
+    host: str = Field(
         DEFAULT_HOST, description="Host with oteapi-services up and running."
     )
 
