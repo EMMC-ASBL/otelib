@@ -1,1 +1,1 @@
-oteapi-core>=0.1.2,<1
+oteapi-core @ git+https://github.com/EMMC-ASBL/oteapi-core.git@6e54693cb130c48e9acbadc767ae6454d93cbb17
