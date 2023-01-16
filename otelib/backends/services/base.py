@@ -13,7 +13,7 @@ from otelib.settings import Settings
 
 if TYPE_CHECKING:  # pragma: no cover
     from pathlib import Path
-    from typing import Optional
+    from typing import Optional, Dict, Any
 
 
 class BaseServicesStrategy(AbstractBaseStrategy):
@@ -35,12 +35,14 @@ class BaseServicesStrategy(AbstractBaseStrategy):
     def __init__(
         self,
         url: "Optional[str]" = None,
+        headers: "Optional[Dict[str, Any]]" = None
     ) -> None:
         """Initiates a strategy."""
         if not url:
             raise ValueError("Url must be specified.")
 
         self.url: "Optional[str]" = url
+        self.headers: "Optional[Dict[str, Any]]" = headers
         self.settings: Settings = Settings()
         self.input_pipe: "Optional[Pipe]" = None
         self.id: "Optional[str]" = None  # pylint: disable=invalid-name
@@ -56,6 +58,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         response = requests.post(
             f"{self.url}{self.settings.prefix}/{self.strategy_name}",
             json=data.dict(),
+            headers=self.headers,
             params={"session_id": session_id} if session_id else {},
             timeout=self.settings.timeout,
         )
@@ -72,6 +75,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
     def fetch(self, session_id: str) -> bytes:
         response = requests.get(
             f"{self.url}{self.settings.prefix}/{self.strategy_name}/{self.id}",
+            headers=self.headers,
             params={"session_id": session_id},
             timeout=self.settings.timeout,
         )
@@ -93,6 +97,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
             post_path,
             params={"session_id": session_id},
             timeout=self.settings.timeout,
+            headers=self.headers,
         )
         if response.ok:
             return response.content
@@ -125,6 +130,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
             response = requests.post(
                 f"{self.url}{self.settings.prefix}/session",
                 json={},
+                headers=self.headers,
                 timeout=self.settings.timeout,
             )
             if not response.ok:

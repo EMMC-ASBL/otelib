@@ -6,7 +6,10 @@ from otelib.backends.services import (
     Mapping,
     Transformation,
 )
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:  # pragma: no cover
+    from typing import Optional, Dict, Any
 
 # pylint: disable=duplicate-code
 class OTEServiceClient:
@@ -20,12 +23,13 @@ class OTEServiceClient:
 
     """
 
-    def __init__(self, url: str) -> None:
+    def __init__(self, url: str, headers: "Optional[Dict[str, Any]]" = None) -> None:
         """Initiates an OTEAPI Service client.
 
         The `url` is the base URL of the OTEAPI Service.
         """
         self.url: str = url
+        self.headers: "Optional[Dict[str, Any]]" = headers
 
     def create_dataresource(self, **kwargs) -> DataResource:
         """Create a new data resource.
@@ -36,7 +40,7 @@ class OTEServiceClient:
             The newly created data resource.
 
         """
-        data_resource = DataResource(self.url)
+        data_resource = DataResource(self.url, self.headers)
         data_resource.create(**kwargs)
         return data_resource
 
@@ -49,7 +53,7 @@ class OTEServiceClient:
             The newly created transformation.
 
         """
-        transformation = Transformation(self.url)
+        transformation = Transformation(self.url, self.headers)
         transformation.create(**kwargs)
         return transformation
 
@@ -75,7 +79,7 @@ class OTEServiceClient:
             The newly created mapping.
 
         """
-        mapping = Mapping(self.url)
+        mapping = Mapping(self.url, self.headers)
         mapping.create(**kwargs)
         return mapping
 
@@ -88,6 +92,6 @@ class OTEServiceClient:
             The newly created function.
 
         """
-        function_ = Function(self.url)
+        function_ = Function(self.url, self.headers)
         function_.create(**kwargs)
         return function_
