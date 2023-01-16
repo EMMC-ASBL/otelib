@@ -18,10 +18,6 @@ class Settings(BaseModel):
         DEFAULT_HOST, description="Host with oteapi-services up and running."
     )
 
-    auth_function: Optional[str] = Field(
-        None, description="Function for generating auth-headers, e.g. from credentials."
-    )
-
     class Config:
         """Pydantic configuration class."""
 

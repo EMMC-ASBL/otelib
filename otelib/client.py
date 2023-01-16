@@ -31,28 +31,6 @@ class OTEClient:
         self.url: str = url or self.settings.host
         self.headers: "Optional[Dict[Any, Any]]" = headers
 
-    def _auth_func_from_settings(self) -> "Union[Callable, None]":
-        if self.settings.auth_function:
-            module, _, funcname = self.settings.auth_function.replace(
-                " ", str()
-            ).rpartition(".")
-            try:
-                func = getattr(import_module(module), funcname)
-            except Exception as error:
-                raise error
-        else:
-            func = None
-        return func
-
-    def login(self, *args, **kwargs):
-        """call the function for fetching an access token
-        and add it to the header of each http-request for the
-        client."""
-        func = self._auth_func_from_settings()
-        if not func:
-            raise AuthorizationError("function for authorization not defined")
-        self.headers = func(*args, **kwargs)
-
     def create_dataresource(self, **kwargs) -> DataResource:
         """Create a new data resource.
 
