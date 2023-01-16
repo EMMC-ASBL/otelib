@@ -13,7 +13,7 @@ from otelib.settings import Settings
 
 if TYPE_CHECKING:  # pragma: no cover
     from pathlib import Path
-    from typing import Optional, Dict, Any
+    from typing import Any, Dict, Optional
 
 
 class BaseServicesStrategy(AbstractBaseStrategy):
@@ -33,9 +33,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
     strategy_config: GenericConfig
 
     def __init__(
-        self,
-        url: "Optional[str]" = None,
-        headers: "Optional[Dict[str, Any]]" = None
+        self, url: "Optional[str]" = None, headers: "Optional[Dict[str, Any]]" = None
     ) -> None:
         """Initiates a strategy."""
         if not url:

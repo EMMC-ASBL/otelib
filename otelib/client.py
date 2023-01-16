@@ -1,4 +1,6 @@
 """OTE Client."""
+from typing import TYPE_CHECKING
+
 from otelib.backends.python.client import OTEPythonClient
 from otelib.backends.services.client import OTEServiceClient
 

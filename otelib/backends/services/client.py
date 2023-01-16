@@ -1,4 +1,6 @@
 """Client for services backend."""
+from typing import TYPE_CHECKING
+
 from otelib.backends.services import (
     DataResource,
     Filter,
@@ -6,10 +8,9 @@ from otelib.backends.services import (
     Mapping,
     Transformation,
 )
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Optional, Dict, Any
+    from typing import Any, Dict, Optional
 
 # pylint: disable=duplicate-code
 class OTEServiceClient:
