@@ -1,4 +1,4 @@
-"""Tests for `otelib.strategies.mapping`."""
+"""Tests for `otelib.backends.services.mapping`."""
 from typing import TYPE_CHECKING
 
 import pytest
@@ -6,22 +6,36 @@ import pytest
 if TYPE_CHECKING:
     from typing import Callable, Union
 
-    from tests.conftest import OTEResponse, ResourceType
+    from ..conftest import OTEResponse, ResourceType
 
 
+@pytest.mark.parametrize("backend", ["services", "python"])
 def test_create(
+    backend: str,
     mock_ote_response: "OTEResponse",
     ids: "Callable[[Union[ResourceType, str]], str]",
     server_url: str,
     testdata: "Callable[[Union[ResourceType, str]], dict]",
 ) -> None:
     """Test `Mapping.create()`."""
-    from otelib.strategies.mapping import Mapping
+    if backend == "services":
+        from otelib.backends.services.mapping import Mapping
+    elif backend == "python":
+        from otelib.backends.python.mapping import Mapping
+
+        server_url = "python"
+        from oteapi.plugins import load_strategies
+
+        load_strategies()
+        from otelib.backends.python.base import Cache
+
+        Cache().clear()  # Cleanup the cache from other tests
 
     mock_ote_response(
         method="post",
         endpoint="/mapping",
         return_json={"mapping_id": ids("mapping")},
+        backend=backend,
     )
 
     mapping = Mapping(server_url)
@@ -42,8 +56,8 @@ def test_create_fails(
     testdata: "Callable[[Union[ResourceType, str]], dict]",
 ) -> None:
     """Check `Mapping.create()` raises `ApiError` upon request failure."""
+    from otelib.backends.services.mapping import Mapping
     from otelib.exceptions import ApiError
-    from otelib.strategies.mapping import Mapping
 
     mock_ote_response(
         method="post",
@@ -67,7 +81,9 @@ def test_create_fails(
     assert mapping.id is None
 
 
+@pytest.mark.parametrize("backend", ["services", "python"])
 def test_fetch(
+    backend: str,
     mock_ote_response: "OTEResponse",
     ids: "Callable[[Union[ResourceType, str]], str]",
     server_url: str,
@@ -76,18 +92,31 @@ def test_fetch(
     """Test `Mapping.fetch()`."""
     import json
 
-    from otelib.strategies.mapping import Mapping
+    if backend == "services":
+        from otelib.backends.services.mapping import Mapping
+    elif backend == "python":
+        from otelib.backends.python.mapping import Mapping
+
+        server_url = "python"
+        from oteapi.plugins import load_strategies
+
+        load_strategies()
+        from otelib.backends.python.base import Cache
+
+        Cache().clear()  # Cleanup the cache from other tests
 
     mock_ote_response(
         method="post",
         endpoint="/mapping",
         return_json={"mapping_id": ids("mapping")},
+        backend=backend,
     )
 
     mock_ote_response(
         method="get",
         endpoint=f"/mapping/{ids('mapping')}",
         return_json={},
+        backend=backend,
     )
 
     mapping = Mapping(server_url)
@@ -110,8 +139,8 @@ def test_fetch_fails(
     testdata: "Callable[[Union[ResourceType, str]], dict]",
 ) -> None:
     """Check `Mapping.fetch()` raises `ApiError` upon request failure."""
+    from otelib.backends.services.mapping import Mapping
     from otelib.exceptions import ApiError
-    from otelib.strategies.mapping import Mapping
 
     mock_ote_response(
         method="post",
@@ -139,7 +168,9 @@ def test_fetch_fails(
         mapping.fetch(session_id=123)
 
 
+@pytest.mark.parametrize("backend", ["services", "python"])
 def test_initialize(
+    backend: str,
     mock_ote_response: "OTEResponse",
     ids: "Callable[[Union[ResourceType, str]], str]",
     server_url: str,
@@ -148,18 +179,31 @@ def test_initialize(
     """Test `Mapping.fetch()`."""
     import json
 
-    from otelib.strategies.mapping import Mapping
+    if backend == "services":
+        from otelib.backends.services.mapping import Mapping
+    elif backend == "python":
+        from otelib.backends.python.mapping import Mapping
+
+        server_url = "python"
+        from oteapi.plugins import load_strategies
+
+        load_strategies()
+        from otelib.backends.python.base import Cache
+
+        Cache().clear()  # Cleanup the cache from other tests
 
     mock_ote_response(
         method="post",
         endpoint="/mapping",
         return_json={"mapping_id": ids("mapping")},
+        backend=backend,
     )
 
     mock_ote_response(
         method="post",
         endpoint=f"/mapping/{ids('mapping')}/initialize",
         return_json=testdata("mapping"),
+        backend=backend,
     )
 
     mapping = Mapping(server_url)
@@ -182,8 +226,8 @@ def test_initialize_fails(
     testdata: "Callable[[Union[ResourceType, str]], dict]",
 ) -> None:
     """Check `Mapping.fetch()` raises `ApiError` upon request failure."""
+    from otelib.backends.services.mapping import Mapping
     from otelib.exceptions import ApiError
-    from otelib.strategies.mapping import Mapping
 
     mock_ote_response(
         method="post",

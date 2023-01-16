@@ -1,4 +1,4 @@
-"""Tests for `otelib.strategies.dataresource`."""
+"""Tests for `otelib.backends.services.dataresource`."""
 from typing import TYPE_CHECKING
 
 import pytest
@@ -6,16 +6,30 @@ import pytest
 if TYPE_CHECKING:
     from typing import Callable, Union
 
-    from tests.conftest import OTEResponse, ResourceType
+    from ..conftest import OTEResponse, ResourceType
 
 
+@pytest.mark.parametrize("backend", ["services", "python"])
 def test_create(
+    backend: str,
     mock_ote_response: "OTEResponse",
     ids: "Callable[[Union[ResourceType, str]], str]",
     server_url: str,
 ) -> None:
     """Test `DataResource.create()`."""
-    from otelib.strategies.dataresource import DataResource
+
+    if backend == "services":
+        from otelib.backends.services.dataresource import DataResource
+    elif backend == "python":
+        from otelib.backends.python.dataresource import DataResource
+
+        server_url = "python"
+        from oteapi.plugins import load_strategies
+
+        load_strategies()
+        from otelib.backends.python.base import Cache
+
+        Cache().clear()  # Cleanup the cache from other tests
 
     mock_ote_response(
         method="post",
@@ -40,8 +54,8 @@ def test_create_fails(
     server_url: str,
 ) -> None:
     """Check `DataResource.create()` raises `ApiError` upon request failure."""
+    from otelib.backends.services.dataresource import DataResource
     from otelib.exceptions import ApiError
-    from otelib.strategies.dataresource import DataResource
 
     mock_ote_response(
         method="post",
@@ -65,7 +79,9 @@ def test_create_fails(
     assert data_resource.id is None
 
 
+@pytest.mark.parametrize("backend", ["services", "python"])
 def test_fetch(
+    backend: str,
     mock_ote_response: "OTEResponse",
     ids: "Callable[[Union[ResourceType, str]], str]",
     server_url: str,
@@ -74,18 +90,31 @@ def test_fetch(
     """Test `DataResource.fetch()`."""
     import json
 
-    from otelib.strategies.dataresource import DataResource
+    if backend == "services":
+        from otelib.backends.services.dataresource import DataResource
+    elif backend == "python":
+        from otelib.backends.python.dataresource import DataResource
+
+        server_url = "python"
+        from oteapi.plugins import load_strategies
+
+        load_strategies()
+        from otelib.backends.python.base import Cache
+
+        Cache().clear()  # Cleanup the cache from other tests
 
     mock_ote_response(
         method="post",
         endpoint="/dataresource",
         return_json={"resource_id": ids("dataresource")},
+        backend=backend,
     )
 
     mock_ote_response(
         method="get",
         endpoint=f"/dataresource/{ids('dataresource')}",
         return_json=testdata("dataresource"),
+        backend=backend,
     )
 
     data_resource = DataResource(server_url)
@@ -107,8 +136,8 @@ def test_fetch_fails(
     server_url: str,
 ) -> None:
     """Check `DataResource.fetch()` raises `ApiError` upon request failure."""
+    from otelib.backends.services.dataresource import DataResource
     from otelib.exceptions import ApiError
-    from otelib.strategies.dataresource import DataResource
 
     mock_ote_response(
         method="post",
@@ -136,7 +165,9 @@ def test_fetch_fails(
         data_resource.fetch(session_id=123)
 
 
+@pytest.mark.parametrize("backend", ["services", "python"])
 def test_initialize(
+    backend: str,
     mock_ote_response: "OTEResponse",
     ids: "Callable[[Union[ResourceType, str]], str]",
     server_url: str,
@@ -144,18 +175,31 @@ def test_initialize(
     """Test `DataResource.fetch()`."""
     import json
 
-    from otelib.strategies.dataresource import DataResource
+    if backend == "services":
+        from otelib.backends.services.dataresource import DataResource
+    elif backend == "python":
+        from otelib.backends.python.dataresource import DataResource
+
+        server_url = "python"
+        from oteapi.plugins import load_strategies
+
+        load_strategies()
+        from otelib.backends.python.base import Cache
+
+        Cache().clear()  # Cleanup the cache from other tests
 
     mock_ote_response(
         method="post",
         endpoint="/dataresource",
         return_json={"resource_id": ids("dataresource")},
+        backend=backend,
     )
 
     mock_ote_response(
         method="post",
         endpoint=f"/dataresource/{ids('dataresource')}/initialize",
         return_json={},
+        backend=backend,
     )
 
     data_resource = DataResource(server_url)
@@ -177,8 +221,8 @@ def test_initialize_fails(
     server_url: str,
 ) -> None:
     """Check `DataResource.fetch()` raises `ApiError` upon request failure."""
+    from otelib.backends.services.dataresource import DataResource
     from otelib.exceptions import ApiError
-    from otelib.strategies.dataresource import DataResource
 
     mock_ote_response(
         method="post",

@@ -1,4 +1,4 @@
-"""Tests for `otelib.strategies.function`."""
+"""Tests for `otelib.backends.services.function`."""
 from typing import TYPE_CHECKING
 
 import pytest
@@ -6,22 +6,36 @@ import pytest
 if TYPE_CHECKING:
     from typing import Callable, Union
 
-    from tests.conftest import OTEResponse, ResourceType
+    from ..conftest import OTEResponse, ResourceType
 
 
+@pytest.mark.parametrize("backend", ["services", "python"])
 def test_create(
+    backend: str,
     mock_ote_response: "OTEResponse",
     ids: "Callable[[Union[ResourceType, str]], str]",
     server_url: str,
     testdata: "Callable[[Union[ResourceType, str]], dict]",
 ) -> None:
     """Test `Function.create()`."""
-    from otelib.strategies.function import Function
+    if backend == "services":
+        from otelib.backends.services.function import Function
+    elif backend == "python":
+        from otelib.backends.python.function import Function
+
+        server_url = "python"
+        from oteapi.plugins import load_strategies
+
+        load_strategies()
+        from otelib.backends.python.base import Cache
+
+        Cache().clear()  # Cleanup the cache from other tests
 
     mock_ote_response(
         method="post",
         endpoint="/function",
         return_json={"function_id": ids("function")},
+        backend=backend,
     )
 
     function = Function(server_url)
@@ -42,8 +56,8 @@ def test_create_fails(
     testdata: "Callable[[Union[ResourceType, str]], dict]",
 ) -> None:
     """Check `Function.create()` raises `ApiError` upon request failure."""
+    from otelib.backends.services.function import Function
     from otelib.exceptions import ApiError
-    from otelib.strategies.function import Function
 
     mock_ote_response(
         method="post",
@@ -67,7 +81,9 @@ def test_create_fails(
     assert function.id is None
 
 
+@pytest.mark.parametrize("backend", ["services", "python"])
 def test_fetch(
+    backend: str,
     mock_ote_response: "OTEResponse",
     ids: "Callable[[Union[ResourceType, str]], str]",
     server_url: str,
@@ -79,18 +95,33 @@ def test_fetch(
 
     import json
 
-    from otelib.strategies.function import Function
+    if backend == "services":
+        from otelib.backends.services.function import Function
+    elif backend == "python":
+        pytest.skip("No function strategy exists in oteapi-core yet.")
+        # the following code will be needed once we can run this
+        from otelib.backends.python.function import Function
+
+        server_url = "python"
+        from oteapi.plugins import load_strategies
+
+        load_strategies()
+        from otelib.backends.python.base import Cache
+
+        Cache().clear()  # Cleanup the cache from other tests
 
     mock_ote_response(
         method="post",
         endpoint="/function",
         return_json={"function_id": ids("function")},
+        backend=backend,
     )
 
     mock_ote_response(
         method="get",
         endpoint=f"/function/{ids('function')}",
         return_json={},
+        backend=backend,
     )
 
     function = Function(server_url)
@@ -113,8 +144,8 @@ def test_fetch_fails(
     testdata: "Callable[[Union[ResourceType, str]], dict]",
 ) -> None:
     """Check `Function.fetch()` raises `ApiError` upon request failure."""
+    from otelib.backends.services.function import Function
     from otelib.exceptions import ApiError
-    from otelib.strategies.function import Function
 
     mock_ote_response(
         method="post",
@@ -142,7 +173,9 @@ def test_fetch_fails(
         function.fetch(session_id=123)
 
 
+@pytest.mark.parametrize("backend", ["services", "python"])
 def test_initialize(
+    backend: str,
     mock_ote_response: "OTEResponse",
     ids: "Callable[[Union[ResourceType, str]], str]",
     server_url: str,
@@ -154,18 +187,32 @@ def test_initialize(
 
     import json
 
-    from otelib.strategies.function import Function
+    if backend == "services":
+        from otelib.backends.services.function import Function
+    elif backend == "python":
+        pytest.skip("No function strategy exists in oteapi-core yet.")
+        from otelib.backends.python.function import Function
+
+        server_url = "python"
+        from oteapi.plugins import load_strategies
+
+        load_strategies()
+        from otelib.backends.python.base import Cache
+
+        Cache().clear()  # Cleanup the cache from other tests
 
     mock_ote_response(
         method="post",
         endpoint="/function",
         return_json={"function_id": ids("function")},
+        backend=backend,
     )
 
     mock_ote_response(
         method="post",
         endpoint=f"/function/{ids('function')}/initialize",
         return_json=testdata("function"),
+        backend=backend,
     )
 
     function = Function(server_url)
@@ -188,8 +235,8 @@ def test_initialize_fails(
     testdata: "Callable[[Union[ResourceType, str]], dict]",
 ) -> None:
     """Check `Function.fetch()` raises `ApiError` upon request failure."""
+    from otelib.backends.services.function import Function
     from otelib.exceptions import ApiError
-    from otelib.strategies.function import Function
 
     mock_ote_response(
         method="post",

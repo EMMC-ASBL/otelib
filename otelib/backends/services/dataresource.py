@@ -1,14 +1,22 @@
 """Common strategy for Download, Prase and Resource strategies."""
+from typing import TYPE_CHECKING
+
 import requests
 from oteapi.models import ResourceConfig
 
+from otelib.backends.services.base import BaseServicesStrategy
 from otelib.exceptions import ApiError
-from otelib.strategies.abc import AbstractStrategy
+
+if TYPE_CHECKING:  # pragma: no cover
+    from typing import Optional
 
 
-class DataResource(AbstractStrategy):
+class DataResource(BaseServicesStrategy):
     """Context class for the data resource strategy interfaces for managing i/o
     operations."""
+
+    strategy_name = "dataresource"
+    strategy_config = ResourceConfig
 
     def create(self, **kwargs) -> None:
         session_id = kwargs.pop("session_id", None)
