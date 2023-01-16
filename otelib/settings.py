@@ -1,6 +1,4 @@
 """Configuration settings for creating the OTE client."""
-from typing import Optional
-
 from pydantic import BaseModel, Field
 
 DEFAULT_HOST = "localhost:8080"
