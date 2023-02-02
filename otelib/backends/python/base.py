@@ -11,7 +11,7 @@ from oteapi.plugins import create_strategy
 from otelib.backends.strategies import AbstractBaseStrategy
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Optional
+    from typing import Optional, Type
 
     from otelib.pipe import Pipe
 
@@ -46,7 +46,7 @@ class BasePythonStrategy(AbstractBaseStrategy):
     """
 
     strategy_name: str
-    strategy_config: GenericConfig
+    strategy_config: "Type[GenericConfig]"
 
     cache = Cache()
 

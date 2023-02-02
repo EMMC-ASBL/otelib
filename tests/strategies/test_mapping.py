@@ -216,7 +216,13 @@ def test_initialize(
 
     content = mapping.initialize(session_id=None)
 
-    assert json.loads(content) == testdata("mapping")
+    # "triples" is a set
+    loaded_content = json.loads(content)
+    testdata_mapping = testdata("mapping")
+    loaded_content["triples"] = sorted(loaded_content["triples"])
+    testdata_mapping["triples"] = sorted(testdata_mapping["triples"])
+
+    assert loaded_content == testdata_mapping
 
 
 def test_initialize_fails(
