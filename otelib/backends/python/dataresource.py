@@ -8,7 +8,7 @@ from oteapi.plugins import create_strategy
 from otelib.backends.python.base import BasePythonStrategy
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Optional
+    from typing import Type
 
 
 class DataResource(BasePythonStrategy):
@@ -16,7 +16,7 @@ class DataResource(BasePythonStrategy):
     operations."""
 
     strategy_name = "dataresource"
-    strategy_config = ResourceConfig
+    strategy_config: "Type[ResourceConfig]" = ResourceConfig
 
     def fetch(self, session_id: str) -> bytes:
         resource_id = self.id

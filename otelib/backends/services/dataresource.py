@@ -1,14 +1,9 @@
 """Common strategy for Download, Prase and Resource strategies."""
-from typing import TYPE_CHECKING
-
 import requests
 from oteapi.models import ResourceConfig
 
 from otelib.backends.services.base import BaseServicesStrategy
 from otelib.exceptions import ApiError
-
-if TYPE_CHECKING:  # pragma: no cover
-    from typing import Optional
 
 
 class DataResource(BaseServicesStrategy):
@@ -24,9 +19,10 @@ class DataResource(BaseServicesStrategy):
 
         response = requests.post(
             f"{self.url}{self.settings.prefix}/dataresource",
-            json=data.dict(),
+            data=data.json(),
             params={"session_id": session_id},
             timeout=self.settings.timeout,
+            headers={"Content-Type": "application/json"},
         )
         if not response.ok:
             raise ApiError(
