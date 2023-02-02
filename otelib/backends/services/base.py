@@ -54,9 +54,10 @@ class BaseServicesStrategy(AbstractBaseStrategy):
 
         response = requests.post(
             f"{self.url}{self.settings.prefix}/{self.strategy_name}",
-            json=data.json(),
+            data=data.json(),
             params={"session_id": session_id} if session_id else {},
             timeout=self.settings.timeout,
+            headers={"Content-Type": "application/json"},
         )
         if not response.ok:
             raise ApiError(
