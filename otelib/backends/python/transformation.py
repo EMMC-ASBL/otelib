@@ -6,7 +6,7 @@ from oteapi.models import TransformationConfig
 from otelib.backends.python.base import BasePythonStrategy
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Optional
+    from typing import Type
 
 
 class Transformation(BasePythonStrategy):
@@ -14,4 +14,4 @@ class Transformation(BasePythonStrategy):
     operations."""
 
     strategy_name = "transformation"
-    strategy_config = TransformationConfig
+    strategy_config: "Type[TransformationConfig]" = TransformationConfig
