@@ -12,6 +12,7 @@ from otelib.backends.services import (
 if TYPE_CHECKING:  # pragma: no cover
     from typing import Any, Dict, Optional
 
+
 # pylint: disable=duplicate-code
 class OTEServiceClient:
     """The Service version of the OTEClient object representing a remote OTE REST API.
