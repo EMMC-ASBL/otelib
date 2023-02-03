@@ -6,7 +6,7 @@ from oteapi.models import FunctionConfig
 from otelib.backends.python.base import BasePythonStrategy
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Optional
+    from typing import Type
 
 
 class Function(BasePythonStrategy):
@@ -14,4 +14,4 @@ class Function(BasePythonStrategy):
     operations."""
 
     strategy_name = "function"
-    strategy_config = FunctionConfig
+    strategy_config: "Type[FunctionConfig]" = FunctionConfig

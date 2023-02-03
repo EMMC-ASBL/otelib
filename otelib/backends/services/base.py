@@ -12,8 +12,7 @@ from otelib.pipe import Pipe
 from otelib.settings import Settings
 
 if TYPE_CHECKING:  # pragma: no cover
-    from pathlib import Path
-    from typing import Any, Dict, Optional
+    from typing import Any, Dict, Optional, Type
 
 
 class BaseServicesStrategy(AbstractBaseStrategy):
@@ -30,7 +29,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
     """
 
     strategy_name: str
-    strategy_config: GenericConfig
+    strategy_config: "Type[GenericConfig]"
 
     def __init__(
         self, url: "Optional[str]" = None, headers: "Optional[Dict[str, Any]]" = None
@@ -53,12 +52,16 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         session_id = kwargs.pop("session_id", None)
         data = self.strategy_config(**kwargs)
 
+        headers = self.headers or {}
+        if "Content-Type" not in headers:
+            headers["Content-Type"] = "application/json"
+
         response = requests.post(
             f"{self.url}{self.settings.prefix}/{self.strategy_name}",
-            json=data.dict(),
-            headers=self.headers,
+            data=data.json(),
             params={"session_id": session_id} if session_id else {},
             timeout=self.settings.timeout,
+            headers=headers,
         )
         if not response.ok:
             raise ApiError(

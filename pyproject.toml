@@ -25,12 +25,12 @@ requires-python = "~=3.9"
 dynamic = ["version"]
 
 dependencies = [
-    "oteapi-core >=0.2.1,<1",
+    "oteapi-core >=0.3.0,<1",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pre-commit ~=2.21",
+    "pre-commit ~=3.0",
     "pylint ~=2.15",
     "pytest ~=7.2",
     "pytest-cov ~=4.0",

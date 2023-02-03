@@ -131,7 +131,11 @@ def test_create_strategies(
         session = created_strategy.cache[session_id]
 
     for key, value in testdata(strategy).items():
-        if strategy == "mapping" and backend == "python":
-            pytest.skip("Issues with tuple/list conversion json for python backend")
         assert key in session
-        assert value == session[key]
+
+        if strategy == "mapping" and key == "triples":
+            # The mapping strategy's "triples" key has a Set type value
+            session_triples = sorted(list(triple) for triple in session[key])
+            assert sorted(value) == session_triples
+        else:
+            assert value == session[key]

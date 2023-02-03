@@ -1,14 +1,9 @@
 """Common strategy for Download, Prase and Resource strategies."""
-from typing import TYPE_CHECKING
-
 import requests
 from oteapi.models import ResourceConfig
 
 from otelib.backends.services.base import BaseServicesStrategy
 from otelib.exceptions import ApiError
-
-if TYPE_CHECKING:  # pragma: no cover
-    from typing import Optional
 
 
 class DataResource(BaseServicesStrategy):
@@ -22,12 +17,16 @@ class DataResource(BaseServicesStrategy):
         session_id = kwargs.pop("session_id", None)
         data = ResourceConfig(**kwargs)
 
+        headers = self.headers or {}
+        if "Content-Type" not in headers:
+            headers["Content-Type"] = "application/json"
+
         response = requests.post(
             f"{self.url}{self.settings.prefix}/dataresource",
-            json=data.dict(),
-            headers=self.headers,
+            data=data.json(),
             params={"session_id": session_id},
             timeout=self.settings.timeout,
+            headers=headers,
         )
         if not response.ok:
             raise ApiError(

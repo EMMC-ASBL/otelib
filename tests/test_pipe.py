@@ -136,10 +136,14 @@ def test_pipe(
         session_id = session_ids[0]
         session = strategy.cache[session_id]
     for key, value in testdata(strategy_name).items():
-        if strategy_name == "mapping" and backend == "python":
-            pytest.skip("Issues with tuple/list conversion json for python backend")
         assert key in session
-        assert value == session[key]
+
+        if strategy_name == "mapping" and key == "triples":
+            # The mapping strategy's "triples" key has a Set type value
+            session_triples = sorted(list(triple) for triple in session[key])
+            assert sorted(value) == session_triples
+        else:
+            assert value == session[key]
 
 
 @pytest.mark.parametrize("backend", ["services", "python"])
