@@ -1,15 +1,33 @@
 """Base API for backend strategies."""
+import os
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 from otelib.pipe import Pipe
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Optional
+    from typing import Optional, Type
+
+    from oteapi.models.genericconfig import GenericConfig
 
 
 class AbstractBaseStrategy(ABC):
     """The abstract base class defining the API for strategies."""
+
+    strategy_name: str
+    strategy_config: "Type[GenericConfig]"
+
+    def __init__(self, source: str) -> None:
+        """Initiates a strategy."""
+        if not source:
+            raise ValueError("source must be provided.")
+
+        self.input_pipe: "Optional[Pipe]" = None
+        self.strategy_id: str = ""
+
+        # For debugging/testing
+        self.debug = bool(os.getenv("OTELIB_DEBUG", ""))
+        self._session_id: "Optional[str]" = None
 
     @abstractmethod
     def create(self, **kwargs) -> None:
@@ -46,7 +64,6 @@ class AbstractBaseStrategy(ABC):
 
         """
 
-    @abstractmethod
     def get(self, session_id: "Optional[str]" = None) -> bytes:
         """Executes a pipeline.
 
@@ -64,6 +81,29 @@ class AbstractBaseStrategy(ABC):
             The output from `fetch()`.
 
         """
+        if session_id is None:
+            session_id = self._create_session()
+
+        if self.debug:
+            self._session_id = session_id
+
+        self.initialize(session_id)
+        if self.input_pipe:
+            self.input_pipe.get(session_id)
+        return self.fetch(session_id)
+
+    @abstractmethod
+    def _create_session(self) -> str:
+        """Create a new session.
+
+        This method should not be run by a user, hence it is "private".
+        The method is used within the `get()` mnethod and allows a backend to customize
+        its session creation method.
+
+        Returns:
+            The newly creates session's ID.
+
+        """
 
     def _set_input(self, input_pipe: "Optional[Pipe]") -> None:
         """Used by `__rshift__` to set the input pipe.
@@ -73,11 +113,9 @@ class AbstractBaseStrategy(ABC):
                 strategy.
 
         """
-        self.input_pipe = input_pipe  # pylint: disable=attribute-defined-outside-init
+        self.input_pipe = input_pipe
 
-    def __rshift__(
-        self, other: "AbstractBaseStrategy"
-    ) -> "AbstractBaseStrategy":  # type: ignore[override]
+    def __rshift__(self, other: "AbstractBaseStrategy") -> "AbstractBaseStrategy":
         """Implements strategy concatenation using the `>>` symbol.
 
         Parameters:

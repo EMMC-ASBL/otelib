@@ -111,7 +111,7 @@ def test_get(
 
     # We must create the strategy - getting a strategy ID
     strategy.create(**create_kwargs)
-    assert strategy.id
+    assert strategy.strategy_id
 
     # There must be a strategy name associated with the strategy
     assert strategy.strategy_name == strategy_name
@@ -196,7 +196,7 @@ def test_get_fails(
 
     # We must create the strategy - getting a strategy ID
     strategy.create(**create_kwargs)
-    assert strategy.id
+    assert strategy.strategy_id
 
     with pytest.raises(ApiError, match="APIError"):
         # Change `url` attribute to hit a wrong URL and raise

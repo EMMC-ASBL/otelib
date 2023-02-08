@@ -40,14 +40,14 @@ def test_create(
 
     mapping = Mapping(server_url)
 
-    assert mapping.id is None
+    assert mapping.strategy_id is None
 
     mapping.create(
         mappingType="triples",
         **testdata("mapping"),
     )
 
-    assert mapping.id
+    assert mapping.strategy_id
 
 
 def test_create_fails(
@@ -68,7 +68,7 @@ def test_create_fails(
 
     mapping = Mapping(server_url)
 
-    assert mapping.id is None
+    assert mapping.strategy_id is None
 
     with pytest.raises(ApiError, match="APIError"):
         # `session_id` has a wrong type, the request should fail.
@@ -78,7 +78,7 @@ def test_create_fails(
             session_id=123,
         )
 
-    assert mapping.id is None
+    assert mapping.strategy_id is None
 
 
 @pytest.mark.parametrize("backend", ["services", "python"])

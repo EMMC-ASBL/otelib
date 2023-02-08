@@ -39,14 +39,14 @@ def test_create(
 
     data_resource = DataResource(server_url)
 
-    assert data_resource.id is None
+    assert data_resource.strategy_id is None
 
     data_resource.create(
         downloadUrl="https://filesamples.com/samples/code/json/sample2.json",
         mediaType="application/json",
     )
 
-    assert data_resource.id
+    assert data_resource.strategy_id
 
 
 def test_create_fails(
@@ -66,7 +66,7 @@ def test_create_fails(
 
     data_resource = DataResource(server_url)
 
-    assert data_resource.id is None
+    assert data_resource.strategy_id is None
 
     with pytest.raises(ApiError, match="APIError"):
         # `session_id` has a wrong type, the request should fail.
@@ -76,7 +76,7 @@ def test_create_fails(
             session_id=123,
         )
 
-    assert data_resource.id is None
+    assert data_resource.strategy_id is None
 
 
 @pytest.mark.parametrize("backend", ["services", "python"])

@@ -113,7 +113,7 @@ def test_pipe(
 
     # We must create the strategy - getting a strategy ID
     strategy.create(**create_kwargs)
-    assert strategy.id
+    assert strategy.strategy_id
 
     pipe = Pipe(strategy)
 
@@ -237,9 +237,9 @@ def test_pipeing_strategies(  # pylint: disable=too-many-statements
     # We must create the data resource and filter - getting IDs
     create_kwargs = dict(strategy_create_kwargs())
     data_resource.create(**create_kwargs["dataresource"])
-    assert data_resource.id
+    assert data_resource.strategy_id
     filter.create(**create_kwargs["filter"])
-    assert filter.id
+    assert filter.strategy_id
 
     pipeline = data_resource >> filter
 
@@ -281,9 +281,9 @@ def test_pipeing_strategies(  # pylint: disable=too-many-statements
     # We must create the data resource and filter - getting IDs
     create_kwargs = dict(strategy_create_kwargs())
     data_resource.create(**create_kwargs["dataresource"])
-    assert data_resource.id
+    assert data_resource.strategy_id
     filter.create(**create_kwargs["filter"])
-    assert filter.id
+    assert filter.strategy_id
 
     pipeline = filter >> data_resource
 

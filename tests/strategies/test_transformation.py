@@ -39,14 +39,14 @@ def test_create(
 
     transformation = Transformation(server_url)
 
-    assert transformation.id is None
+    assert transformation.strategy_id is None
 
     transformation.create(
         transformationType="celery/remote",
         configuration={"task_name": "test-task", "args": []},
     )
 
-    assert transformation.id
+    assert transformation.strategy_id
 
 
 def test_create_fails(
@@ -66,7 +66,7 @@ def test_create_fails(
 
     transformation = Transformation(server_url)
 
-    assert transformation.id is None
+    assert transformation.strategy_id is None
 
     with pytest.raises(ApiError, match="APIError"):
         # `session_id` has a wrong type, the request should fail.
@@ -76,7 +76,7 @@ def test_create_fails(
             session_id=123,
         )
 
-    assert transformation.id is None
+    assert transformation.strategy_id is None
 
 
 @pytest.mark.parametrize("backend", ["services", "python"])

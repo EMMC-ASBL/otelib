@@ -40,14 +40,14 @@ def test_create(
 
     filter = Filter(server_url)
 
-    assert filter.id is None
+    assert filter.strategy_id is None
 
     filter.create(
         filterType="filter/sql",
         query=testdata("filter")["sqlquery"],
     )
 
-    assert filter.id
+    assert filter.strategy_id
 
 
 def test_create_fails(
@@ -68,7 +68,7 @@ def test_create_fails(
 
     filter = Filter(server_url)
 
-    assert filter.id is None
+    assert filter.strategy_id is None
 
     with pytest.raises(ApiError, match="APIError"):
         # `session_id` has a wrong type, the request should fail.
@@ -78,7 +78,7 @@ def test_create_fails(
             session_id=123,
         )
 
-    assert filter.id is None
+    assert filter.strategy_id is None
 
 
 @pytest.mark.parametrize("backend", ["services", "python"])

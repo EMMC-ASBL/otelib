@@ -40,14 +40,14 @@ def test_create(
 
     function = Function(server_url)
 
-    assert function.id is None
+    assert function.strategy_id is None
 
     function.create(
         functionType="triples",
         **testdata("function"),
     )
 
-    assert function.id
+    assert function.strategy_id
 
 
 def test_create_fails(
@@ -68,7 +68,7 @@ def test_create_fails(
 
     function = Function(server_url)
 
-    assert function.id is None
+    assert function.strategy_id is None
 
     with pytest.raises(ApiError, match="APIError"):
         # `session_id` has a wrong type, the request should fail.
@@ -78,7 +78,7 @@ def test_create_fails(
             session_id=123,
         )
 
-    assert function.id is None
+    assert function.strategy_id is None
 
 
 @pytest.mark.parametrize("backend", ["services", "python"])
