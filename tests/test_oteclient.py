@@ -54,9 +54,6 @@ def test_create_strategies(
 
         load_strategies()
 
-        from otelib.backends.python.base import Cache
-
-        Cache().clear()  # Cleanup the cache from other tests
         if strategy == "function":
             pytest.skip("No function strategy exists in oteapi-core yet.")
 

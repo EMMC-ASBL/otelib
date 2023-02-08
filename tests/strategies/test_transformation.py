@@ -26,9 +26,6 @@ def test_create(
         from oteapi.plugins import load_strategies
 
         load_strategies()
-        from otelib.backends.python.base import Cache
-
-        Cache().clear()  # Cleanup the cache from other tests
 
     mock_ote_response(
         method="post",
@@ -99,9 +96,6 @@ def test_fetch(
         from oteapi.plugins import load_strategies
 
         load_strategies()
-        from otelib.backends.python.base import Cache
-
-        Cache().clear()  # Cleanup the cache from other tests
 
     mock_ote_response(
         method="post",
@@ -184,9 +178,6 @@ def test_initialize(
         from oteapi.plugins import load_strategies
 
         load_strategies()
-        from otelib.backends.python.base import Cache
-
-        Cache().clear()  # Cleanup the cache from other tests
 
     mock_ote_response(
         method="post",

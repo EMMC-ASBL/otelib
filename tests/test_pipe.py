@@ -55,10 +55,6 @@ def test_pipe(
 
         load_strategies()
 
-        from otelib.backends.python.base import Cache
-
-        Cache().clear()  # Cleanup the cache from other tests
-
     # create()
     mock_ote_response(
         method="post",
@@ -171,10 +167,6 @@ def test_pipeing_strategies(  # pylint: disable=too-many-statements
 
         load_strategies()
 
-        from otelib.backends.python.base import Cache
-
-        Cache().clear()  # Cleanup the cache from other tests
-
     # create()
     mock_ote_response(
         method="post",
@@ -272,9 +264,6 @@ def test_pipeing_strategies(  # pylint: disable=too-many-statements
     ##
     # Reverse the pipeline and try again
     ##
-    if backend == "python":
-        Cache().clear()  # Cleanup the cache from other tests
-
     data_resource = DataResource(server_url)
     filter = Filter(server_url)
 

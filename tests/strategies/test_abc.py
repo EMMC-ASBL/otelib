@@ -53,10 +53,6 @@ def test_get(
 
         load_strategies()
 
-        from otelib.backends.python.base import Cache
-
-        Cache().clear()  # Cleanup the cache from other tests
-
     ## create()
     mock_ote_response(
         method="post",
