@@ -1,5 +1,6 @@
 """Base class for strategies in the Python backend."""
 import json
+import warnings
 from copy import deepcopy
 from typing import TYPE_CHECKING
 from uuid import uuid4
@@ -15,9 +16,6 @@ if TYPE_CHECKING:  # pragma: no cover
     from oteapi.models import SessionUpdate
 
 
-CACHE: "Dict[str, Any]" = {}
-
-
 class BasePythonStrategy(AbstractBaseStrategy):
     """Base class for strategies for the python backend.
 
@@ -31,12 +29,13 @@ class BasePythonStrategy(AbstractBaseStrategy):
 
     """
 
-    cache = CACHE
-
-    def __init__(self, source: str) -> None:
+    def __init__(self, source: str, cache: "Optional[Dict[str, Any]]" = None) -> None:
         super().__init__(source)
 
         self.interpreter: "Optional[str]" = source
+        if cache is None:
+            warnings.warn(f"No global cache used for Python backend strategy {self}")
+        self.cache = cache if cache is not None else {}
 
         if self.interpreter != "python":
             raise ValueError(
@@ -97,7 +96,7 @@ class BasePythonStrategy(AbstractBaseStrategy):
         """
         if method_name not in ["get", "initialize"]:
             raise PythonBackendException(
-                "method_name should be either 'fetch' or 'initialize'."
+                "method_name should be either 'get' or 'initialize'."
             )
 
         self._sanity_checks(session_id)

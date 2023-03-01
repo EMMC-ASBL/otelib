@@ -50,7 +50,11 @@ class BaseServicesStrategy(AbstractBaseStrategy):
             )
 
         response_json: dict = response.json()
-        self.strategy_id = response_json.pop(f"{self.strategy_name}_id")
+        self.strategy_id = (
+            response_json.pop(f"{self.strategy_name}_id")
+            if f"{self.strategy_name}_id" in response_json
+            else response_json.pop(f"{self.strategy_name[len('data'):]}_id")
+        )
 
     def fetch(self, session_id: str) -> bytes:
         response = requests.get(
@@ -60,9 +64,14 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         )
         if response.ok:
             return response.content
+        strategy_name = (
+            self.strategy_name[len("data") :]
+            if self.strategy_name.startswith("data")
+            else self.strategy_name
+        )
         raise ApiError(
             f"Cannot fetch {self.strategy_name}: session_id={session_id!r} "
-            f"{self.strategy_name}_id={self.strategy_id!r}"
+            f"{strategy_name}_id={self.strategy_id!r}"
             f"content={str(response.content) if self.debug else ''}",
             status=response.status_code,
         )
@@ -79,9 +88,14 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         )
         if response.ok:
             return response.content
+        strategy_name = (
+            self.strategy_name[len("data") :]
+            if self.strategy_name.startswith("data")
+            else self.strategy_name
+        )
         raise ApiError(
             f"Cannot initialize {self.strategy_name}: session_id={session_id!r} "
-            f"{self.strategy_name}_id={self.strategy_id!r}"
+            f"{strategy_name}_id={self.strategy_id!r}"
             f"content={str(response.content) if self.debug else ''}",
             status=response.status_code,
         )

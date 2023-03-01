@@ -8,6 +8,8 @@ from utils import strategy_create_kwargs
 if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Union
 
+    from otelib.backends import python as python_backend
+    from otelib.backends import services as services_backend
     from otelib.backends.python.base import BasePythonStrategy
     from otelib.backends.services.base import BaseServicesStrategy
 
@@ -15,8 +17,10 @@ if TYPE_CHECKING:
 
     BaseStrategy = Union[BasePythonStrategy, BaseServicesStrategy]
 
+    DataResource = Union[python_backend.DataResource, services_backend.DataResource]
+    Filter = Union[python_backend.Filter, services_backend.Filter]
 
-@pytest.mark.parametrize("backend", ["services", "python"])
+
 @pytest.mark.parametrize(
     "strategy_name,create_kwargs",
     strategy_create_kwargs(),
@@ -33,73 +37,68 @@ def test_pipe(
     create_kwargs: "Dict[str, Any]",
 ) -> None:
     """Test creating a `Pipe` and run the `get()` method."""
-    if strategy_name == "function" and "example" not in server_url:
-        pytest.skip("No function strategy exists in oteapi-core yet.")
+    if strategy_name == "function":
+        if backend == "services" and "example" in server_url:
+            pass
+        else:
+            pytest.skip("No function strategy exists in oteapi-core yet.")
 
+    import importlib
     import json
 
     import requests
 
     from otelib.pipe import Pipe
 
+    strategies = importlib.import_module(f"otelib.backends.{backend}")
+    server_url = server_url if backend != "python" else backend
+
     if backend == "services":
-        from otelib.backends import services as strategies
-    elif backend == "python":
-        if strategy_name == "function":
-            pytest.skip("No function strategy exists in oteapi-core yet.")
-        from otelib.backends import python as strategies
+        # Mock URL responses
 
-        server_url = "python"
+        # create()
+        mock_ote_response(
+            method="post",
+            endpoint=f"/{strategy_name}",
+            return_json={
+                f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # pylint: disable=line-too-long
+                "_id": ids(strategy_name)
+            },
+        )
 
-        from oteapi.plugins import load_strategies
+        # initialize()
+        # The filter and mapping returns everything from their `initialize()` method.
+        mock_ote_response(
+            method="post",
+            endpoint=f"/{strategy_name}/{ids(strategy_name)}/initialize",
+            params={"session_id": ids("session")},
+            return_json=(
+                testdata(strategy_name)
+                if strategy_name in ("filter", "mapping")
+                else {}
+            ),
+        )
 
-        load_strategies()
+        # fetch()
+        # The data resource and transformation returns everything from their `get()`
+        # method.
+        mock_ote_response(
+            method="get",
+            endpoint=f"/{strategy_name}/{ids(strategy_name)}",
+            params={"session_id": ids("session")},
+            return_json=(
+                testdata(strategy_name)
+                if strategy_name in ("dataresource", "transformation")
+                else {}
+            ),
+        )
 
-    # create()
-    mock_ote_response(
-        method="post",
-        endpoint=f"/{strategy_name}",
-        return_json={
-            f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # pylint: disable=line-too-long
-            "_id": ids(strategy_name)
-        },
-        backend=backend,
-    )
-
-    # initialize()
-    # The filter and mapping returns everything from their `initialize()` method.
-    mock_ote_response(
-        method="post",
-        endpoint=f"/{strategy_name}/{ids(strategy_name)}/initialize",
-        params={"session_id": ids("session")},
-        return_json=(
-            testdata(strategy_name) if strategy_name in ("filter", "mapping") else {}
-        ),
-        backend=backend,
-    )
-
-    # fetch()
-    # The data resource and transformation returns everything from their `get()`
-    # method.
-    mock_ote_response(
-        method="get",
-        endpoint=f"/{strategy_name}/{ids(strategy_name)}",
-        params={"session_id": ids("session")},
-        return_json=(
-            testdata(strategy_name)
-            if strategy_name in ("dataresource", "transformation")
-            else {}
-        ),
-        backend=backend,
-    )
-
-    # Session content
-    mock_ote_response(
-        method="get",
-        endpoint=f"/session/{ids('session')}",
-        return_json=testdata(strategy_name),
-        backend=backend,
-    )
+        # Session content
+        mock_ote_response(
+            method="get",
+            endpoint=f"/session/{ids('session')}",
+            return_json=testdata(strategy_name),
+        )
 
     strategy_name_map = {"dataresource": "DataResource"}
 
@@ -142,7 +141,6 @@ def test_pipe(
             assert value == session[key]
 
 
-@pytest.mark.parametrize("backend", ["services", "python"])
 @pytest.mark.usefixtures("mock_session")
 def test_pipeing_strategies(  # pylint: disable=too-many-statements
     backend: str,
@@ -152,79 +150,77 @@ def test_pipeing_strategies(  # pylint: disable=too-many-statements
     server_url: str,
 ) -> None:
     """A simple pipeline will be tested."""
+    import importlib
     import json
 
     import requests
 
-    if backend == "services":
-        from otelib.backends.services import DataResource, Filter
-    elif backend == "python":
-        from otelib.backends.python import DataResource, Filter
+    strategies = importlib.import_module(f"otelib.backends.{backend}")
+    server_url = server_url if backend != "python" else backend
 
-        server_url = "python"
-
-        from oteapi.plugins import load_strategies
-
-        load_strategies()
-
-    # create()
-    mock_ote_response(
-        method="post",
-        endpoint="/dataresource",
-        return_json={"resource_id": ids("dataresource")},
-        backend=backend,
-    )
-    mock_ote_response(
-        method="post",
-        endpoint="/filter",
-        return_json={"filter_id": ids("filter")},
-        backend=backend,
-    )
-
-    # initialize()
-    mock_ote_response(
-        method="post",
-        endpoint=f"/dataresource/{ids('dataresource')}/initialize",
-        params={"session_id": ids("session")},
-        return_json={},
-        backend=backend,
-    )
-    mock_ote_response(
-        method="post",
-        endpoint=f"/filter/{ids('filter')}/initialize",
-        params={"session_id": ids("session")},
-        return_json=testdata("filter"),
-        backend=backend,
-    )
-
-    # fetch()
-    mock_ote_response(
-        method="get",
-        endpoint=f"/dataresource/{ids('dataresource')}",
-        params={"session_id": ids("session")},
-        return_json=testdata("dataresource"),
-        backend=backend,
-    )
-    mock_ote_response(
-        method="get",
-        endpoint=f"/filter/{ids('filter')}",
-        params={"session_id": ids("session")},
-        return_json={},
-        backend=backend,
-    )
-
-    # Session content
     session_test_content = testdata("filter")
     session_test_content.update(testdata("dataresource"))
-    mock_ote_response(
-        method="get",
-        endpoint=f"/session/{ids('session')}",
-        return_json=session_test_content,
-        backend=backend,
-    )
 
-    data_resource = DataResource(server_url)
-    filter = Filter(server_url)
+    if backend == "services":
+        # Mock URL responses
+
+        # create()
+        mock_ote_response(
+            method="post",
+            endpoint="/dataresource",
+            return_json={"resource_id": ids("dataresource")},
+        )
+        mock_ote_response(
+            method="post",
+            endpoint="/filter",
+            return_json={"filter_id": ids("filter")},
+        )
+
+        # initialize()
+        mock_ote_response(
+            method="post",
+            endpoint=f"/dataresource/{ids('dataresource')}/initialize",
+            params={"session_id": ids("session")},
+            return_json={},
+        )
+        mock_ote_response(
+            method="post",
+            endpoint=f"/filter/{ids('filter')}/initialize",
+            params={"session_id": ids("session")},
+            return_json=testdata("filter"),
+        )
+
+        # fetch()
+        mock_ote_response(
+            method="get",
+            endpoint=f"/dataresource/{ids('dataresource')}",
+            params={"session_id": ids("session")},
+            return_json=testdata("dataresource"),
+        )
+        mock_ote_response(
+            method="get",
+            endpoint=f"/filter/{ids('filter')}",
+            params={"session_id": ids("session")},
+            return_json={},
+        )
+
+        # Session content
+        mock_ote_response(
+            method="get",
+            endpoint=f"/session/{ids('session')}",
+            return_json=session_test_content,
+        )
+
+    strategy_kwargs = {}
+    if backend == "python":
+        # Setup custom cache
+        cache = {}
+        strategy_kwargs["cache"] = cache
+
+    data_resource: "DataResource" = strategies.DataResource(
+        server_url, **strategy_kwargs
+    )
+    filter: "Filter" = strategies.Filter(server_url, **strategy_kwargs)
 
     # We must create the data resource and filter - getting IDs
     create_kwargs = dict(strategy_create_kwargs())
@@ -264,8 +260,16 @@ def test_pipeing_strategies(  # pylint: disable=too-many-statements
     ##
     # Reverse the pipeline and try again
     ##
-    data_resource = DataResource(server_url)
-    filter = Filter(server_url)
+    strategy_kwargs = {}
+    if backend == "python":
+        # Setup custom cache
+        cache = {}
+        strategy_kwargs["cache"] = cache
+
+    data_resource: "DataResource" = strategies.DataResource(
+        server_url, **strategy_kwargs
+    )
+    filter: "Filter" = strategies.Filter(server_url, **strategy_kwargs)
 
     # We must create the data resource and filter - getting IDs
     create_kwargs = dict(strategy_create_kwargs())

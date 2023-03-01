@@ -105,7 +105,7 @@ class AbstractBaseStrategy(ABC):
 
         """
 
-    def _set_input(self, input_pipe: "Optional[Pipe]") -> None:
+    def _set_input(self, input_pipe: Pipe) -> None:
         """Used by `__rshift__` to set the input pipe.
 
         Parameters:

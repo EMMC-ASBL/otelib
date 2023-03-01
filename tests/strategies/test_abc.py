@@ -18,7 +18,6 @@ if TYPE_CHECKING:
     BaseStrategy = Union[BasePythonStrategy, BaseServicesStrategy]
 
 
-@pytest.mark.parametrize("backend", ["services", "python"])
 @pytest.mark.parametrize(
     "strategy_name,create_kwargs",
     strategy_create_kwargs(),
@@ -38,66 +37,60 @@ def test_get(
     if strategy_name == "function":
         pytest.skip("No function strategy exists in oteapi-core yet.")
 
+    import importlib
     import json
 
     import requests
 
+    strategies = importlib.import_module(f"otelib.backends.{backend}")
+    server_url = server_url if backend != "python" else backend
+
     if backend == "services":
-        from otelib.backends import services as strategies
-    elif backend == "python":
-        from otelib.backends import python as strategies
+        # Mock URL responses
 
-        server_url = "python"
+        ## create()
+        mock_ote_response(
+            method="post",
+            endpoint=f"/{strategy_name}",
+            return_json={
+                f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # pylint: disable=line-too-long
+                "_id": ids(strategy_name)
+            },
+        )
 
-        from oteapi.plugins import load_strategies
+        # initialize()
+        # The filter and mapping returns everything from their `initialize()` method.
+        mock_ote_response(
+            method="post",
+            endpoint=f"/{strategy_name}/{ids(strategy_name)}/initialize",
+            params={"session_id": ids("session")},
+            return_json=(
+                testdata(strategy_name)
+                if strategy_name in ("filter", "mapping")
+                else {}
+            ),
+        )
 
-        load_strategies()
+        # fetch()
+        # The data resource and transformation returns everything from their `get()`
+        # method.
+        mock_ote_response(
+            method="get",
+            endpoint=f"/{strategy_name}/{ids(strategy_name)}",
+            params={"session_id": ids("session")},
+            return_json=(
+                testdata(strategy_name)
+                if strategy_name in ("dataresource", "transformation")
+                else {}
+            ),
+        )
 
-    ## create()
-    mock_ote_response(
-        method="post",
-        endpoint=f"/{strategy_name}",
-        return_json={
-            f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # pylint: disable=line-too-long
-            "_id": ids(strategy_name)
-        },
-        backend=backend,
-    )
-
-    # initialize()
-    # The filter and mapping returns everything from their `initialize()` method.
-    mock_ote_response(
-        method="post",
-        endpoint=f"/{strategy_name}/{ids(strategy_name)}/initialize",
-        params={"session_id": ids("session")},
-        return_json=(
-            testdata(strategy_name) if strategy_name in ("filter", "mapping") else {}
-        ),
-        backend=backend,
-    )
-
-    # fetch()
-    # The data resource and transformation returns everything from their `get()`
-    # method.
-    mock_ote_response(
-        method="get",
-        endpoint=f"/{strategy_name}/{ids(strategy_name)}",
-        params={"session_id": ids("session")},
-        return_json=(
-            testdata(strategy_name)
-            if strategy_name in ("dataresource", "transformation")
-            else {}
-        ),
-        backend=backend,
-    )
-
-    # Session content
-    mock_ote_response(
-        method="get",
-        endpoint=f"/session/{ids('session')}",
-        return_json=testdata(strategy_name),
-        backend=backend,
-    )
+        # Session content
+        mock_ote_response(
+            method="get",
+            endpoint=f"/session/{ids('session')}",
+            return_json=testdata(strategy_name),
+        )
 
     strategy_name_map = {"dataresource": "DataResource"}
 
@@ -152,7 +145,7 @@ def test_get(
     strategy_create_kwargs(),
     ids=[_[0] for _ in strategy_create_kwargs()],
 )
-def test_get_fails(
+def test_services_get_fails(
     mock_ote_response: "OTEResponse",
     ids: "Callable[[Union[ResourceType, str]], str]",
     server_url: str,
@@ -194,7 +187,7 @@ def test_get_fails(
     strategy.create(**create_kwargs)
     assert strategy.strategy_id
 
-    with pytest.raises(ApiError, match="APIError"):
+    with pytest.raises(ApiError, match=f"^{ApiError.__name__}.*"):
         # Change `url` attribute to hit a wrong URL and raise
         strategy.url = wrong_url
         strategy.get()

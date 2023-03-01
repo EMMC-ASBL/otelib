@@ -19,7 +19,6 @@ if TYPE_CHECKING:
     OTEClient = Union[OTEPythonClient, OTEServiceClient]
 
 
-@pytest.mark.parametrize("backend", ["services", "python"])
 @pytest.mark.parametrize(
     "strategy,create_kwargs",
     strategy_create_kwargs(),
@@ -27,7 +26,6 @@ if TYPE_CHECKING:
 )
 @pytest.mark.usefixtures("mock_session")
 def test_create_strategies(
-    backend: str,
     client: "OTEClient",
     ids: "Callable[[Union[ResourceType, str]], str]",
     mock_ote_response: "OTEResponse",
@@ -36,68 +34,64 @@ def test_create_strategies(
     create_kwargs: "Dict[str, Any]",
 ) -> None:
     """Test creating any strategy and calling it's `get()` method."""
-    if strategy == "function" and "example" not in getattr(client, "url"):
-        pytest.skip("No function strategy exists in oteapi-core yet.")
-
     import json
 
     import requests
 
-    if backend == "python":
-        # This is probably not the most elegant way to
-        # switch clients...
-        from otelib.client import OTEPythonClient
+    from otelib.backends.services.client import OTEServiceClient
 
-        client = OTEPythonClient("python")
-
-        from oteapi.plugins import load_strategies
-
-        load_strategies()
-
-        if strategy == "function":
+    if strategy == "function":
+        if isinstance(client, OTEServiceClient) and "example" in client.url:
+            pass
+        else:
             pytest.skip("No function strategy exists in oteapi-core yet.")
 
-    # create()
-    mock_ote_response(
-        method="post",
-        endpoint=f"/{strategy}",
-        return_json={
-            f"{strategy[len('data'):] if strategy.startswith('data') else strategy}"
-            "_id": ids(strategy)
-        },
-        backend=backend,
-    )
+    backend = "services" if isinstance(client, OTEServiceClient) else "python"
 
-    # initialize()
-    # The filter and mapping returns everything from their `initialize()` method.
-    mock_ote_response(
-        method="post",
-        endpoint=f"/{strategy}/{ids(strategy)}/initialize",
-        params={"session_id": ids("session")},
-        return_json=(testdata(strategy) if strategy in ("filter", "mapping") else {}),
-        backend=backend,
-    )
+    if backend == "services":
+        # Mock URL responses
 
-    # fetch()
-    # The data resource and transformation returns everything from their `get()`
-    # method.
-    mock_ote_response(
-        method="get",
-        endpoint=f"/{strategy}/{ids(strategy)}",
-        params={"session_id": ids("session")},
-        return_json=(
-            testdata(strategy) if strategy in ("dataresource", "transformation") else {}
-        ),
-        backend=backend,
-    )
+        # create()
+        mock_ote_response(
+            method="post",
+            endpoint=f"/{strategy}",
+            return_json={
+                f"{strategy[len('data'):] if strategy.startswith('data') else strategy}"
+                "_id": ids(strategy)
+            },
+        )
 
-    # Session content
-    mock_ote_response(
-        method="get",
-        endpoint=f"/session/{ids('session')}",
-        return_json=testdata(strategy),
-        backend=backend,
-    )
+        # initialize()
+        # The filter and mapping returns everything from their `initialize()` method.
+        mock_ote_response(
+            method="post",
+            endpoint=f"/{strategy}/{ids(strategy)}/initialize",
+            params={"session_id": ids("session")},
+            return_json=(
+                testdata(strategy) if strategy in ("filter", "mapping") else {}
+            ),
+        )
+
+        # fetch()
+        # The data resource and transformation returns everything from their `get()`
+        # method.
+        mock_ote_response(
+            method="get",
+            endpoint=f"/{strategy}/{ids(strategy)}",
+            params={"session_id": ids("session")},
+            return_json=(
+                testdata(strategy)
+                if strategy in ("dataresource", "transformation")
+                else {}
+            ),
+        )
+
+        # Session content
+        mock_ote_response(
+            method="get",
+            endpoint=f"/session/{ids('session')}",
+            return_json=testdata(strategy),
+        )
 
     created_strategy: "BaseStrategy" = getattr(client, f"create_{strategy}")(
         **create_kwargs
@@ -113,6 +107,7 @@ def test_create_strategies(
     assert (
         created_strategy._session_id
     ), f"Session ID not found in {created_strategy} ! Is OTEAPI_DEBUG not set?"
+
     if backend == "services":
         strategy_prefix = created_strategy.settings.prefix
         startegy_sessionid = created_strategy._session_id
@@ -121,11 +116,13 @@ def test_create_strategies(
             timeout=30,
         )
         session: "Dict[str, Any]" = content_session.json()
+
     elif backend == "python":
-        session_ids = [x for x in created_strategy.cache if "session" in x]
+        session_ids = [
+            cache_key for cache_key in created_strategy.cache if "session" in cache_key
+        ]
         assert len(session_ids) == 1
-        session_id = session_ids[0]
-        session = created_strategy.cache[session_id]
+        session = created_strategy.cache[session_ids[0]]
 
     for key, value in testdata(strategy).items():
         assert key in session
