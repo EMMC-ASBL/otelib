@@ -9,14 +9,12 @@ if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Union
 
     from otelib.backends.python.base import BasePythonStrategy
-    from otelib.backends.python.client import OTEPythonClient
     from otelib.backends.services.base import BaseServicesStrategy
-    from otelib.backends.services.client import OTEServiceClient
+    from otelib.client import OTEClient
 
     from .conftest import OTEResponse, ResourceType
 
     BaseStrategy = Union[BasePythonStrategy, BaseServicesStrategy]
-    OTEClient = Union[OTEPythonClient, OTEServiceClient]
 
 
 @pytest.mark.parametrize(
@@ -38,15 +36,13 @@ def test_create_strategies(
 
     import requests
 
-    from otelib.backends.services.client import OTEServiceClient
-
     if strategy == "function":
-        if isinstance(client, OTEServiceClient) and "example" in client.url:
+        if client._impl._backend == "services" and "example" in client.url:
             pass
         else:
             pytest.skip("No function strategy exists in oteapi-core yet.")
 
-    backend = "services" if isinstance(client, OTEServiceClient) else "python"
+    backend = client._impl._backend
 
     if backend == "services":
         # Mock URL responses

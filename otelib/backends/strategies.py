@@ -3,10 +3,11 @@ import os
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
+from otelib.backends.utils import StrategyType
 from otelib.pipe import Pipe
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Optional, Type
+    from typing import Optional, Type, Union
 
     from oteapi.models.genericconfig import GenericConfig
 
@@ -14,7 +15,7 @@ if TYPE_CHECKING:  # pragma: no cover
 class AbstractBaseStrategy(ABC):
     """The abstract base class defining the API for strategies."""
 
-    strategy_name: str
+    strategy_name: "Union[StrategyType, str]"
     strategy_config: "Type[GenericConfig]"
 
     def __init__(self, source: str) -> None:
@@ -24,6 +25,7 @@ class AbstractBaseStrategy(ABC):
 
         self.input_pipe: "Optional[Pipe]" = None
         self.strategy_id: str = ""
+        self.strategy_name = StrategyType(self.strategy_name)
 
         # For debugging/testing
         self.debug = bool(os.getenv("OTELIB_DEBUG", ""))
@@ -97,11 +99,11 @@ class AbstractBaseStrategy(ABC):
         """Create a new session.
 
         This method should not be run by a user, hence it is "private".
-        The method is used within the `get()` mnethod and allows a backend to customize
+        The method is used within the `get()` method and allows a backend to customize
         its session creation method.
 
         Returns:
-            The newly creates session's ID.
+            The newly created session's ID.
 
         """
 

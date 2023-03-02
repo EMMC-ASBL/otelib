@@ -17,6 +17,14 @@ class ApiError(BaseOtelibException):
         return f"{self.__class__.__name__}: status={self.status} {self.detail}"
 
 
+class InvalidBackend(BaseOtelibException):
+    """The backend does not exist; it is invalid."""
+
+
+class InvalidStrategy(BaseOtelibException):
+    """The strategy type does not exist; it is invalid."""
+
+
 class PythonBackendException(BaseOtelibException):
     """A generic error has happened in the Python backend."""
 

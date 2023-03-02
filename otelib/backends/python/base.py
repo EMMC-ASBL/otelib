@@ -42,9 +42,9 @@ class BasePythonStrategy(AbstractBaseStrategy):
                 "Only the 'python' interpreter source is currently supported."
             )
 
-    def create(self, **kwargs) -> None:
-        session_id = kwargs.pop("session_id", None)
-        data = self.strategy_config(**kwargs)
+    def create(self, **config) -> None:
+        session_id = config.pop("session_id", None)
+        data = self.strategy_config(**config)
 
         self.strategy_id = f"{self.strategy_name}-{uuid4()}"
         self.cache[self.strategy_id] = data.json()

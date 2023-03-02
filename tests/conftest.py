@@ -1,5 +1,5 @@
 """Fixtures and configuration for pytest."""
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments,protected-access
 from enum import Enum
 from typing import TYPE_CHECKING
 
@@ -11,7 +11,6 @@ if TYPE_CHECKING:
     from requests_mock import Mocker
     from utils import ResourceType
 
-    from otelib.backends.python.client import OTEPythonClient
     from otelib.client import OTEClient
 
     OTEResponse = Callable[
@@ -108,8 +107,8 @@ def client(server_url: str, backend: str) -> "OTEClient":
         return OTEClient(server_url)
 
     if backend == "python":
-        res: "OTEPythonClient" = OTEClient("python")
-        res.clear_cache()  # pylint: disable=no-member
+        res = OTEClient("python")
+        res._impl.clear_cache()  # pylint: disable=no-member
         return res
 
     raise RuntimeError(f"Unknown backend: {backend!r}")
@@ -126,10 +125,9 @@ def mock_session(
 
     This is called in `AbstractStrategy.get()`.
     """
-    from otelib.backends.services.client import OTEServiceClient
     from otelib.settings import Settings
 
-    if isinstance(client, OTEServiceClient) and "example" in server_url:
+    if client._impl._backend == "services" and "example" in server_url:
         requests_mock.post(
             f"{client.url}{Settings().prefix}/session",
             json={"session_id": ids("session")},

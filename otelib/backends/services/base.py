@@ -31,9 +31,9 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         self.url: "Optional[str]" = source
         self.settings = Settings()
 
-    def create(self, **kwargs) -> None:
-        session_id = kwargs.pop("session_id", None)
-        data = self.strategy_config(**kwargs)
+    def create(self, **config) -> None:
+        session_id = config.pop("session_id", None)
+        data = self.strategy_config(**config)
 
         response = requests.post(
             f"{self.url}{self.settings.prefix}/{self.strategy_name}",
@@ -106,9 +106,10 @@ class BaseServicesStrategy(AbstractBaseStrategy):
             json={},
             timeout=self.settings.timeout,
         )
+        print(response.url)
         if not response.ok:
             raise ApiError(
-                f"Cannot create session: {response.status_code}"
+                f"Cannot create session: {response.status_code} "
                 f"content={str(response.content) if self.debug else ''}",
                 status=response.status_code,
             )
