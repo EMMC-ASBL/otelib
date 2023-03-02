@@ -45,7 +45,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         if not response.ok:
             raise ApiError(
                 f"Cannot create {self.strategy_name}: {data!r}"
-                f"content={str(response.content) if self.debug else ''}",
+                f"{' content=' + str(response.content) if self.debug else ''}",
                 status=response.status_code,
             )
 
@@ -72,7 +72,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         raise ApiError(
             f"Cannot fetch {self.strategy_name}: session_id={session_id!r} "
             f"{strategy_name}_id={self.strategy_id!r}"
-            f"content={str(response.content) if self.debug else ''}",
+            f"{' content=' + str(response.content) if self.debug else ''}",
             status=response.status_code,
         )
 
@@ -96,7 +96,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         raise ApiError(
             f"Cannot initialize {self.strategy_name}: session_id={session_id!r} "
             f"{strategy_name}_id={self.strategy_id!r}"
-            f"content={str(response.content) if self.debug else ''}",
+            f"{' content=' + str(response.content) if self.debug else ''}",
             status=response.status_code,
         )
 
@@ -106,11 +106,10 @@ class BaseServicesStrategy(AbstractBaseStrategy):
             json={},
             timeout=self.settings.timeout,
         )
-        print(response.url)
         if not response.ok:
             raise ApiError(
                 f"Cannot create session: {response.status_code} "
-                f"content={str(response.content) if self.debug else ''}",
+                f"{' content=' + str(response.content) if self.debug else ''}",
                 status=response.status_code,
             )
         return json.loads(response.text)["session_id"]
