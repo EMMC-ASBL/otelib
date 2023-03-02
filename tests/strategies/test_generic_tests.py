@@ -232,7 +232,9 @@ def test_initialize(
 
     loaded_content = json.loads(content)
     testdata_strategy = testdata(strategy_type, "initialize")
-    if strategy_type == strategy_type.MAPPING and backend == "python":
+    if strategy_type == strategy_type.MAPPING and (
+        backend == "python" or "example" not in strategy.url
+    ):
         # "triples" is a Set and must be "sorted"
         loaded_content["triples"] = sorted(loaded_content["triples"])
         testdata_strategy["triples"] = sorted(testdata_strategy["triples"])
