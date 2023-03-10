@@ -115,6 +115,17 @@ def test_pipe(
     content = pipe.get()
     if strategy_name in ("filter", "mapping"):
         assert json.loads(content) == {}
+    elif (
+        strategy in ("transformation",)
+        and backend == "services"
+        and "example" not in server_url
+    ):
+        # Real backend !
+        # Dynamic response content - just check keys are the same and values are
+        # non-empty
+        _content: "dict[str, Any]" = json.loads(content)
+        assert list(_content) == list(testdata(strategy_name))
+        assert all(_content.values())
     else:
         assert json.loads(content) == testdata(strategy_name)
 

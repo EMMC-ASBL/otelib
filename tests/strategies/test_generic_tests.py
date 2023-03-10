@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 if TYPE_CHECKING:
-    from typing import Callable, Tuple, Type, Union
+    from typing import Any, Callable, Tuple, Type, Union
 
     from requests_mock import Mocker
     from utils import ResourceType
@@ -138,7 +138,19 @@ def test_fetch(
 
     content = strategy.fetch(session_id)
 
-    assert json.loads(content) == testdata(strategy_type, "get")
+    if (
+        strategy_type == strategy_type.TRANSFORMATION
+        and backend == "services"
+        and "example" not in server_url
+    ):
+        # Real backend for transformation strategy
+        # Dynamic response content - just check keys are the same and values are
+        # non-empty
+        _content: "dict[str, Any]" = json.loads(content)
+        assert list(_content) == list(testdata(strategy, "get"))
+        assert all(_content.values())
+    else:
+        assert json.loads(content) == testdata(strategy_type, "get")
 
 
 def test_fetch_fails(

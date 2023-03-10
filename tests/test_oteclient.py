@@ -96,6 +96,17 @@ def test_create_strategies(
     content = created_strategy.get()
     if strategy in ("filter", "mapping"):
         assert json.loads(content) == {}
+    elif (
+        strategy in ("transformation",)
+        and client._impl._backend == "services"
+        and "example" not in client.url
+    ):
+        # Real backend !
+        # Dynamic response content - just check keys are the same and values are
+        # non-empty
+        _content: "dict[str, Any]" = json.loads(content)
+        assert list(_content) == list(testdata(strategy))
+        assert all(_content.values())
     else:
         assert json.loads(content) == testdata(strategy)
 
