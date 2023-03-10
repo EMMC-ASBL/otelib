@@ -149,7 +149,11 @@ def test_pipe(
             # The mapping strategy's "triples" key has a Set type value
             session_triples = sorted(list(triple) for triple in session[key])
             assert sorted(value) == session_triples
-        elif strategy_name == "transformation" and key == "celery_task_id":
+        elif (
+            strategy_name == "transformation"
+            and key == "celery_task_id"
+            and "example" not in server_url
+        ):
             # The task ID is dynamically generated.
             # Simply check the value is non-empty
             assert key in session and session[key]
