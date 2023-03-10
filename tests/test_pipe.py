@@ -1,5 +1,6 @@
 """Test the `otelib.pipe` module."""
 # pylint: disable=too-many-arguments,too-many-locals,protected-access,redefined-builtin
+# pylint: disable=too-many-branches
 from typing import TYPE_CHECKING
 
 import pytest
@@ -148,6 +149,10 @@ def test_pipe(
             # The mapping strategy's "triples" key has a Set type value
             session_triples = sorted(list(triple) for triple in session[key])
             assert sorted(value) == session_triples
+        elif strategy_name == "transformation" and key == "celery_task_id":
+            # The task ID is dynamically generated.
+            # Simply check the value is non-empty
+            assert key in session and session[key]
         else:
             assert value == session[key]
 
