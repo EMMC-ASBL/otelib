@@ -110,7 +110,7 @@ def test_get(
     if strategy_name in ("filter", "mapping"):
         assert json.loads(content) == {}
     elif (
-        strategy in ("transformation",)
+        strategy_name in ("transformation",)
         and backend == "services"
         and "example" not in server_url
     ):

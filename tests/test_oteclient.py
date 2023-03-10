@@ -1,5 +1,6 @@
 """Test OTE Client."""
 # pylint: disable=protected-access,invalid-name,too-many-arguments,too-many-locals
+# pylint: disable=too-many-branches
 from typing import TYPE_CHECKING
 
 import pytest
@@ -138,5 +139,9 @@ def test_create_strategies(
             # The mapping strategy's "triples" key has a Set type value
             session_triples = sorted(list(triple) for triple in session[key])
             assert sorted(value) == session_triples
+        elif strategy == "transformation" and key == "celery_task_id":
+            # The task ID is dynamically generated.
+            # Simply check the value is non-empty
+            assert key in session and session[key]
         else:
             assert value == session[key]

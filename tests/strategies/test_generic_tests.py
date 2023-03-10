@@ -147,7 +147,7 @@ def test_fetch(
         # Dynamic response content - just check keys are the same and values are
         # non-empty
         _content: "dict[str, Any]" = json.loads(content)
-        assert list(_content) == list(testdata(strategy, "get"))
+        assert list(_content) == list(testdata(strategy_type, "get"))
         assert all(_content.values())
     else:
         assert json.loads(content) == testdata(strategy_type, "get")
