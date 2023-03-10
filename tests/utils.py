@@ -34,7 +34,7 @@ TEST_DATA = {
             ["http://onto-ns.com/meta/1.0/Bar#a", "map:mapsTo", "onto:C"],
         ],
     },
-    "transformation": {"data": {"task_id": ["some_task_id"]}},
+    "transformation": {"celery_task_id": "some_task_id"},
 }
 
 

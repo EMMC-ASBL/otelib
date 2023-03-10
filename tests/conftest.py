@@ -292,7 +292,7 @@ def mock_celery_transformation_strategy(
     class MockResult:
         """Mock result from 'transformationType=celery/remote'."""
 
-        task_id = raw_test_data["transformation"]["data"]["task_id"]
+        celery_task_id = raw_test_data["transformation"]["celery_task_id"]
 
     monkeypatch.setattr(
         "oteapi.strategies.transformation.celery_remote.CELERY_APP.send_task",
