@@ -1,143 +1,137 @@
 """Base class for strategies in the Python backend."""
 import json
-import os
+import warnings
+from copy import deepcopy
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
-from oteapi.models import AttrDict
-from oteapi.models.genericconfig import GenericConfig
 from oteapi.plugins import create_strategy
 
 from otelib.backends.strategies import AbstractBaseStrategy
+from otelib.exceptions import ItemNotFoundInCache, PythonBackendException
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Optional, Type
+    from typing import Any, Dict, Literal, Optional
 
-    from otelib.pipe import Pipe
-
-
-class Singleton:
-    """
-    Initializes a singleton object
-    """
-
-    def __new__(cls):
-        if not hasattr(cls, "instance"):
-            cls.instance = super(Singleton, cls).__new__(cls)
-        return cls.instance
-
-
-class Cache(Singleton, dict):
-    """
-    Singleton dictionary class. Can be cleared with the .clear() method
-    """
+    from oteapi.models import SessionUpdate
 
 
 class BasePythonStrategy(AbstractBaseStrategy):
     """Base class for strategies for the python backend.
 
     Parameters:
-        interpreter (str): Must be set to `"python"` or a `ValueError` is raised.
+        source (str): The Python interpreter to use in the local environment.
+            Currently only `python` is allowed.
 
     Attributes:
-        interpreter (str): This is always `"python"` for the Python backend.
+        interpreter (str): This is always `python` for the Python backend.
         input_pipe (Optional[Pipe]): An input pipeline.
 
     """
 
-    strategy_name: str
-    strategy_config: "Type[GenericConfig]"
+    def __init__(self, source: str, cache: "Optional[Dict[str, Any]]" = None) -> None:
+        super().__init__(source)
 
-    cache = Cache()
+        self.interpreter: "Optional[str]" = source
+        if cache is None:
+            warnings.warn(f"No global cache used for Python backend strategy {self}")
+        self.cache = cache if cache is not None else {}
 
-    def __init__(
-        self,
-        interpreter: "Optional[str]" = None,
-    ) -> None:
-        """Initiates a strategy."""
-        if not interpreter:
-            raise ValueError("Interpreter (python) must be specified.")
-
-        self.interpreter: "Optional[str]" = interpreter
-
-        if interpreter != "python":
-            raise NotImplementedError(
-                "Only python interpreter supported for python backend"
+        if self.interpreter != "python":
+            raise ValueError(
+                "Only the 'python' interpreter source is currently supported."
             )
 
-        self.input_pipe: "Optional[Pipe]" = None
-        self.id: "Optional[str]" = None  # pylint: disable=invalid-name
+    def create(self, **config) -> None:
+        session_id = config.pop("session_id", None)
+        data = self.strategy_config(**config)
 
-        # For debugging/testing
-        self.debug: bool = bool(os.getenv("OTELIB_DEBUG", ""))
-        self._session_id: "Optional[str]" = None
-
-    def create(self, **kwargs) -> None:
-        session_id = kwargs.pop("session_id", None)
-        data = self.strategy_config(**kwargs)
-
-        self.id = f"{self.strategy_name}-{str(uuid4())}"
-        self.id = self.id
-        self.cache[self.id] = data.json()
+        self.strategy_id = f"{self.strategy_name}-{uuid4()}"
+        self.cache[self.strategy_id] = data.json()
 
         if session_id:
-            session = self.cache[session_id]
+            if session_id not in self.cache:
+                raise ItemNotFoundInCache(
+                    "Session not found in cache, but given to create()", session_id
+                )
+
+            # Add strategy ID information to the session object.
             list_key = f"{self.strategy_name}_info"
-            if list_key in session:
-                session[list_key].extend([self.id])
+            if list_key in self.cache[session_id]:
+                if not isinstance(self.cache[session_id][list_key], list):
+                    raise TypeError(
+                        f"Expected type for {list_key!r} field in session to be a "
+                        f"list, found {type(self.cache[session_id][list_key])!r}."
+                    )
+                self.cache[session_id][list_key].append(self.strategy_id)
             else:
-                session[list_key] = [self.id]
+                self.cache[session_id][list_key] = [self.strategy_id]
 
     def fetch(self, session_id: str) -> bytes:
-        config = self.strategy_config(**json.loads(self.cache[self.id]))
-        session_data = None if not session_id else self.cache[session_id]
-        session_update = create_strategy(self.strategy_name, config)
-        session_update = session_update.get(session=session_data)
-
-        if session_update and session_id:
-            self.cache[session_id].update(session_update)
-
-        return bytes(AttrDict(**session_update).json(), encoding="utf-8")
+        return self._run_strategy_method("get", session_id)
 
     def initialize(self, session_id: str) -> bytes:
-        config = self.strategy_config(**json.loads(self.cache[self.id]))
-        if session_id:
-            session_data = self.cache[session_id]
-        else:
-            session_data = None
+        return self._run_strategy_method("initialize", session_id)
 
+    def _create_session(self) -> str:
+        session_id = f"session-{uuid4()}"
+        self.cache[session_id] = {}
+        return session_id
+
+    def _run_strategy_method(
+        self, method_name: "Literal['get', 'initialize']", session_id: str
+    ) -> bytes:
+        """Generic implementation of the `fetch()` and `initialize()` methods.
+
+        This will run the `method_name` method on the strategy and return the
+        serialized session update object.
+
+        Parameters:
+            method_name: The name of the strategy's method to execute.
+            session_id: The ID of the session shared by the pipeline.
+
+        Returns:
+            The bytes-serialized output from the given strategy method.
+
+        """
+        if method_name not in ["get", "initialize"]:
+            raise PythonBackendException(
+                "method_name should be either 'get' or 'initialize'."
+            )
+
+        self._sanity_checks(session_id)
+
+        config = self.strategy_config(**json.loads(self.cache[self.strategy_id]))
         strategy = create_strategy(self.strategy_name, config)
-        session_update = strategy.initialize(session=session_data)
-        if session_update and session_id:
-            self.cache[session_id].update(session_update)
 
-        return bytes(AttrDict(**session_update).json(), encoding="utf-8")
+        if not hasattr(strategy, method_name):
+            raise PythonBackendException(
+                f"{method_name!r} is not a valid method for {strategy}"
+            )
 
-    def get(self, session_id: "Optional[str]" = None) -> bytes:
-        """Executes a pipeline.
+        session_update: "SessionUpdate" = getattr(strategy, method_name)(
+            session=deepcopy(self.cache[session_id])
+        )
 
-        This will call `initialize()` and then the `get()` method on the
-        input pipe, which in turn will call the `get()` method on the
-        strategy connected to its input and so forth until the beginning
-        of the pipeline.
+        self.cache[session_id].update(session_update)
 
-        Finally, `fetch()` is called and its output is returned.
+        return session_update.json().encode(encoding="utf-8")
+
+    def _sanity_checks(self, session_id: str) -> None:
+        """Perform sanity checks before running a strategy method.
 
         Parameters:
             session_id: The ID of the session shared by the pipeline.
 
-        Returns:
-            The output from `fetch()`.
-
         """
-        if session_id is None:
-            session_id = f"session-{str(uuid4())}"
-            self.cache[session_id] = {}
+        if not self.strategy_id or self.strategy_id not in self.cache:
+            raise ItemNotFoundInCache(
+                "Run create() prior to initialize()", self.strategy_id
+            )
 
-        if self.debug:
-            self._session_id = session_id
-
-        self.initialize(session_id)
-        if self.input_pipe:
-            self.input_pipe.get(session_id)
-        return self.fetch(session_id)
+        if session_id not in self.cache or not isinstance(
+            self.cache.get(session_id, {}), dict
+        ):
+            raise ItemNotFoundInCache(
+                "Did you run this method through get()?", session_id
+            )

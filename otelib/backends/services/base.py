@@ -1,25 +1,22 @@
 """Base class for strategies in the service/REST API backend."""
 import json
-import os
 from typing import TYPE_CHECKING
 
 import requests
-from oteapi.models.genericconfig import GenericConfig
 
 from otelib.backends.strategies import AbstractBaseStrategy
 from otelib.exceptions import ApiError
-from otelib.pipe import Pipe
 from otelib.settings import Settings
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Any, Dict, Optional, Type
+    from typing import Any, Dict, Optional
 
 
 class BaseServicesStrategy(AbstractBaseStrategy):
     """Abstract class for strategies.
 
     Parameters:
-        url (str): The base URL of the OTEAPI Service.
+        source (str): The base URL of the OTEAPI Service.
 
     Attributes:
         url (str): The base URL of the OTEAPI Service.
@@ -28,29 +25,28 @@ class BaseServicesStrategy(AbstractBaseStrategy):
 
     """
 
-    strategy_name: str
-    strategy_config: "Type[GenericConfig]"
+    def __init__(self, source: str) -> None:
+        super().__init__(source)
 
-    def __init__(
-        self, url: "Optional[str]" = None, headers: "Optional[Dict[str, Any]]" = None
-    ) -> None:
-        """Initiates a strategy."""
-        if not url:
-            raise ValueError("Url must be specified.")
+        self.url: "Optional[str]" = source
+        self._headers: "Optional[Dict[str, Any]]" = None
+        self.settings = Settings()
 
-        self.url: "Optional[str]" = url
-        self.headers: "Optional[Dict[str, Any]]" = headers
-        self.settings: Settings = Settings()
-        self.input_pipe: "Optional[Pipe]" = None
-        self.id: "Optional[str]" = None  # pylint: disable=invalid-name
+    @property
+    def headers(self) -> "Dict[str, Any]":
+        """URL headers to use for all requests to the OTEAPI Service."""
+        return self._headers or {}
 
-        # For debugging/testing
-        self.debug: bool = bool(os.getenv("OTELIB_DEBUG", ""))
-        self._session_id: "Optional[str]" = None
+    @headers.setter
+    def headers(self, value: "Dict[str, Any]") -> None:
+        """Set the URL headers to use for all requests to the OTEAPI Service."""
+        if not isinstance(value, dict):
+            raise TypeError("headers must be a dictionary")
+        self._headers = value
 
-    def create(self, **kwargs) -> None:
-        session_id = kwargs.pop("session_id", None)
-        data = self.strategy_config(**kwargs)
+    def create(self, **config) -> None:
+        session_id = config.pop("session_id", None)
+        data = self.strategy_config(**config)
 
         headers = self.headers or {}
         if "Content-Type" not in headers:
@@ -66,33 +62,42 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         if not response.ok:
             raise ApiError(
                 f"Cannot create {self.strategy_name}: {data!r}"
-                f"content={str(response.content) if self.debug else ''}",
+                f"{' content=' + str(response.content) if self.debug else ''}",
                 status=response.status_code,
             )
 
         response_json: dict = response.json()
-        self.id = response_json.pop(f"{self.strategy_name}_id")
+        self.strategy_id = (
+            response_json.pop(f"{self.strategy_name}_id")
+            if f"{self.strategy_name}_id" in response_json
+            else response_json.pop(f"{self.strategy_name[len('data'):]}_id")
+        )
 
     def fetch(self, session_id: str) -> bytes:
         response = requests.get(
-            f"{self.url}{self.settings.prefix}/{self.strategy_name}/{self.id}",
-            headers=self.headers,
+            f"{self.url}{self.settings.prefix}/{self.strategy_name}/{self.strategy_id}",
             params={"session_id": session_id},
             timeout=self.settings.timeout,
+            headers=self.headers,
         )
         if response.ok:
             return response.content
+        strategy_name = (
+            self.strategy_name[len("data") :]
+            if self.strategy_name.startswith("data")
+            else self.strategy_name
+        )
         raise ApiError(
             f"Cannot fetch {self.strategy_name}: session_id={session_id!r} "
-            f"{self.strategy_name}_id={self.id!r}"
-            f"content={str(response.content) if self.debug else ''}",
+            f"{strategy_name}_id={self.strategy_id!r}"
+            f"{' content=' + str(response.content) if self.debug else ''}",
             status=response.status_code,
         )
 
     def initialize(self, session_id: str) -> bytes:
         post_path = (
             f"{self.url}{self.settings.prefix}"
-            f"/{self.strategy_name}/{self.id}/initialize"
+            f"/{self.strategy_name}/{self.strategy_id}/initialize"
         )
         response = requests.post(
             post_path,
@@ -102,50 +107,29 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         )
         if response.ok:
             return response.content
+        strategy_name = (
+            self.strategy_name[len("data") :]
+            if self.strategy_name.startswith("data")
+            else self.strategy_name
+        )
         raise ApiError(
             f"Cannot initialize {self.strategy_name}: session_id={session_id!r} "
-            f"{self.strategy_name}_id={self.id!r}"
-            f"content={str(response.content) if self.debug else ''}",
+            f"{strategy_name}_id={self.strategy_id!r}"
+            f"{' content=' + str(response.content) if self.debug else ''}",
             status=response.status_code,
         )
 
-    def get(self, session_id: "Optional[str]" = None) -> bytes:
-        """Executes a pipeline.
-
-        This will call `initialize()` and then the `get()` method on the
-        input pipe, which in turn will call the `get()` method on the
-        strategy connected to its input and so forth until the beginning
-        of the pipeline.
-
-        Finally, `fetch()` is called and its output is returned.
-
-        Parameters:
-            session_id: The ID of the session shared by the pipeline.
-
-        Returns:
-            The output from `fetch()`.
-
-        """
-
-        if session_id is None:
-            response = requests.post(
-                f"{self.url}{self.settings.prefix}/session",
-                json={},
-                headers=self.headers,
-                timeout=self.settings.timeout,
+    def _create_session(self) -> str:
+        response = requests.post(
+            f"{self.url}{self.settings.prefix}/session",
+            json={},
+            headers=self.headers,
+            timeout=self.settings.timeout,
+        )
+        if not response.ok:
+            raise ApiError(
+                f"Cannot create session: {response.status_code} "
+                f"{' content=' + str(response.content) if self.debug else ''}",
+                status=response.status_code,
             )
-            if not response.ok:
-                raise ApiError(
-                    f"Cannot create session: {response.status_code}"
-                    f"content={str(response.content) if self.debug else ''}",
-                    status=response.status_code,
-                )
-            session_id = json.loads(response.text)["session_id"]
-
-        if self.debug:
-            self._session_id = session_id
-
-        self.initialize(session_id)
-        if self.input_pipe:
-            self.input_pipe.get(session_id)
-        return self.fetch(session_id)
+        return json.loads(response.text)["session_id"]
