@@ -60,7 +60,7 @@ disable = [
     "no-name-in-module",
     "no-self-argument",
     "too-few-public-methods",
-    "duplicate-code",
+    # "duplicate-code",
 ]
 
 [tool.pytest.ini_options]
