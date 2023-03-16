@@ -1,98 +1,61 @@
 """Client for python backend."""
-from otelib.backends.python import (
-    DataResource,
-    Filter,
-    Function,
-    Mapping,
-    Transformation,
-)
+from typing import TYPE_CHECKING
+
+from oteapi.plugins import load_strategies
+
+from otelib.backends.client import AbstractBaseClient
+from otelib.exceptions import PythonBackendException
+
+if TYPE_CHECKING:  # pragma: no cover
+    from typing import Any, Dict, Type
+
+    from otelib.backends.python.base import BasePythonStrategy
+
+CACHE: "Dict[str, Any]" = {}
 
 
 # pylint: disable=duplicate-code
-class OTEPythonClient:
+class OTEPythonClient(AbstractBaseClient):
     """The Python version of the OTEClient object.
 
-    Parameters:
-        Interpreter (str): Interpreter for the python backend.
-
     Attributes:
-        Interpreter (str): Interpreter for the python backend.
+        interpreter (str): Interpreter for the python backend.
 
     """
 
-    def __init__(self, interpreter: str) -> None:
-        """Initiates an OTEAPI Service client.
+    _backend = "python"
 
-        The `interpreter` indicates which intepreter to use for the python backend
-        currently only 'python' is supported
-        """
-        self.interpreter: str = interpreter
-        if interpreter != "python":
+    def __init__(self, source: str) -> None:
+        """Initiates an OTEAPI Python client."""
+        super().__init__(source)
+
+        self._cache = CACHE
+
+        load_strategies()
+
+    @property
+    def interpreter(self) -> str:
+        """Proxy for the source attribute."""
+        return self.source
+
+    def _validate_source(self, source: str) -> None:
+        if source != "python":
             raise NotImplementedError(
-                "Only python interpreter supported for python backend"
+                f"{source!r} is not a valid Python backend interpreter source. "
+                "Only the 'python' interpreter is supported for the Python backend."
             )
+        super()._validate_source(source)
 
-    def create_dataresource(self, **kwargs) -> DataResource:
-        """Create a new data resource.
+    def _create_strategy(  # type: ignore[override]
+        self, strategy_cls: "Type[BasePythonStrategy]", **config
+    ) -> "BasePythonStrategy":
+        strategy = strategy_cls(self.interpreter, self._cache)
+        strategy.create(**config)
+        return strategy
 
-        Any given keyword arguments are passed on to the `create()` method.
-
-        Returns:
-            The newly created data resource.
-
-        """
-        data_resource = DataResource(self.interpreter)
-        data_resource.create(**kwargs)
-        return data_resource
-
-    def create_transformation(self, **kwargs) -> Transformation:
-        """Create a new transformation.
-
-        Any given keyword arguments are passed on to the `create()` method.
-
-        Returns:
-            The newly created transformation.
-
-        """
-        transformation = Transformation(self.interpreter)
-        transformation.create(**kwargs)
-        return transformation
-
-    def create_filter(self, **kwargs) -> Filter:
-        """Create a new filter.
-
-        Any given keyword arguments are passed on to the `create()` method.
-
-        Returns:
-            The newly created filter.
-
-        """
-        filter_ = Filter(self.interpreter)
-        filter_.create(**kwargs)
-        return filter_
-
-    def create_mapping(self, **kwargs) -> Mapping:
-        """Create a new mapping.
-
-        Any given keyword arguments are passed on to the `create()` method.
-
-        Returns:
-            The newly created mapping.
-
-        """
-        mapping = Mapping(self.interpreter)
-        mapping.create(**kwargs)
-        return mapping
-
-    def create_function(self, **kwargs) -> Function:
-        """Create a new function.
-
-        Any given keyword arguments are passed on to the `create()` method.
-
-        Returns:
-            The newly created function.
-
-        """
-        function_ = Function(self.interpreter)
-        function_.create(**kwargs)
-        return function_
+    def clear_cache(self) -> None:
+        """Clear the global CACHE object."""
+        global CACHE  # pylint: disable=global-statement
+        CACHE = {}
+        if self._cache != CACHE and (self._cache or CACHE):
+            raise PythonBackendException("Could not clear the global CACHE object.")

@@ -1,14 +1,15 @@
 """Fixtures and configuration for pytest."""
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments,protected-access
 from enum import Enum
 from typing import TYPE_CHECKING
 
 import pytest
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Dict, Optional, Union
+    from typing import Any, Callable, Dict, Literal, Optional, Type, Union
 
     from requests_mock import Mocker
+    from utils import ResourceType
 
     from otelib.client import OTEClient
 
@@ -26,28 +27,6 @@ if TYPE_CHECKING:
         ],
         None,
     ]
-
-
-class ResourceType(str, Enum):
-    """Enumeration of resource types."""
-
-    DATARESOURCE = "dataresource"
-    FILTER = "filter"
-    FUNCTION = "function"
-    MAPPING = "mapping"
-    SESSION = "session"
-    TRANSFORMATION = "transformation"
-
-    def get_idprefix(self) -> str:
-        """Get the `IDPREFIX` used in oteapi-services."""
-        return {
-            "dataresource": "dataresource-",
-            "filter": "filter-",
-            "function": "function-",
-            "mapping": "mapping-",
-            "session": "session-",
-            "transformation": "transformation-",
-        }[self.value]
 
 
 class HTTPMethod(str, Enum):
@@ -85,8 +64,10 @@ def server_url() -> str:
 
 
 @pytest.fixture
-def resource_type_cls() -> ResourceType:
+def resource_type_cls() -> "Type[ResourceType]":
     """Return the `ResourceType` Enum."""
+    from utils import ResourceType
+
     return ResourceType
 
 
@@ -96,6 +77,7 @@ def ids() -> "Callable[[Union[ResourceType, str]], str]":
 
     By "resource", any resource is meant, e.g., `sessions`, `filter`, etc.
     """
+    from utils import ResourceType
 
     def _ids(resource_type: "Union[ResourceType, str]") -> str:
         """Return a test id for the given `resource_type`."""
@@ -105,12 +87,31 @@ def ids() -> "Callable[[Union[ResourceType, str]], str]":
     return _ids
 
 
+@pytest.fixture(params=["services", "python"])
+def backend(request: pytest.FixtureRequest) -> str:
+    """Run a test for all backends."""
+    if request.param == "python":
+        from oteapi.plugins import load_strategies
+
+        load_strategies()
+
+    return request.param
+
+
 @pytest.fixture
-def client(server_url: str) -> "OTEClient":
+def client(server_url: str, backend: str) -> "OTEClient":
     """Create an `OTEClient` test client."""
     from otelib.client import OTEClient
 
-    return OTEClient(server_url)
+    if backend == "services":
+        return OTEClient(server_url)
+
+    if backend == "python":
+        res = OTEClient("python")
+        res._impl.clear_cache()  # pylint: disable=no-member
+        return res
+
+    raise RuntimeError(f"Unknown backend: {backend!r}")
 
 
 @pytest.fixture
@@ -126,7 +127,7 @@ def mock_session(
     """
     from otelib.settings import Settings
 
-    if "example" in server_url:
+    if client._impl._backend == "services" and "example" in server_url:
         requests_mock.post(
             f"{client.url}{Settings().prefix}/session",
             json={"session_id": ids("session")},
@@ -149,7 +150,6 @@ def mock_ote_response(
         method: "Union[HTTPMethod, str]",
         endpoint: str,
         status_code: int = 200,
-        backend: "Optional[str]" = None,
         params: "Optional[Union[Dict[str, Any], str]]" = None,
         headers: "Optional[dict]" = None,
         return_content: "Optional[bytes]" = None,
@@ -162,7 +162,7 @@ def mock_ote_response(
         It will only be ensured that the `endpoint` starts with a forward slash.
         If it does not, one will be added. Otherwise, `endpoint` is not manipulated.
         """
-        if "example" not in server_url or backend == "python":
+        if "example" not in server_url:
             # Make sure the requests are done for real.
             requests_mock.real_http = True
             return
@@ -232,42 +232,12 @@ def mock_ote_response(
     return _mock_response
 
 
-TEST_DATA = {
-    "dataresource": {
-        "content": {
-            "firstName": "Joe",
-            "lastName": "Jackson",
-            "gender": "male",
-            "age": 28,
-            "address": {
-                "streetAddress": "101",
-                "city": "San Diego",
-                "state": "CA",
-            },
-            "phoneNumbers": [{"type": "home", "number": "7349282382"}],
-        }
-    },
-    "filter": {"sqlquery": "DROP TABLE myTable;"},
-    "function": {},
-    "mapping": {
-        "prefixes": {
-            "map": "http://example.org/0.0.1/mapping_ontology#",
-            "onto": "http://example.org/0.2.1/ontology#",
-        },
-        "triples": [
-            ["http://onto-ns.com/meta/1.0/Foo#a", "map:mapsTo", "onto:A"],
-            ["http://onto-ns.com/meta/1.0/Foo#b", "map:mapsTo", "onto:B"],
-            ["http://onto-ns.com/meta/1.0/Bar#a", "map:mapsTo", "onto:C"],
-        ],
-    },
-    "transformation": {"data": {}},
-}
-
-
 @pytest.fixture
 def raw_test_data() -> "Dict[str, Any]":
     """Return raw test data."""
     from copy import deepcopy
+
+    from utils import TEST_DATA
 
     return deepcopy(TEST_DATA)
 
@@ -277,13 +247,54 @@ def testdata(
     raw_test_data: "Dict[str, Any]",
 ) -> "Callable[[Union[ResourceType, str]], dict]":
     """Test data for OTE resource."""
+    from utils import ResourceType
 
-    def _testdata(resource_type: "Union[ResourceType, str]") -> dict:
-        """Return test data for a given resource."""
+    def _testdata(
+        resource_type: "Union[ResourceType, str]",
+        method: "Optional[Literal['get', 'initialize']]" = None,
+    ) -> dict:
+        """Return test data for a given resource.
+
+        Parameters:
+            resource_type: The resource type to return test data for.
+            method: Optionally, provide the method for which to return the test data.
+                If not given, the test data will be provided as is.
+
+        """
         resource_type = ResourceType(resource_type)
         if resource_type == ResourceType.SESSION:
             raise ValueError("No test data available for a session.")
 
-        return raw_test_data[resource_type.value]
+        if method is None:
+            return raw_test_data[resource_type.value]
+
+        return (
+            raw_test_data[resource_type.value]
+            if resource_type.map_method_to_data(method)
+            else {}
+        )
 
     return _testdata
+
+
+@pytest.fixture(autouse=True)
+def mock_celery_transformation_strategy(
+    monkeypatch: pytest.MonkeyPatch, raw_test_data: "Dict[str, Any]"
+) -> None:
+    """Use celery_worker always for all things.
+
+    Parameters:
+        monkeypatch: Monkeypatch fixture for use in pytest.
+        raw_test_data: Deep copy of the test data.
+
+    """
+
+    class MockResult:
+        """Mock result from 'transformationType=celery/remote'."""
+
+        task_id = raw_test_data["transformation"]["celery_task_id"]
+
+    monkeypatch.setattr(
+        "oteapi.strategies.transformation.celery_remote.CELERY_APP.send_task",
+        lambda *args, **kwargs: MockResult(),
+    )
