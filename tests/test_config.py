@@ -1,6 +1,9 @@
 """Pytest for testing kwargs in clients"""
 
+import warnings
+
 import pytest
+
 from otelib import OTEClient
 
 
@@ -15,6 +18,12 @@ def test_warning(backend, config):
     """Pytest for unloaded kwargs warning."""
     message = f"The given configuration option(s) for {tuple(config)} is/are ignored."
     with pytest.warns(UserWarning) as record:
-        OTEClient(backend, **config)
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=DeprecationWarning)
+            warnings.filterwarnings(
+                "ignore", message=".*No global cache used for Python backend strategy.*"
+            )
+            OTEClient(backend, **config)
     assert len(record) == 1
-    record[0].message == message
+
+    assert str(record[0].message) == message
