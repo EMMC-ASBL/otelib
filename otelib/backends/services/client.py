@@ -4,12 +4,9 @@ from typing import TYPE_CHECKING
 from otelib.backends.client import AbstractBaseClient
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Type
+    from typing import Any, Dict, Type
 
     from otelib.backends.services.base import BaseServicesStrategy
-
-if TYPE_CHECKING:  # pragma: no cover
-    from typing import Any, Dict
 
 
 # pylint: disable=duplicate-code

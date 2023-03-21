@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from otelib.backends.factories import strategy_factory
 from otelib.backends.utils import Backend, StrategyType
+from otelib.warnings import IgnoringConfigOptions
 
 if TYPE_CHECKING:  # pragma: no cover
     from typing import Any, Dict, Type, Union
@@ -52,7 +53,9 @@ class AbstractBaseClient(ABC):
         """Set the custom client configuration options."""
         if config:
             warnings.warn(
-                f"The given configuration option(s) for {tuple(config)} is/are ignored."
+                f"The given configuration option(s) for {tuple(config)} is/are "
+                "ignored.",
+                IgnoringConfigOptions,
             )
 
     @abstractmethod
