@@ -1,14 +1,40 @@
 # Changelog
 
-## [Unreleased](https://github.com/EMMC-ASBL/otelib/tree/HEAD)
+## [v0.3.0](https://github.com/EMMC-ASBL/otelib/tree/v0.3.0) (2023-04-13)
 
-[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.2.0...HEAD)
+[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.2.0...v0.3.0)
+
+**Implemented enhancements:**
+
+- Use flit instead of setuptools [\#76](https://github.com/EMMC-ASBL/otelib/issues/76)
+- Use SINTEF/ci-cd [\#74](https://github.com/EMMC-ASBL/otelib/issues/74)
+
+**Fixed bugs:**
+
+- Update tests to support updated celery strategy [\#101](https://github.com/EMMC-ASBL/otelib/issues/101)
 
 **Closed issues:**
 
-- Update pylint options [\#79](https://github.com/EMMC-ASBL/otelib/issues/79)
+- Improve test startup for backend strategies [\#69](https://github.com/EMMC-ASBL/otelib/issues/69)
+- Have all clients inherit from the same base class.  [\#68](https://github.com/EMMC-ASBL/otelib/issues/68)
+- Improved caching for python backend  [\#66](https://github.com/EMMC-ASBL/otelib/issues/66)
 
-## [v0.2.0](https://github.com/EMMC-ASBL/otelib/tree/v0.2.0) (2022-10-28)
+**Merged pull requests:**
+
+- \[Auto-generated\] Update dependencies [\#107](https://github.com/EMMC-ASBL/otelib/pull/107) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#105](https://github.com/EMMC-ASBL/otelib/pull/105) ([TEAM4-0](https://github.com/TEAM4-0))
+- Celery updates [\#103](https://github.com/EMMC-ASBL/otelib/pull/103) ([CasperWA](https://github.com/CasperWA))
+- \[Auto-generated\] Update dependencies [\#100](https://github.com/EMMC-ASBL/otelib/pull/100) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#98](https://github.com/EMMC-ASBL/otelib/pull/98) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#95](https://github.com/EMMC-ASBL/otelib/pull/95) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#93](https://github.com/EMMC-ASBL/otelib/pull/93) ([TEAM4-0](https://github.com/TEAM4-0))
+- Renamed argument of Pipe.get\(\) to `session_id` to reduce confusion [\#91](https://github.com/EMMC-ASBL/otelib/pull/91) ([jesper-friis](https://github.com/jesper-friis))
+- \[Auto-generated\] Update dependencies [\#90](https://github.com/EMMC-ASBL/otelib/pull/90) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#89](https://github.com/EMMC-ASBL/otelib/pull/89) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#82](https://github.com/EMMC-ASBL/otelib/pull/82) ([TEAM4-0](https://github.com/TEAM4-0))
+- Update CI/CD & use `flit` build system [\#77](https://github.com/EMMC-ASBL/otelib/pull/77) ([CasperWA](https://github.com/CasperWA))
+
+## [v0.2.0](https://github.com/EMMC-ASBL/otelib/tree/v0.2.0) (2022-11-09)
 
 [Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.1.0...v0.2.0)
 
@@ -22,6 +48,7 @@
 
 **Closed issues:**
 
+- Update pylint options [\#79](https://github.com/EMMC-ASBL/otelib/issues/79)
 - I think this part, which is repeated over and over can be simplified, but I'll have to think more about it. Perhaps this could be part of a separate issue and PR? :\) [\#65](https://github.com/EMMC-ASBL/otelib/issues/65)
 
 **Merged pull requests:**

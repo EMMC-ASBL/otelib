@@ -18,7 +18,6 @@ if TYPE_CHECKING:
     BaseStrategy = Union[BasePythonStrategy, BaseServicesStrategy]
 
 
-@pytest.mark.parametrize("backend", ["services", "python"])
 @pytest.mark.parametrize(
     "strategy_name,create_kwargs",
     strategy_create_kwargs(),
@@ -38,70 +37,60 @@ def test_get(
     if strategy_name == "function":
         pytest.skip("No function strategy exists in oteapi-core yet.")
 
+    import importlib
     import json
 
     import requests
 
+    strategies = importlib.import_module(f"otelib.backends.{backend}")
+    server_url = server_url if backend != "python" else backend
+
     if backend == "services":
-        from otelib.backends import services as strategies
-    elif backend == "python":
-        from otelib.backends import python as strategies
+        # Mock URL responses
 
-        server_url = "python"
+        ## create()
+        mock_ote_response(
+            method="post",
+            endpoint=f"/{strategy_name}",
+            return_json={
+                f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # pylint: disable=line-too-long
+                "_id": ids(strategy_name)
+            },
+        )
 
-        from oteapi.plugins import load_strategies
+        # initialize()
+        # The filter and mapping returns everything from their `initialize()` method.
+        mock_ote_response(
+            method="post",
+            endpoint=f"/{strategy_name}/{ids(strategy_name)}/initialize",
+            params={"session_id": ids("session")},
+            return_json=(
+                testdata(strategy_name)
+                if strategy_name in ("filter", "mapping")
+                else {}
+            ),
+        )
 
-        load_strategies()
+        # fetch()
+        # The data resource and transformation returns everything from their `get()`
+        # method.
+        mock_ote_response(
+            method="get",
+            endpoint=f"/{strategy_name}/{ids(strategy_name)}",
+            params={"session_id": ids("session")},
+            return_json=(
+                testdata(strategy_name)
+                if strategy_name in ("dataresource", "transformation")
+                else {}
+            ),
+        )
 
-        from otelib.backends.python.base import Cache
-
-        Cache().clear()  # Cleanup the cache from other tests
-
-    ## create()
-    mock_ote_response(
-        method="post",
-        endpoint=f"/{strategy_name}",
-        return_json={
-            f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # pylint: disable=line-too-long
-            "_id": ids(strategy_name)
-        },
-        backend=backend,
-    )
-
-    # initialize()
-    # The filter and mapping returns everything from their `initialize()` method.
-    mock_ote_response(
-        method="post",
-        endpoint=f"/{strategy_name}/{ids(strategy_name)}/initialize",
-        params={"session_id": ids("session")},
-        return_json=(
-            testdata(strategy_name) if strategy_name in ("filter", "mapping") else {}
-        ),
-        backend=backend,
-    )
-
-    # fetch()
-    # The data resource and transformation returns everything from their `get()`
-    # method.
-    mock_ote_response(
-        method="get",
-        endpoint=f"/{strategy_name}/{ids(strategy_name)}",
-        params={"session_id": ids("session")},
-        return_json=(
-            testdata(strategy_name)
-            if strategy_name in ("dataresource", "transformation")
-            else {}
-        ),
-        backend=backend,
-    )
-
-    # Session content
-    mock_ote_response(
-        method="get",
-        endpoint=f"/session/{ids('session')}",
-        return_json=testdata(strategy_name),
-        backend=backend,
-    )
+        # Session content
+        mock_ote_response(
+            method="get",
+            endpoint=f"/session/{ids('session')}",
+            return_json=testdata(strategy_name),
+        )
 
     strategy_name_map = {"dataresource": "DataResource"}
 
@@ -111,7 +100,7 @@ def test_get(
 
     # We must create the strategy - getting a strategy ID
     strategy.create(**create_kwargs)
-    assert strategy.id
+    assert strategy.strategy_id
 
     # There must be a strategy name associated with the strategy
     assert strategy.strategy_name == strategy_name
@@ -120,6 +109,17 @@ def test_get(
     assert isinstance(content, bytes)
     if strategy_name in ("filter", "mapping"):
         assert json.loads(content) == {}
+    elif (
+        strategy_name in ("transformation",)
+        and backend == "services"
+        and "example" not in server_url
+    ):
+        # Real backend !
+        # Dynamic response content - just check keys are the same and values are
+        # non-empty
+        _content: "dict[str, Any]" = json.loads(content)
+        assert list(_content) == list(testdata(strategy_name))
+        assert all(_content.values())
     else:
         assert json.loads(content) == testdata(strategy_name)
 
@@ -141,14 +141,22 @@ def test_get(
         session = strategy.cache[session_id]
 
     for key, value in testdata(strategy_name).items():
-        if strategy_name == "mapping" and backend == "python":
-            pytest.skip("Issues with tuple/list conversion json for python backend")
         assert key in session
-        assert value == session[key]
 
-    # for key, value in testdata(strategy_name).items():
-    #    assert key in session
-    #    assert value == session[key]
+        if strategy_name == "mapping" and key == "triples":
+            # The mapping strategy's "triples" key has a Set type value
+            session_triples = sorted(list(triple) for triple in session[key])
+            assert sorted(value) == session_triples
+        elif (
+            strategy_name == "transformation"
+            and key == "celery_task_id"
+            and "example" not in server_url
+        ):
+            # The task ID is dynamically generated.
+            # Simply check the value is non-empty
+            assert key in session and session[key]
+        else:
+            assert value == session[key]
 
 
 @pytest.mark.parametrize(
@@ -156,7 +164,7 @@ def test_get(
     strategy_create_kwargs(),
     ids=[_[0] for _ in strategy_create_kwargs()],
 )
-def test_get_fails(
+def test_services_get_fails(
     mock_ote_response: "OTEResponse",
     ids: "Callable[[Union[ResourceType, str]], str]",
     server_url: str,
@@ -196,9 +204,9 @@ def test_get_fails(
 
     # We must create the strategy - getting a strategy ID
     strategy.create(**create_kwargs)
-    assert strategy.id
+    assert strategy.strategy_id
 
-    with pytest.raises(ApiError, match="APIError"):
+    with pytest.raises(ApiError, match=f"^{ApiError.__name__}.*"):
         # Change `url` attribute to hit a wrong URL and raise
         strategy.url = wrong_url
         strategy.get()

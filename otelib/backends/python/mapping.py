@@ -6,7 +6,7 @@ from oteapi.models import MappingConfig
 from otelib.backends.python.base import BasePythonStrategy
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Optional
+    from typing import Type
 
 
 class Mapping(BasePythonStrategy):
@@ -14,4 +14,4 @@ class Mapping(BasePythonStrategy):
     operations."""
 
     strategy_name = "mapping"
-    strategy_config = MappingConfig
+    strategy_config: "Type[MappingConfig]" = MappingConfig
