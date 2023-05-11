@@ -115,7 +115,13 @@ class AbstractBaseStrategy(ABC):
                 strategy.
 
         """
-        self.input_pipe = input_pipe
+        while (hasattr(self, 'input_pipe')):
+            pipe = self.input_pipe
+            if hasattr(pipe, 'input'):
+                self = pipe.input
+            else:            
+                self.input_pipe=input_pipe
+                break
 
     def __rshift__(self, other: "AbstractBaseStrategy") -> "AbstractBaseStrategy":
         """Implements strategy concatenation using the `>>` symbol.
