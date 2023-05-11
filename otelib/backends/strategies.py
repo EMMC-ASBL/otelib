@@ -115,8 +115,8 @@ class AbstractBaseStrategy(ABC):
                 strategy.
 
         """
-        filter = _find_input_filter(self)
-        filter.input_pipe = input_pipe
+        start_filter = _find_start_filter(self)
+        start_filter.input_pipe = input_pipe
 
     def __rshift__(self, other: "AbstractBaseStrategy") -> "AbstractBaseStrategy":
         """Implements strategy concatenation using the `>>` symbol.
@@ -133,14 +133,14 @@ class AbstractBaseStrategy(ABC):
         return other
 
 
-def _find_input_filter(filter):
+def _find_start_filter(other):
     """Used by _set_input to find the input filter,
     incase of pipeline concatenation."""
 
-    while hasattr(filter, "input_pipe"):
-        pipe = filter.input_pipe
+    while hasattr(other, "input_pipe"):
+        pipe = other.input_pipe
         if hasattr(pipe, "input"):
-            filter = pipe.input
+            other = pipe.input
         else:
-            return filter
-    return filter
+            return other
+    return other
