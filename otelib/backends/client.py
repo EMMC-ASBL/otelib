@@ -1,12 +1,14 @@
 """Base API for backend client."""
+import warnings
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 from otelib.backends.factories import strategy_factory
 from otelib.backends.utils import Backend, StrategyType
+from otelib.warnings import IgnoringConfigOptions
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Type, Union
+    from typing import Any, Dict, Type, Union
 
     from otelib.backends.strategies import AbstractBaseStrategy
 
@@ -16,7 +18,7 @@ class AbstractBaseClient(ABC):
 
     _backend: "Union[Backend, str]"
 
-    def __init__(self, source: str) -> None:
+    def __init__(self, source: str, **config) -> None:
         """Initiates a client."""
         if not source:
             raise ValueError("source must be provided.")
@@ -25,6 +27,7 @@ class AbstractBaseClient(ABC):
         self._backend = Backend(self._backend)
 
         self._validate_source(source)
+        self._set_config(config)
 
     @property
     def source(self) -> str:
@@ -45,6 +48,15 @@ class AbstractBaseClient(ABC):
                 "'source' should not be set prior to calling '_validate_source()'."
             )
         self._source = source
+
+    def _set_config(self, config: "Dict[str, Any]") -> None:
+        """Set the custom client configuration options."""
+        if config:
+            warnings.warn(
+                f"The given configuration option(s) for {tuple(config)} is/are "
+                "ignored.",
+                IgnoringConfigOptions,
+            )
 
     @abstractmethod
     def _create_strategy(

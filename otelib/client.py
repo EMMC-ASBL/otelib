@@ -21,12 +21,13 @@ class OTEClient:
 
     """
 
-    def __init__(self, url: str) -> None:
+    def __init__(self, url: str, **config) -> None:
         """Initialize an OTE Client.
 
         Parameters:
             url: The base URL of the OTE Service (or Python interpreter for local
                 OTEAPI Core usage).
+            config: Custom client configuration properties.
 
         """
         try:
@@ -36,7 +37,7 @@ class OTEClient:
         else:
             backend = Backend.SERVICES
 
-        self._impl = client_factory(backend)(url)
+        self._impl = client_factory(backend)(url, **config)
 
     @property
     def url(self) -> str:
