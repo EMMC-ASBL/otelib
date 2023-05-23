@@ -35,7 +35,10 @@ class BaseServicesStrategy(AbstractBaseStrategy):
     @property
     def headers(self) -> "Dict[str, Any]":
         """URL headers to use for all requests to the OTEAPI Service."""
-        return self._headers or {}
+        value = self._headers or {}
+        if "Content-Type" not in value:
+            value["Content-Type"] = "application/json"
+        return value
 
     @headers.setter
     def headers(self, value: "Dict[str, Any]") -> None:
@@ -49,8 +52,6 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         data = self.strategy_config(**config)
 
         headers = self.headers or {}
-        if "Content-Type" not in headers:
-            headers["Content-Type"] = "application/json"
 
         response = requests.post(
             f"{self.url}{self.settings.prefix}/{self.strategy_name}",
