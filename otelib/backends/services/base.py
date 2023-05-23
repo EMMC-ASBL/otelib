@@ -51,14 +51,12 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         session_id = config.pop("session_id", None)
         data = self.strategy_config(**config)
 
-        headers = self.headers or {}
-
         response = requests.post(
             f"{self.url}{self.settings.prefix}/{self.strategy_name}",
             data=data.json(),
             params={"session_id": session_id} if session_id else {},
             timeout=self.settings.timeout,
-            headers=headers,
+            headers=self.headers,
         )
         if not response.ok:
             raise ApiError(
