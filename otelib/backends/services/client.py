@@ -39,7 +39,10 @@ class OTEServiceClient(AbstractBaseClient):
     @property
     def headers(self) -> "Dict[str, Any]":
         """URL headers to use for all requests to the OTEAPI Service."""
-        return self._headers
+        value = self._headers
+        if "Content-Type" not in value:
+            value["Content-Type"] = "application/json"
+        return value
 
     @headers.setter
     def headers(self, value: "Dict[str, Any]") -> None:
