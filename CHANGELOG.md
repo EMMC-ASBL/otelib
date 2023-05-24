@@ -1,6 +1,15 @@
 # Changelog
 
-## [v0.3.0](https://github.com/EMMC-ASBL/otelib/tree/v0.3.0) (2023-04-13)
+## [v0.3.1](https://github.com/EMMC-ASBL/otelib/tree/v0.3.1) (2023-05-23)
+
+[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.3.0...v0.3.1)
+
+**Merged pull requests:**
+
+- \[Auto-generated\] Update dependencies [\#113](https://github.com/EMMC-ASBL/otelib/pull/113) ([TEAM4-0](https://github.com/TEAM4-0))
+- Enh/add auth [\#96](https://github.com/EMMC-ASBL/otelib/pull/96) ([MBueschelberger](https://github.com/MBueschelberger))
+
+## [v0.3.0](https://github.com/EMMC-ASBL/otelib/tree/v0.3.0) (2023-04-19)
 
 [Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.2.0...v0.3.0)
 
