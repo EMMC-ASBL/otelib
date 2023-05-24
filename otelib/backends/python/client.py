@@ -25,9 +25,9 @@ class OTEPythonClient(AbstractBaseClient):
 
     _backend = "python"
 
-    def __init__(self, source: str) -> None:
+    def __init__(self, source: str, **config) -> None:
         """Initiates an OTEAPI Python client."""
-        super().__init__(source)
+        super().__init__(source, **config)
 
         self._cache = CACHE
 

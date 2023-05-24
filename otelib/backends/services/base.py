@@ -9,7 +9,7 @@ from otelib.exceptions import ApiError
 from otelib.settings import Settings
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Optional
+    from typing import Any, Dict, Optional
 
 
 class BaseServicesStrategy(AbstractBaseStrategy):
@@ -29,7 +29,23 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         super().__init__(source)
 
         self.url: "Optional[str]" = source
+        self._headers: "Optional[Dict[str, Any]]" = None
         self.settings = Settings()
+
+    @property
+    def headers(self) -> "Dict[str, Any]":
+        """URL headers to use for all requests to the OTEAPI Service."""
+        value = self._headers or {}
+        if "Content-Type" not in value:
+            value["Content-Type"] = "application/json"
+        return value
+
+    @headers.setter
+    def headers(self, value: "Dict[str, Any]") -> None:
+        """Set the URL headers to use for all requests to the OTEAPI Service."""
+        if not isinstance(value, dict):
+            raise TypeError("headers must be a dictionary")
+        self._headers = value
 
     def create(self, **config) -> None:
         session_id = config.pop("session_id", None)
@@ -40,7 +56,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
             data=data.json(),
             params={"session_id": session_id} if session_id else {},
             timeout=self.settings.timeout,
-            headers={"Content-Type": "application/json"},
+            headers=self.headers,
         )
         if not response.ok:
             raise ApiError(
@@ -61,6 +77,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
             f"{self.url}{self.settings.prefix}/{self.strategy_name}/{self.strategy_id}",
             params={"session_id": session_id},
             timeout=self.settings.timeout,
+            headers=self.headers,
         )
         if response.ok:
             return response.content
@@ -85,6 +102,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
             post_path,
             params={"session_id": session_id},
             timeout=self.settings.timeout,
+            headers=self.headers,
         )
         if response.ok:
             return response.content
@@ -104,6 +122,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         response = requests.post(
             f"{self.url}{self.settings.prefix}/session",
             json={},
+            headers=self.headers,
             timeout=self.settings.timeout,
         )
         if not response.ok:
