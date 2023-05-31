@@ -327,40 +327,6 @@ def test_pipeing_strategies(  # pylint: disable=too-many-statements
         assert value == session[key]
 
 
-#    # check that id can be retrieved from joined pipes
-#    # create pipe 1
-#    data_resource1: "DataResource" = strategies.DataResource(
-#        server_url, **strategy_kwargs
-#    )
-#    dataid1 =  data_resource1.strategy_id
-#    filter1: "Filter" = strategies.Filter(server_url, **strategy_kwargs)
-#    filterid1 = filter1.strategy_id
-#    pipeline1 = filter1 >> data_resource1
-#
-#    # create pipe 2
-#    data_resource2: "DataResource" = strategies.DataResource(
-#        server_url, **strategy_kwargs
-#    )
-#    dataid2 =  data_resource2.strategy_id
-#    filter2: "Filter" = strategies.Filter(server_url, **strategy_kwargs)
-#    filterid2 = filter2.strategy_id
-#    pipeline2 = filter2 >> data_resource1
-#
-#    # create joined pipeline
-#    pipeline_joined = pipeline1 >> pipeline2
-#
-#    # confirm that we can retrieve the strategy ids
-#    pipeline_tail = pipeline_joined # or should it be pipeline head?
-#    assert pipeline_tail.strategy_id == dataid1
-#    raise Exception('tail!', pipeline_tail.strategy_id)
-#    pipeline_tail = pipeline_tail.input_pipe.input
-#    assert pipeline_tail.strategy_id == filterid1
-#    pipeline_tail = pipeline_tail.input_pipe.input
-#    assert pipeline_tail.strategy_id == dataid2
-#    pipeline_tail = pipeline_tail.input_pipe.input
-#    assert pipeline_tail.strategy_id == filterid2
-
-
 def test_pipeing_concatenate(  # pylint: disable=too-many-statements
     backend: str,
     server_url: str,
