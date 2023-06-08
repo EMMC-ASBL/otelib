@@ -325,3 +325,51 @@ def test_pipeing_strategies(  # pylint: disable=too-many-statements
     for key, value in session_test_content.items():
         assert key in session
         assert value == session[key]
+
+
+def test_pipeing_concatenate(  # pylint: disable=too-many-statements
+    backend: str,
+    server_url: str,
+) -> None:
+    """Tests for the correct chaining of resources and filters in a pipeline.
+    This function tests for issue 110: https://github.com/EMMC-ASBL/otelib/issues/110
+    """
+
+    import importlib
+
+    strategies = importlib.import_module(f"otelib.backends.{backend}")
+    server_url = server_url if backend != "python" else backend
+
+    strategy_kwargs = {}
+    if backend == "python":
+        # Setup custom cache
+        cache = {}
+        strategy_kwargs["cache"] = cache
+
+    data_resource1: "DataResource" = strategies.DataResource(
+        server_url, **strategy_kwargs
+    )
+    dataid1 = data_resource1.strategy_id
+    filter1: "Filter" = strategies.Filter(server_url, **strategy_kwargs)
+    filterid1 = filter1.strategy_id
+    pipeline1 = data_resource1 >> filter1
+
+    data_resource2: "DataResource" = strategies.DataResource(
+        server_url, **strategy_kwargs
+    )
+    dataid2 = data_resource2.strategy_id
+    filter2: "Filter" = strategies.Filter(server_url, **strategy_kwargs)
+    filterid2 = filter2.strategy_id
+    pipeline2 = data_resource2 >> filter2
+
+    pipeline_combined = pipeline1 >> pipeline2
+
+    # confirm that we can retrieve the strategy ids
+    pipeline_tail = pipeline_combined  # or should it be pipeline head?
+    assert pipeline_tail.strategy_id == dataid1
+    pipeline_tail = pipeline_tail.input_pipe.input
+    assert pipeline_tail.strategy_id == filterid1
+    pipeline_tail = pipeline_tail.input_pipe.input
+    assert pipeline_tail.strategy_id == dataid2
+    pipeline_tail = pipeline_tail.input_pipe.input
+    assert pipeline_tail.strategy_id == filterid2
