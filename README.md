@@ -6,6 +6,9 @@
 [![CI - Tests](https://github.com/EMMC-ASBL/otelib/actions/workflows/ci_tests.yml/badge.svg?branch=master)](https://github.com/EMMC-ASBL/otelib/actions/workflows/ci_tests.yml?query=branch%3Amaster)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/EMMC-ASBL/otelib?logo=github)](https://github.com/EMMC-ASBL/otelib/pulse)
 [![GitHub last commit](https://img.shields.io/github/last-commit/EMMC-ASBL/otelib?logo=github)](https://github.com/EMMC-ASBL/otelib/pulse)
+[![DOI](https://zenodo.org/badge/447285057.svg)](https://zenodo.org/badge/latestdoi/447285057)
+
+
 
 OTELib is a small Python library on top of the OTEAPI, that provides a simple and pythonic interface to the REST services.
 
