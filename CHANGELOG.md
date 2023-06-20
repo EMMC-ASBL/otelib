@@ -1,6 +1,20 @@
 # Changelog
 
-## [v0.3.1](https://github.com/EMMC-ASBL/otelib/tree/v0.3.1) (2023-05-23)
+## [v0.3.2](https://github.com/EMMC-ASBL/otelib/tree/v0.3.2) (2023-06-08)
+
+[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.3.1...v0.3.2)
+
+**Closed issues:**
+
+- Fix: input\_pipe  not set correctly when two pipelines are merged [\#110](https://github.com/EMMC-ASBL/otelib/issues/110)
+
+**Merged pull requests:**
+
+- \[Auto-generated\] Update dependencies [\#117](https://github.com/EMMC-ASBL/otelib/pull/117) ([TEAM4-0](https://github.com/TEAM4-0))
+- Doi badge [\#115](https://github.com/EMMC-ASBL/otelib/pull/115) ([jesper-friis](https://github.com/jesper-friis))
+- Add checks to make sure input\_pipe is set to the first filter [\#111](https://github.com/EMMC-ASBL/otelib/pull/111) ([Treesarj](https://github.com/Treesarj))
+
+## [v0.3.1](https://github.com/EMMC-ASBL/otelib/tree/v0.3.1) (2023-05-24)
 
 [Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.3.0...v0.3.1)
 
