@@ -1,5 +1,4 @@
 """Fixtures and configuration for pytest."""
-# pylint: disable=too-many-arguments,protected-access
 from enum import Enum
 from typing import TYPE_CHECKING
 
@@ -44,7 +43,7 @@ class HTTPMethod(str, Enum):
     PUT = "put"
 
 
-def pytest_configure(config) -> None:  # pylint: disable=unused-argument
+def pytest_configure(config) -> None:
     """Method that runs before pytest collects tests, so no modules are imported."""
     import os
 
@@ -108,7 +107,7 @@ def client(server_url: str, backend: str) -> "OTEClient":
 
     if backend == "python":
         res = OTEClient("python")
-        res._impl.clear_cache()  # pylint: disable=no-member
+        res._impl.clear_cache()
         return res
 
     raise RuntimeError(f"Unknown backend: {backend!r}")
@@ -140,7 +139,7 @@ def mock_session(
 @pytest.fixture
 def mock_ote_response(
     requests_mock: "Mocker", server_url: str
-) -> "Callable[[Union[HTTPMethod, str], str, int, Optional[Union[Dict[str, Any], str]], Optional[dict], Optional[bytes], Optional[Union[dict, str]], Optional[str], Optional[OTEClient]], None]":  # pylint: disable=line-too-long
+) -> "Callable[[Union[HTTPMethod, str], str, int, Optional[Union[Dict[str, Any], str]], Optional[dict], Optional[bytes], Optional[Union[dict, str]], Optional[str], Optional[OTEClient]], None]":  # noqa: E501
     """Provide a function to mock OTE services responses."""
     from urllib.parse import parse_qs
 

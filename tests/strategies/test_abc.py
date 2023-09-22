@@ -1,5 +1,4 @@
 """Tests for `otelib.strategies.abc`."""
-# pylint: disable=too-many-arguments,too-many-locals,protected-access
 from typing import TYPE_CHECKING
 
 import pytest
@@ -53,7 +52,7 @@ def test_get(
             method="post",
             endpoint=f"/{strategy_name}",
             return_json={
-                f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # pylint: disable=line-too-long
+                f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # noqa: E501
                 "_id": ids(strategy_name)
             },
         )
@@ -184,7 +183,7 @@ def test_services_get_fails(
         method="post",
         endpoint=f"/{strategy_name}",
         return_json={
-            f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # pylint: disable=line-too-long
+            f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # noqa: E501
             "_id": ids(strategy_name)
         },
     )
