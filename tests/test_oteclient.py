@@ -41,12 +41,15 @@ def test_create_strategies(
     import requests
 
     if strategy == "function":
-        if client._impl._backend == "services" and "example" in client.url:
+        if (
+            getattr(client._impl._backend, "value", client._impl._backend) == "services"
+            and "example" in client.url
+        ):
             pass
         else:
             pytest.skip("No function strategy exists in oteapi-core yet.")
 
-    backend = client._impl._backend
+    backend = getattr(client._impl._backend, "value", client._impl._backend)
 
     if backend == "services":
         # Mock URL responses
@@ -111,7 +114,7 @@ def test_create_strategies(
         assert json.loads(content) == {}
     elif (
         strategy in ("transformation",)
-        and client._impl._backend == "services"
+        and backend == "services"
         and "example" not in client.url
     ):
         # Real backend !

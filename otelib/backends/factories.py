@@ -19,7 +19,7 @@ def client_factory(backend: "Union[str, Backend]") -> "Type[AbstractBaseClient]"
     except ValueError as exc:
         raise InvalidBackend(f"{str(backend)!r} is not a valid backend.") from exc
 
-    client_module = importlib.import_module(f"otelib.backends.{backend}.client")
+    client_module = importlib.import_module(f"otelib.backends.{backend.value}.client")
 
     if backend == backend.PYTHON:
         return getattr(client_module, "OTEPythonClient")
@@ -47,7 +47,7 @@ def strategy_factory(
         ) from exc
 
     strategy_module = importlib.import_module(
-        f"otelib.backends.{backend}.{strategy_type}"
+        f"otelib.backends.{backend.value}.{strategy_type}"
     )
     try:
         return getattr(strategy_module, strategy_type.cls_name)
