@@ -6,6 +6,7 @@ import pytest
 from utils import strategy_create_kwargs
 
 if TYPE_CHECKING:
+    from pathlib import Path
     from typing import Any, Callable, Dict, Union
 
     from requests_mock import Mocker
@@ -32,6 +33,8 @@ def test_get(
     server_url: str,
     strategy_name: str,
     create_kwargs: "Dict[str, Any]",
+    requests_mock: "Mocker",
+    static_dir: "Path",
 ) -> None:
     """Test `AbstractStrategy.get()`."""
     if strategy_name == "function":
@@ -90,6 +93,13 @@ def test_get(
             method="get",
             endpoint=f"/session/{ids('session')}",
             return_json=testdata(strategy_name),
+        )
+
+    if strategy_name == "dataresource":
+        # Mock URL response
+        requests_mock.get(
+            create_kwargs["downloadUrl"],
+            content=(static_dir / "sample2.json").read_bytes(),
         )
 
     strategy_name_map = {"dataresource": "DataResource"}

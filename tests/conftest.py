@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 if TYPE_CHECKING:
+    from pathlib import Path
     from typing import Any, Callable, Dict, Literal, Optional, Type, Union
 
     from requests_mock import Mocker
@@ -298,3 +299,11 @@ def mock_celery_transformation_strategy(
         "oteapi.strategies.transformation.celery_remote.CELERY_APP.send_task",
         lambda *args, **kwargs: MockResult(),
     )
+
+
+@pytest.fixture(scope="session")
+def static_dir() -> "Path":
+    """Return the path to the static tests directory."""
+    from pathlib import Path
+
+    return (Path(__file__).parent / "static").resolve()
