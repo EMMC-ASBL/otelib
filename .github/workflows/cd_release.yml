@@ -8,7 +8,7 @@ on:
 jobs:
   publish:
     name: External
-    uses: SINTEF/ci-cd/.github/workflows/cd_release.yml@v1
+    uses: SINTEF/ci-cd/.github/workflows/cd_release.yml@v2.5.1
     if: github.repository == 'EMMC-ASBL/otelib' && startsWith(github.ref, 'refs/tags/v')
     with:
       # General settings
@@ -21,7 +21,12 @@ jobs:
       package_dirs: otelib
       install_extras: "[dev]"
       python_version_build: "3.9"
-      build_cmd: "pip install -U flit && flit build"
+      build_libs: "flit"
+      build_cmd: "flit build"
+      publish_on_pypi: true
+
+      # Documentation
+      update_docs: false
     secrets:
       PyPI_token: ${{ secrets.PYPI_TOKEN }}
       PAT: ${{ secrets.RELEASE_PAT }}

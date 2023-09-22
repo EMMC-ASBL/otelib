@@ -8,7 +8,7 @@ on:
 jobs:
   check-dependencies:
     name: External
-    uses: SINTEF/ci-cd/.github/workflows/ci_check_pyproject_dependencies.yml@v1
+    uses: SINTEF/ci-cd/.github/workflows/ci_check_pyproject_dependencies.yml@v2.5.1
     if: github.repository_owner == 'EMMC-ASBL'
     with:
       git_username: "TEAM 4.0[bot]"
@@ -17,5 +17,9 @@ jobs:
       python_version: "3.9"
       install_extras: "[dev]"
       pr_labels: "CI/CD"
+      ignore: |
+        dependency-name=oteapi-core...versions=>=1
+        dependency-name=pydantic...versions=>=2
+
     secrets:
       PAT: ${{ secrets.RELEASE_PAT }}
