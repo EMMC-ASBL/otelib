@@ -7,6 +7,8 @@ from utils import strategy_create_kwargs
 if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Union
 
+    from requests_mock import Mocker
+
     from otelib.backends import python as python_backend
     from otelib.backends import services as services_backend
     from otelib.backends.python.base import BasePythonStrategy
@@ -34,6 +36,7 @@ def test_pipe(
     server_url: str,
     strategy_name: str,
     create_kwargs: "Dict[str, Any]",
+    requests_mock: "Mocker",
 ) -> None:
     """Test creating a `Pipe` and run the `get()` method."""
     if strategy_name == "function":
@@ -97,6 +100,15 @@ def test_pipe(
             method="get",
             endpoint=f"/session/{ids('session')}",
             return_json=testdata(strategy_name),
+        )
+
+    if backend == "python" and strategy_name == "dataresource":
+        # Mock URL responses to ensure we don't hit the real (external) URL
+        requests_mock.request(
+            method="get",
+            url=create_kwargs["downloadUrl"],
+            status_code=200,
+            json=testdata(strategy_name, "get")["content"],
         )
 
     strategy_name_map = {"dataresource": "DataResource"}
@@ -166,6 +178,7 @@ def test_pipeing_strategies(
     ids: "Callable[[Union[ResourceType, str]], str]",
     testdata: "Callable[[Union[ResourceType, str]], dict]",
     server_url: str,
+    requests_mock: "Mocker",
 ) -> None:
     """A simple pipeline will be tested."""
     import importlib
@@ -227,6 +240,15 @@ def test_pipeing_strategies(
             method="get",
             endpoint=f"/session/{ids('session')}",
             return_json=session_test_content,
+        )
+
+    if backend == "python":
+        # Mock URL responses to ensure we don't hit the real (external) URL
+        requests_mock.request(
+            method="get",
+            url=dict(strategy_create_kwargs())["dataresource"]["downloadUrl"],
+            status_code=200,
+            json=testdata("dataresource", "get")["content"],
         )
 
     strategy_kwargs = {}

@@ -42,4 +42,4 @@ repos:
       exclude: ^tests/.*$
       additional_dependencies:
         - "types-requests"
-        - "pydantic"
+        - "pydantic<2"
