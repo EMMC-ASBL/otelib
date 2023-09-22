@@ -46,7 +46,9 @@ class BasePythonStrategy(AbstractBaseStrategy):
         session_id = config.pop("session_id", None)
         data = self.strategy_config(**config)
 
-        self.strategy_id = f"{self.strategy_name}-{uuid4()}"
+        self.strategy_id = (
+            f"{getattr(self.strategy_name, 'value', self.strategy_name)}-{uuid4()}"
+        )
         self.cache[self.strategy_id] = data.json()
 
         if session_id:
@@ -56,7 +58,9 @@ class BasePythonStrategy(AbstractBaseStrategy):
                 )
 
             # Add strategy ID information to the session object.
-            list_key = f"{self.strategy_name}_info"
+            list_key = (
+                f"{getattr(self.strategy_name, 'value', self.strategy_name)}_info"
+            )
             if list_key in self.cache[session_id]:
                 if not isinstance(self.cache[session_id][list_key], list):
                     raise TypeError(

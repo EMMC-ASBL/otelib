@@ -47,7 +47,7 @@ def strategy_factory(
         ) from exc
 
     strategy_module = importlib.import_module(
-        f"otelib.backends.{backend.value}.{strategy_type}"
+        f"otelib.backends.{backend.value}.{strategy_type.value}"
     )
     try:
         return getattr(strategy_module, strategy_type.cls_name)
