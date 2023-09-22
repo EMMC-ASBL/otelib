@@ -9,6 +9,8 @@ from utils import strategy_create_kwargs
 if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Union
 
+    from requests_mock import Mocker
+
     from otelib.backends.python.base import BasePythonStrategy
     from otelib.backends.services.base import BaseServicesStrategy
     from otelib.client import OTEClient
@@ -31,6 +33,7 @@ def test_create_strategies(
     testdata: "Callable[[Union[ResourceType, str]], dict]",
     strategy: str,
     create_kwargs: "Dict[str, Any]",
+    requests_mock: "Mocker",
 ) -> None:
     """Test creating any strategy and calling it's `get()` method."""
     import json
@@ -88,6 +91,15 @@ def test_create_strategies(
             method="get",
             endpoint=f"/session/{ids('session')}",
             return_json=testdata(strategy),
+        )
+
+    if backend == "python" and strategy == "dataresource":
+        # Mock URL responses to ensure we don't hit the real (external) URL
+        requests_mock.request(
+            method="get",
+            url=create_kwargs["downloadUrl"],
+            status_code=200,
+            json=testdata(strategy, "get")["content"],
         )
 
     created_strategy: "BaseStrategy" = getattr(client, f"create_{strategy}")(

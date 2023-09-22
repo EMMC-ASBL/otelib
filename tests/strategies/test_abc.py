@@ -32,6 +32,7 @@ def test_get(
     server_url: str,
     strategy_name: str,
     create_kwargs: "Dict[str, Any]",
+    requests_mock: "Mocker",
 ) -> None:
     """Test `AbstractStrategy.get()`."""
     if strategy_name == "function":
@@ -90,6 +91,15 @@ def test_get(
             method="get",
             endpoint=f"/session/{ids('session')}",
             return_json=testdata(strategy_name),
+        )
+
+    if backend == "python" and strategy_name == "dataresource":
+        # Mock URL responses to ensure we don't hit the real (external) URL
+        requests_mock.request(
+            method="get",
+            url=create_kwargs["downloadUrl"],
+            status_code=200,
+            json=testdata(strategy_name, "get")["content"],
         )
 
     strategy_name_map = {"dataresource": "DataResource"}
