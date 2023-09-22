@@ -4,6 +4,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:  # pragma: no cover
     from typing import Optional
 
+    from oteapi.models.genericconfig import AttrDict
+
     from otelib.backends.strategies import AbstractBaseStrategy
 
 
@@ -13,6 +15,6 @@ class Pipe:
     def __init__(self, strategy: "AbstractBaseStrategy") -> None:
         self.input: "AbstractBaseStrategy" = strategy
 
-    def get(self, session_id: "Optional[str]" = None) -> bytes:
+    def get(self, session_id: "Optional[str]" = None) -> "AttrDict":
         """Call the input strategy's `get()` method."""
         return self.input.get(session_id)

@@ -138,9 +138,7 @@ def mock_session(
 
 
 @pytest.fixture
-def mock_ote_response(
-    requests_mock: "Mocker", server_url: str
-) -> "Callable[[Union[HTTPMethod, str], str, int, Optional[Union[Dict[str, Any], str]], Optional[dict], Optional[bytes], Optional[Union[dict, str]], Optional[str], Optional[OTEClient]], None]":  # pylint: disable=line-too-long
+def mock_ote_response(requests_mock: "Mocker", server_url: str) -> "OTEResponse":
     """Provide a function to mock OTE services responses."""
     from urllib.parse import parse_qs
 

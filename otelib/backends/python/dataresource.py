@@ -11,6 +11,8 @@ from otelib.backends.python.base import BasePythonStrategy
 if TYPE_CHECKING:  # pragma: no cover
     from typing import Type
 
+    from oteapi.models.sessionupdate import SessionUpdate
+
 
 class DataResource(BasePythonStrategy):
     """Context class for the data resource strategy interfaces for managing i/o
@@ -19,7 +21,7 @@ class DataResource(BasePythonStrategy):
     strategy_name = "dataresource"
     strategy_config: "Type[ResourceConfig]" = ResourceConfig
 
-    def fetch(self, session_id: str) -> bytes:
+    def fetch(self, session_id: str) -> "SessionUpdate":
         self._sanity_checks(session_id)
 
         config = self.strategy_config(**json.loads(self.cache[self.strategy_id]))
@@ -44,9 +46,9 @@ class DataResource(BasePythonStrategy):
             )
             self.cache[session_id].update(session_update)
 
-        return session_update.json().encode(encoding="utf-8")
+        return session_update
 
-    def initialize(self, session_id: str) -> bytes:
+    def initialize(self, session_id: str) -> "SessionUpdate":
         self._sanity_checks(session_id)
 
         config = self.strategy_config(**json.loads(self.cache[self.strategy_id]))
@@ -71,4 +73,4 @@ class DataResource(BasePythonStrategy):
             )
             self.cache[session_id].update(session_update)
 
-        return session_update.json().encode(encoding="utf-8")
+        return session_update

@@ -48,7 +48,6 @@ def test_pipe(
             pytest.skip("No function strategy exists in oteapi-core yet.")
 
     import importlib
-    import json
 
     import requests
 
@@ -127,7 +126,7 @@ def test_pipe(
 
     content = pipe.get()
     if strategy_name in ("filter", "mapping"):
-        assert json.loads(content) == {}
+        assert not content
     elif (
         strategy_name in ("transformation",)
         and backend == "services"
@@ -136,11 +135,10 @@ def test_pipe(
         # Real backend !
         # Dynamic response content - just check keys are the same and values are
         # non-empty
-        _content: "dict[str, Any]" = json.loads(content)
-        assert list(_content) == list(testdata(strategy_name))
-        assert all(_content.values())
+        assert list(content) == list(testdata(strategy_name))
+        assert all(content.values())
     else:
-        assert json.loads(content) == testdata(strategy_name)
+        assert content == testdata(strategy_name)
 
     # The testdata should always be in the full session
     if backend == "services":
@@ -184,7 +182,6 @@ def test_pipeing_strategies(  # pylint: disable=too-many-statements
 ) -> None:
     """A simple pipeline will be tested."""
     import importlib
-    import json
 
     import requests
 
@@ -277,7 +274,7 @@ def test_pipeing_strategies(  # pylint: disable=too-many-statements
 
     # Since the "last" strategy does not return anything from its `get()` method,
     # this should return an empty dictionary.
-    assert json.loads(content) == {}
+    assert not content
 
     # All the test data should however be present in the session
     assert (
@@ -326,7 +323,7 @@ def test_pipeing_strategies(  # pylint: disable=too-many-statements
 
     # Since the "last" strategy now returns something from its `get()` method,
     # this can be tested.
-    assert json.loads(content) == testdata("dataresource")
+    assert content == testdata("dataresource")
 
     # All the test data should however be present in the session
     assert (

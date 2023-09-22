@@ -13,7 +13,7 @@ from otelib.exceptions import ItemNotFoundInCache, PythonBackendException
 if TYPE_CHECKING:  # pragma: no cover
     from typing import Any, Dict, Literal, Optional
 
-    from oteapi.models import SessionUpdate
+    from oteapi.models import AttrDict, SessionUpdate
 
 
 class BasePythonStrategy(AbstractBaseStrategy):
@@ -67,10 +67,10 @@ class BasePythonStrategy(AbstractBaseStrategy):
             else:
                 self.cache[session_id][list_key] = [self.strategy_id]
 
-    def fetch(self, session_id: str) -> bytes:
+    def fetch(self, session_id: str) -> "AttrDict":
         return self._run_strategy_method("get", session_id)
 
-    def initialize(self, session_id: str) -> bytes:
+    def initialize(self, session_id: str) -> "AttrDict":
         return self._run_strategy_method("initialize", session_id)
 
     def _create_session(self) -> str:
@@ -80,7 +80,7 @@ class BasePythonStrategy(AbstractBaseStrategy):
 
     def _run_strategy_method(
         self, method_name: "Literal['get', 'initialize']", session_id: str
-    ) -> bytes:
+    ) -> "SessionUpdate":
         """Generic implementation of the `fetch()` and `initialize()` methods.
 
         This will run the `method_name` method on the strategy and return the
@@ -91,7 +91,7 @@ class BasePythonStrategy(AbstractBaseStrategy):
             session_id: The ID of the session shared by the pipeline.
 
         Returns:
-            The bytes-serialized output from the given strategy method.
+            The dict-like pydantic model session output from the given strategy method.
 
         """
         if method_name not in ["get", "initialize"]:
@@ -115,7 +115,7 @@ class BasePythonStrategy(AbstractBaseStrategy):
 
         self.cache[session_id].update(session_update)
 
-        return session_update.json().encode(encoding="utf-8")
+        return session_update
 
     def _sanity_checks(self, session_id: str) -> None:
         """Perform sanity checks before running a strategy method.

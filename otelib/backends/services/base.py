@@ -1,8 +1,8 @@
 """Base class for strategies in the service/REST API backend."""
-import json
 from typing import TYPE_CHECKING
 
 import requests
+from oteapi.models import AttrDict
 
 from otelib.backends.strategies import AbstractBaseStrategy
 from otelib.exceptions import ApiError
@@ -72,7 +72,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
             else response_json.pop(f"{self.strategy_name[len('data'):]}_id")
         )
 
-    def fetch(self, session_id: str) -> bytes:
+    def fetch(self, session_id: str) -> AttrDict:
         response = requests.get(
             f"{self.url}{self.settings.prefix}/{self.strategy_name}/{self.strategy_id}",
             params={"session_id": session_id},
@@ -80,7 +80,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
             headers=self.headers,
         )
         if response.ok:
-            return response.content
+            return AttrDict(**response.json())
         strategy_name = (
             self.strategy_name[len("data") :]
             if self.strategy_name.startswith("data")
@@ -93,7 +93,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
             status=response.status_code,
         )
 
-    def initialize(self, session_id: str) -> bytes:
+    def initialize(self, session_id: str) -> AttrDict:
         post_path = (
             f"{self.url}{self.settings.prefix}"
             f"/{self.strategy_name}/{self.strategy_id}/initialize"
@@ -105,7 +105,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
             headers=self.headers,
         )
         if response.ok:
-            return response.content
+            return AttrDict(**response.json())
         strategy_name = (
             self.strategy_name[len("data") :]
             if self.strategy_name.startswith("data")
@@ -131,4 +131,4 @@ class BaseServicesStrategy(AbstractBaseStrategy):
                 f"{' content=' + str(response.content) if self.debug else ''}",
                 status=response.status_code,
             )
-        return json.loads(response.text)["session_id"]
+        return response.json()["session_id"]
