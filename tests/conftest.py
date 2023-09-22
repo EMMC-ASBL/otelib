@@ -6,27 +6,56 @@ from typing import TYPE_CHECKING
 import pytest
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Dict, Literal, Optional, Type, Union
+    from typing import Any, Literal, Optional, Protocol, Union
 
     from requests_mock import Mocker
     from utils import ResourceType
 
     from otelib.client import OTEClient
 
-    OTEResponse = Callable[
-        [
-            Union["HTTPMethod", str],
-            str,
-            int,
-            Optional[Union[Dict[str, Any], str]],
-            Optional[dict],
-            Optional[bytes],
-            Optional[Union[dict, str]],
-            Optional[str],
-            Optional[OTEClient],
-        ],
-        None,
-    ]
+    class TestResourceIds(Protocol):
+        """Return a test id for the given `resource_type`."""
+
+        def __call__(self, resource_type: Union[ResourceType, str]) -> str:
+            ...
+
+    class OTEResponse(Protocol):
+        """Use `requests_mock` to mock a response from an OTE services server.
+
+        It will only be ensured that the `endpoint` starts with a forward slash.
+        If it does not, one will be added. Otherwise, `endpoint` is not manipulated.
+        """
+
+        def __call__(
+            self,
+            method: Union["HTTPMethod", str],
+            endpoint: str,
+            status_code: int = 200,
+            params: Optional[Union[dict[str, Any], str]] = None,
+            headers: Optional[dict] = None,
+            return_content: Optional[bytes] = None,
+            return_json: Optional[Union[dict, str]] = None,
+            return_text: Optional[str] = None,
+            ote_client: Optional[OTEClient] = None,
+        ) -> None:
+            ...
+
+    class Testdata(Protocol):
+        """Return test data for a given resource.
+
+        Parameters:
+            resource_type: The resource type to return test data for.
+            method: Optionally, provide the method for which to return the test data.
+                If not given, the test data will be provided as is.
+
+        """
+
+        def __call__(
+            self,
+            resource_type: Union[ResourceType, str],
+            method: Optional[Literal["get", "initialize"]] = None,
+        ) -> dict:
+            ...
 
 
 class HTTPMethod(str, Enum):
@@ -64,7 +93,7 @@ def server_url() -> str:
 
 
 @pytest.fixture
-def resource_type_cls() -> "Type[ResourceType]":
+def resource_type_cls() -> "type[ResourceType]":
     """Return the `ResourceType` Enum."""
     from utils import ResourceType
 
@@ -72,7 +101,7 @@ def resource_type_cls() -> "Type[ResourceType]":
 
 
 @pytest.fixture
-def ids() -> "Callable[[Union[ResourceType, str]], str]":
+def ids() -> "TestResourceIds":
     """Provide a function to return a test resource id.
 
     By "resource", any resource is meant, e.g., `sessions`, `filter`, etc.
@@ -118,7 +147,7 @@ def client(server_url: str, backend: str) -> "OTEClient":
 def mock_session(
     requests_mock: "Mocker",
     client: "OTEClient",
-    ids: "Callable[[Union[ResourceType, str]], str]",
+    ids: "TestResourceIds",
     server_url: str,
 ) -> None:
     """Mock `POST /session`.
@@ -138,9 +167,7 @@ def mock_session(
 
 
 @pytest.fixture
-def mock_ote_response(
-    requests_mock: "Mocker", server_url: str
-) -> "Callable[[Union[HTTPMethod, str], str, int, Optional[Union[Dict[str, Any], str]], Optional[dict], Optional[bytes], Optional[Union[dict, str]], Optional[str], Optional[OTEClient]], None]":  # pylint: disable=line-too-long
+def mock_ote_response(requests_mock: "Mocker", server_url: str) -> "OTEResponse":
     """Provide a function to mock OTE services responses."""
     from urllib.parse import parse_qs
 
@@ -150,7 +177,7 @@ def mock_ote_response(
         method: "Union[HTTPMethod, str]",
         endpoint: str,
         status_code: int = 200,
-        params: "Optional[Union[Dict[str, Any], str]]" = None,
+        params: "Optional[Union[dict[str, Any], str]]" = None,
         headers: "Optional[dict]" = None,
         return_content: "Optional[bytes]" = None,
         return_json: "Optional[Union[dict, str]]" = None,
@@ -233,7 +260,7 @@ def mock_ote_response(
 
 
 @pytest.fixture
-def raw_test_data() -> "Dict[str, Any]":
+def raw_test_data() -> "dict[str, Any]":
     """Return raw test data."""
     from copy import deepcopy
 
@@ -243,9 +270,7 @@ def raw_test_data() -> "Dict[str, Any]":
 
 
 @pytest.fixture
-def testdata(
-    raw_test_data: "Dict[str, Any]",
-) -> "Callable[[Union[ResourceType, str]], dict]":
+def testdata(raw_test_data: "dict[str, Any]") -> "Testdata":
     """Test data for OTE resource."""
     from utils import ResourceType
 
@@ -279,7 +304,7 @@ def testdata(
 
 @pytest.fixture(autouse=True)
 def mock_celery_transformation_strategy(
-    monkeypatch: pytest.MonkeyPatch, raw_test_data: "Dict[str, Any]"
+    monkeypatch: pytest.MonkeyPatch, raw_test_data: "dict[str, Any]"
 ) -> None:
     """Use celery_worker always for all things.
 

@@ -7,7 +7,7 @@ import pytest
 from utils import strategy_create_kwargs
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Dict, Union
+    from typing import Any, Union
 
     from requests_mock import Mocker
 
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from otelib.backends.services.base import BaseServicesStrategy
     from otelib.client import OTEClient
 
-    from .conftest import OTEResponse, ResourceType
+    from .conftest import OTEResponse, Testdata, TestResourceIds
 
     BaseStrategy = Union[BasePythonStrategy, BaseServicesStrategy]
 
@@ -28,11 +28,11 @@ if TYPE_CHECKING:
 @pytest.mark.usefixtures("mock_session")
 def test_create_strategies(
     client: "OTEClient",
-    ids: "Callable[[Union[ResourceType, str]], str]",
+    ids: "TestResourceIds",
     mock_ote_response: "OTEResponse",
-    testdata: "Callable[[Union[ResourceType, str]], dict]",
+    testdata: "Testdata",
     strategy: str,
-    create_kwargs: "Dict[str, Any]",
+    create_kwargs: "dict[str, Any]",
     requests_mock: "Mocker",
 ) -> None:
     """Test creating any strategy and calling it's `get()` method."""
@@ -135,7 +135,7 @@ def test_create_strategies(
             f"{created_strategy.url}{strategy_prefix}/session/{startegy_sessionid}",
             timeout=30,
         )
-        session: "Dict[str, Any]" = content_session.json()
+        session: "dict[str, Any]" = content_session.json()
 
     elif backend == "python":
         session_ids = [
