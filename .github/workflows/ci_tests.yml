@@ -32,6 +32,15 @@ jobs:
       build_libs: flit
       build_cmd: flit build
 
+  ruff:
+    name: Ruff
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - uses: chartboost/ruff-action@v1
+
   pytest:
     name: pytest (${{ matrix.os[1] }}, py${{ matrix.python-version }})
     runs-on: ${{ matrix.os[0] }}
@@ -46,7 +55,8 @@ jobs:
         python-version: ["3.9", "3.10"]
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
       with:
         fetch-depth: 2
 
