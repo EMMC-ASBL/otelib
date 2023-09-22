@@ -43,7 +43,7 @@ repos:
       exclude: ^tests/.*$
       additional_dependencies:
         - "types-requests"
-        - "pydantic"
+        - "pydantic<2"
 
   - repo: local
     hooks:
