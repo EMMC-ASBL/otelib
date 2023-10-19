@@ -53,7 +53,7 @@ def test_get(
         mock_ote_response(
             method="post",
             endpoint=f"/{strategy_name}",
-            return_json={
+            response_json={
                 f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # pylint: disable=line-too-long
                 "_id": ids(strategy_name)
             },
@@ -65,7 +65,7 @@ def test_get(
             method="post",
             endpoint=f"/{strategy_name}/{ids(strategy_name)}/initialize",
             params={"session_id": ids("session")},
-            return_json=(
+            response_json=(
                 testdata(strategy_name)
                 if strategy_name in ("filter", "mapping")
                 else {}
@@ -79,7 +79,7 @@ def test_get(
             method="get",
             endpoint=f"/{strategy_name}/{ids(strategy_name)}",
             params={"session_id": ids("session")},
-            return_json=(
+            response_json=(
                 testdata(strategy_name)
                 if strategy_name in ("dataresource", "transformation")
                 else {}
@@ -90,7 +90,7 @@ def test_get(
         mock_ote_response(
             method="get",
             endpoint=f"/session/{ids('session')}",
-            return_json=testdata(strategy_name),
+            response_json=testdata(strategy_name),
         )
 
     if backend == "python" and strategy_name == "dataresource":
@@ -193,7 +193,7 @@ def test_services_get_fails(
     mock_ote_response(
         method="post",
         endpoint=f"/{strategy_name}",
-        return_json={
+        response_json={
             f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # pylint: disable=line-too-long
             "_id": ids(strategy_name)
         },

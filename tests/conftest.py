@@ -14,16 +14,32 @@ if TYPE_CHECKING:
     from otelib.client import OTEClient
 
     class TestResourceIds(Protocol):
-        """Return a test id for the given `resource_type`."""
+        """Defines a protocol for fetching a test ID based on the provided resource
+        type."""
 
         def __call__(self, resource_type: Union[ResourceType, str]) -> str:
             ...
 
     class OTEResponse(Protocol):
-        """Use `requests_mock` to mock a response from an OTE services server.
+        """Defines a protocol for mocking a response from an OTE services server using
+        `requests_mock`.
 
-        It will only be ensured that the `endpoint` starts with a forward slash.
-        If it does not, one will be added. Otherwise, `endpoint` is not manipulated.
+        The implementing callable should ensure that the `endpoint` starts with a
+        forward slash (`/`). If it doesn't, one is added. No other manipulation on the
+        `endpoint` is done.
+
+        Parameters:
+            method: The HTTP method (or its string representation) for the request.
+            endpoint: The API endpoint. Should start with a forward slash.
+            status_code: The desired HTTP status code for the response. Defaults to 200
+                (OK).
+            params: Optional request parameters.
+            headers: Optional request headers.
+            response_content: Optional content to be returned as the response body.
+            response_json: Optional JSON data to be returned as the response body.
+            response_text: Optional plain text to be returned as the response body.
+            ote_client: An optional client instance for making the request.
+
         """
 
         def __call__(
@@ -33,20 +49,25 @@ if TYPE_CHECKING:
             status_code: int = 200,
             params: Optional[Union[dict[str, Any], str]] = None,
             headers: Optional[dict] = None,
-            return_content: Optional[bytes] = None,
-            return_json: Optional[Union[dict, str]] = None,
-            return_text: Optional[str] = None,
+            response_content: Optional[bytes] = None,
+            response_json: Optional[Union[dict, str]] = None,
+            response_text: Optional[str] = None,
             ote_client: Optional[OTEClient] = None,
         ) -> None:
             ...
 
     class Testdata(Protocol):
-        """Return test data for a given resource.
+        """Defines a protocol for fetching test data corresponding to a specified
+        resource type.
+
+        Test data can be optionally tailored based on a provided method (e.g., "get",
+        "initialize"). If no method is specified, the test data is provided in its
+        default form.
 
         Parameters:
             resource_type: The resource type to return test data for.
-            method: Optionally, provide the method for which to return the test data.
-                If not given, the test data will be provided as is.
+            method: An optional method specifier which can influence the structure of
+                the returned test data.
 
         """
 
@@ -179,9 +200,9 @@ def mock_ote_response(requests_mock: "Mocker", server_url: str) -> "OTEResponse"
         status_code: int = 200,
         params: "Optional[Union[dict[str, Any], str]]" = None,
         headers: "Optional[dict]" = None,
-        return_content: "Optional[bytes]" = None,
-        return_json: "Optional[Union[dict, str]]" = None,
-        return_text: "Optional[str]" = None,
+        response_content: "Optional[bytes]" = None,
+        response_json: "Optional[Union[dict, str]]" = None,
+        response_text: "Optional[str]" = None,
         ote_client: "Optional[OTEClient]" = None,
     ) -> None:
         """Use `requests_mock` to mock a response from an OTE services server.
@@ -229,12 +250,12 @@ def mock_ote_response(requests_mock: "Mocker", server_url: str) -> "OTEResponse"
             params = ""
 
         mock_kwargs = {}
-        if return_content is not None:
-            mock_kwargs["content"] = return_content
-        if return_json is not None:
-            mock_kwargs["json"] = return_json
-        if return_text is not None:
-            mock_kwargs["text"] = return_text
+        if response_content is not None:
+            mock_kwargs["content"] = response_content
+        if response_json is not None:
+            mock_kwargs["json"] = response_json
+        if response_text is not None:
+            mock_kwargs["text"] = response_text
         if headers is not None:
             mock_kwargs["headers"] = headers
 

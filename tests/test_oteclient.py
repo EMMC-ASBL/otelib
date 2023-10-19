@@ -55,7 +55,7 @@ def test_create_strategies(
         mock_ote_response(
             method="post",
             endpoint=f"/{strategy}",
-            return_json={
+            response_json={
                 f"{strategy[len('data'):] if strategy.startswith('data') else strategy}"
                 "_id": ids(strategy)
             },
@@ -67,7 +67,7 @@ def test_create_strategies(
             method="post",
             endpoint=f"/{strategy}/{ids(strategy)}/initialize",
             params={"session_id": ids("session")},
-            return_json=(
+            response_json=(
                 testdata(strategy) if strategy in ("filter", "mapping") else {}
             ),
         )
@@ -79,7 +79,7 @@ def test_create_strategies(
             method="get",
             endpoint=f"/{strategy}/{ids(strategy)}",
             params={"session_id": ids("session")},
-            return_json=(
+            response_json=(
                 testdata(strategy)
                 if strategy in ("dataresource", "transformation")
                 else {}
@@ -90,7 +90,7 @@ def test_create_strategies(
         mock_ote_response(
             method="get",
             endpoint=f"/session/{ids('session')}",
-            return_json=testdata(strategy),
+            response_json=testdata(strategy),
         )
 
     if backend == "python" and strategy == "dataresource":

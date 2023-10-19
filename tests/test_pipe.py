@@ -64,7 +64,7 @@ def test_pipe(
         mock_ote_response(
             method="post",
             endpoint=f"/{strategy_name}",
-            return_json={
+            response_json={
                 f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # pylint: disable=line-too-long
                 "_id": ids(strategy_name)
             },
@@ -76,7 +76,7 @@ def test_pipe(
             method="post",
             endpoint=f"/{strategy_name}/{ids(strategy_name)}/initialize",
             params={"session_id": ids("session")},
-            return_json=(
+            response_json=(
                 testdata(strategy_name)
                 if strategy_name in ("filter", "mapping")
                 else {}
@@ -90,7 +90,7 @@ def test_pipe(
             method="get",
             endpoint=f"/{strategy_name}/{ids(strategy_name)}",
             params={"session_id": ids("session")},
-            return_json=(
+            response_json=(
                 testdata(strategy_name)
                 if strategy_name in ("dataresource", "transformation")
                 else {}
@@ -101,7 +101,7 @@ def test_pipe(
         mock_ote_response(
             method="get",
             endpoint=f"/session/{ids('session')}",
-            return_json=testdata(strategy_name),
+            response_json=testdata(strategy_name),
         )
 
     if backend == "python" and strategy_name == "dataresource":
@@ -201,12 +201,12 @@ def test_pipeing_strategies(  # pylint: disable=too-many-statements
         mock_ote_response(
             method="post",
             endpoint="/dataresource",
-            return_json={"resource_id": ids("dataresource")},
+            response_json={"resource_id": ids("dataresource")},
         )
         mock_ote_response(
             method="post",
             endpoint="/filter",
-            return_json={"filter_id": ids("filter")},
+            response_json={"filter_id": ids("filter")},
         )
 
         # initialize()
@@ -214,13 +214,13 @@ def test_pipeing_strategies(  # pylint: disable=too-many-statements
             method="post",
             endpoint=f"/dataresource/{ids('dataresource')}/initialize",
             params={"session_id": ids("session")},
-            return_json={},
+            response_json={},
         )
         mock_ote_response(
             method="post",
             endpoint=f"/filter/{ids('filter')}/initialize",
             params={"session_id": ids("session")},
-            return_json=testdata("filter"),
+            response_json=testdata("filter"),
         )
 
         # fetch()
@@ -228,20 +228,20 @@ def test_pipeing_strategies(  # pylint: disable=too-many-statements
             method="get",
             endpoint=f"/dataresource/{ids('dataresource')}",
             params={"session_id": ids("session")},
-            return_json=testdata("dataresource"),
+            response_json=testdata("dataresource"),
         )
         mock_ote_response(
             method="get",
             endpoint=f"/filter/{ids('filter')}",
             params={"session_id": ids("session")},
-            return_json={},
+            response_json={},
         )
 
         # Session content
         mock_ote_response(
             method="get",
             endpoint=f"/session/{ids('session')}",
-            return_json=session_test_content,
+            response_json=session_test_content,
         )
 
     if backend == "python":

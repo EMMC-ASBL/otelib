@@ -30,7 +30,7 @@ def test_create(
         mock_ote_response(
             method="post",
             endpoint=f"/{strategy_type.value}",
-            return_json={strategy_type.get_return_id_key(): ids(strategy_type.value)},
+            response_json={strategy_type.get_return_id_key(): ids(strategy_type.value)},
         )
 
     strategy = strategy_cls(server_url)
@@ -66,7 +66,7 @@ def test_create_fails(
             method="post",
             endpoint=f"/{strategy_type.value}",
             status_code=500,
-            return_content=b"Internal Server Error",
+            response_content=b"Internal Server Error",
         )
 
     strategy = strategy_cls(server_url)
@@ -107,13 +107,13 @@ def test_fetch(
         mock_ote_response(
             method="post",
             endpoint=f"/{strategy_type.value}",
-            return_json={strategy_type.get_return_id_key(): ids(strategy_type.value)},
+            response_json={strategy_type.get_return_id_key(): ids(strategy_type.value)},
         )
 
         mock_ote_response(
             method="get",
             endpoint=f"/{strategy_type.value}/{ids(strategy_type.value)}",
-            return_json=testdata(strategy_type, "get"),
+            response_json=testdata(strategy_type, "get"),
         )
 
     strategy = strategy_cls(server_url)
@@ -175,14 +175,14 @@ def test_fetch_fails(
         mock_ote_response(
             method="post",
             endpoint=f"/{strategy_type.value}",
-            return_json={strategy_type.get_return_id_key(): ids(strategy_type.value)},
+            response_json={strategy_type.get_return_id_key(): ids(strategy_type.value)},
         )
 
         mock_ote_response(
             method="get",
             endpoint=f"/{strategy_type.value}/{ids(strategy_type.value)}",
             status_code=500,
-            return_content=b"Internal Server Error",
+            response_content=b"Internal Server Error",
         )
 
     strategy = strategy_cls(server_url)
@@ -220,13 +220,13 @@ def test_initialize(
         mock_ote_response(
             method="post",
             endpoint=f"/{strategy_type.value}",
-            return_json={strategy_type.get_return_id_key(): ids(strategy_type.value)},
+            response_json={strategy_type.get_return_id_key(): ids(strategy_type.value)},
         )
 
         mock_ote_response(
             method="post",
             endpoint=f"/{strategy_type.value}/{ids(strategy_type.value)}/initialize",
-            return_json=testdata(strategy_type, "initialize"),
+            response_json=testdata(strategy_type, "initialize"),
         )
 
     strategy = strategy_cls(server_url)
@@ -277,14 +277,14 @@ def test_initialize_fails(
         mock_ote_response(
             method="post",
             endpoint=f"/{strategy_type.value}",
-            return_json={strategy_type.get_return_id_key(): ids(strategy_type.value)},
+            response_json={strategy_type.get_return_id_key(): ids(strategy_type.value)},
         )
 
         mock_ote_response(
             method="post",
             endpoint=f"/{strategy_type.value}/{ids(strategy_type.value)}/initialize",
             status_code=500,
-            return_content=b"Internal Server Error",
+            response_content=b"Internal Server Error",
         )
 
     strategy = strategy_cls(server_url)
