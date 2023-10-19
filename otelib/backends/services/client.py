@@ -9,7 +9,6 @@ if TYPE_CHECKING:  # pragma: no cover
     from otelib.backends.services.base import BaseServicesStrategy
 
 
-# pylint: disable=duplicate-code
 class OTEServiceClient(AbstractBaseClient):
     """The Service version of the OTEClient object representing a remote OTE REST API.
 

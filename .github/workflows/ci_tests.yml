@@ -19,16 +19,8 @@ jobs:
       # pre-commit
       run_pre-commit: true
       python_version_pre-commit: "3.9"
-      skip_pre-commit_hooks: pylint,pylint-tests
 
-      # pylint
-      run_pylint: true
-      python_version_pylint_safety: "3.9"
-      pylint_runs: |
-        --rcfile=pyproject.toml --ignore-paths=tests/ --extension-pkg-whitelist='pydantic' otelib
-        --rcfile=pyproject.toml --extension-pkg-whitelist='pydantic' --disable=import-outside-toplevel,redefined-outer-name,duplicate-code,import-error --recursive=yes tests
-
-      # safety
+      run_pylint: false
       run_safety: true
       # Ignore ID 44715 for now.
       # See this NumPy issue for more information: https://github.com/numpy/numpy/issues/19038
@@ -53,7 +45,8 @@ jobs:
         python-version: ["3.9", "3.10"]
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
       with:
         fetch-depth: 2
 

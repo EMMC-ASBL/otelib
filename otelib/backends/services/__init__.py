@@ -5,7 +5,6 @@ from .function import Function
 from .mapping import Mapping
 from .transformation import Transformation
 
-# pylint: disable=duplicate-code
 __all__ = (
     "DataResource",
     "Filter",
