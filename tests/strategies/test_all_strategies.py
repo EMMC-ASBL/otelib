@@ -4,8 +4,6 @@ from typing import TYPE_CHECKING
 import pytest
 
 if TYPE_CHECKING:
-    from typing import Any
-
     from requests_mock import Mocker
 
     from ..conftest import OTEResponse, ResourceType, Testdata, TestResourceIds
