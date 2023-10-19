@@ -95,8 +95,8 @@ class BaseServicesStrategy(AbstractBaseStrategy):
 
     def initialize(self, session_id: str) -> bytes:
         post_path = (
-            f"{self.url}{self.settings.prefix}/{self.strategy_name}/{self.strategy_id}"
-            "/initialize"
+            f"{self.url}{self.settings.prefix}"
+            f"/{self.strategy_name}/{self.strategy_id}/initialize"
         )
         response = requests.post(
             post_path,
