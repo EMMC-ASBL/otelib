@@ -75,7 +75,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
             if f"{getattr(self.strategy_name, 'value', self.strategy_name)}_id"
             in response_json
             else response_json.pop(
-                f"{getattr(self.strategy_name, 'value', self.strategy_name)[len('data'):]}_id"  # pylint: disable=line-too-long
+                f"{getattr(self.strategy_name, 'value', self.strategy_name)[len('data'):]}_id"
             )
         )
 
