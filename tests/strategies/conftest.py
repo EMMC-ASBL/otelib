@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 if TYPE_CHECKING:
-    from typing import Literal, Tuple, Type, Union
+    from typing import Literal, Union
 
     from otelib.backends import python as python_backend
     from otelib.backends import services as services_backend
@@ -31,8 +31,8 @@ if TYPE_CHECKING:
 def strategy_implementation(
     request: pytest.FixtureRequest,
     backend: str,
-    resource_type_cls: "Type[ResourceType]",
-) -> "Tuple[Type[StrategyCls], ResourceType, Literal['python', 'services']]":
+    resource_type_cls: "type[ResourceType]",
+) -> "tuple[type[StrategyCls], ResourceType, Literal['python', 'services']]":
     """Return a given strategy class implementation as well as the current backend.
 
     Returns:

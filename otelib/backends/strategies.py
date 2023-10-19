@@ -7,7 +7,7 @@ from otelib.backends.utils import StrategyType
 from otelib.pipe import Pipe
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Optional, Type, Union
+    from typing import Optional, Union
 
     from oteapi.models.genericconfig import GenericConfig
 
@@ -16,7 +16,7 @@ class AbstractBaseStrategy(ABC):
     """The abstract base class defining the API for strategies."""
 
     strategy_name: "Union[StrategyType, str]"
-    strategy_config: "Type[GenericConfig]"
+    strategy_config: "type[GenericConfig]"
 
     def __init__(self, source: str) -> None:
         """Initiates a strategy."""

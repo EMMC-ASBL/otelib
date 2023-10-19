@@ -9,7 +9,7 @@ from otelib.exceptions import ApiError
 from otelib.settings import Settings
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Any, Dict, Optional
+    from typing import Any, Optional
 
 
 class BaseServicesStrategy(AbstractBaseStrategy):
@@ -29,11 +29,11 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         super().__init__(source)
 
         self.url: "Optional[str]" = source
-        self._headers: "Optional[Dict[str, Any]]" = None
+        self._headers: "Optional[dict[str, Any]]" = None
         self.settings = Settings()
 
     @property
-    def headers(self) -> "Dict[str, Any]":
+    def headers(self) -> "dict[str, Any]":
         """URL headers to use for all requests to the OTEAPI Service."""
         value = self._headers or {}
         if "Content-Type" not in value:
@@ -41,7 +41,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         return value
 
     @headers.setter
-    def headers(self, value: "Dict[str, Any]") -> None:
+    def headers(self, value: "dict[str, Any]") -> None:
         """Set the URL headers to use for all requests to the OTEAPI Service."""
         if not isinstance(value, dict):
             raise TypeError("headers must be a dictionary")
@@ -54,7 +54,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         response = requests.post(
             f"{self.url}{self.settings.prefix}/"
             f"{getattr(self.strategy_name, 'value', self.strategy_name)}",
-            data=data.json(),
+            data=data.model_dump_json(),
             params={"session_id": session_id} if session_id else {},
             timeout=self.settings.timeout,
             headers=self.headers,

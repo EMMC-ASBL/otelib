@@ -7,7 +7,7 @@ import pytest
 from utils import strategy_create_kwargs
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Dict, Union
+    from typing import Any, Union
 
     from requests_mock import Mocker
 
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from otelib.backends.python.base import BasePythonStrategy
     from otelib.backends.services.base import BaseServicesStrategy
 
-    from .conftest import OTEResponse, ResourceType
+    from .conftest import OTEResponse, Testdata, TestResourceIds
 
     BaseStrategy = Union[BasePythonStrategy, BaseServicesStrategy]
 
@@ -33,11 +33,11 @@ if TYPE_CHECKING:
 def test_pipe(
     backend: str,
     mock_ote_response: "OTEResponse",
-    ids: "Callable[[Union[ResourceType, str]], str]",
-    testdata: "Callable[[Union[ResourceType, str]], dict]",
+    ids: "TestResourceIds",
+    testdata: "Testdata",
     server_url: str,
     strategy_name: str,
-    create_kwargs: "Dict[str, Any]",
+    create_kwargs: "dict[str, Any]",
     requests_mock: "Mocker",
 ) -> None:
     """Test creating a `Pipe` and run the `get()` method."""
@@ -64,7 +64,7 @@ def test_pipe(
         mock_ote_response(
             method="post",
             endpoint=f"/{strategy_name}",
-            return_json={
+            response_json={
                 f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # pylint: disable=line-too-long
                 "_id": ids(strategy_name)
             },
@@ -76,7 +76,7 @@ def test_pipe(
             method="post",
             endpoint=f"/{strategy_name}/{ids(strategy_name)}/initialize",
             params={"session_id": ids("session")},
-            return_json=(
+            response_json=(
                 testdata(strategy_name)
                 if strategy_name in ("filter", "mapping")
                 else {}
@@ -90,7 +90,7 @@ def test_pipe(
             method="get",
             endpoint=f"/{strategy_name}/{ids(strategy_name)}",
             params={"session_id": ids("session")},
-            return_json=(
+            response_json=(
                 testdata(strategy_name)
                 if strategy_name in ("dataresource", "transformation")
                 else {}
@@ -101,7 +101,7 @@ def test_pipe(
         mock_ote_response(
             method="get",
             endpoint=f"/session/{ids('session')}",
-            return_json=testdata(strategy_name),
+            response_json=testdata(strategy_name),
         )
 
     if backend == "python" and strategy_name == "dataresource":
@@ -148,7 +148,7 @@ def test_pipe(
             f"{strategy.url}{strategy.settings.prefix}/session/{strategy._session_id}",
             timeout=30,
         )
-        session: "Dict[str, Any]" = content_session.json()
+        session: "dict[str, Any]" = content_session.json()
     elif backend == "python":
         session_ids = [x for x in strategy.cache if "session" in x]
         assert len(session_ids) == 1
@@ -177,8 +177,8 @@ def test_pipe(
 def test_pipeing_strategies(  # pylint: disable=too-many-statements
     backend: str,
     mock_ote_response: "OTEResponse",
-    ids: "Callable[[Union[ResourceType, str]], str]",
-    testdata: "Callable[[Union[ResourceType, str]], dict]",
+    ids: "TestResourceIds",
+    testdata: "Testdata",
     server_url: str,
     requests_mock: "Mocker",
 ) -> None:
@@ -201,12 +201,12 @@ def test_pipeing_strategies(  # pylint: disable=too-many-statements
         mock_ote_response(
             method="post",
             endpoint="/dataresource",
-            return_json={"resource_id": ids("dataresource")},
+            response_json={"resource_id": ids("dataresource")},
         )
         mock_ote_response(
             method="post",
             endpoint="/filter",
-            return_json={"filter_id": ids("filter")},
+            response_json={"filter_id": ids("filter")},
         )
 
         # initialize()
@@ -214,13 +214,13 @@ def test_pipeing_strategies(  # pylint: disable=too-many-statements
             method="post",
             endpoint=f"/dataresource/{ids('dataresource')}/initialize",
             params={"session_id": ids("session")},
-            return_json={},
+            response_json={},
         )
         mock_ote_response(
             method="post",
             endpoint=f"/filter/{ids('filter')}/initialize",
             params={"session_id": ids("session")},
-            return_json=testdata("filter"),
+            response_json=testdata("filter"),
         )
 
         # fetch()
@@ -228,20 +228,20 @@ def test_pipeing_strategies(  # pylint: disable=too-many-statements
             method="get",
             endpoint=f"/dataresource/{ids('dataresource')}",
             params={"session_id": ids("session")},
-            return_json=testdata("dataresource"),
+            response_json=testdata("dataresource"),
         )
         mock_ote_response(
             method="get",
             endpoint=f"/filter/{ids('filter')}",
             params={"session_id": ids("session")},
-            return_json={},
+            response_json={},
         )
 
         # Session content
         mock_ote_response(
             method="get",
             endpoint=f"/session/{ids('session')}",
-            return_json=session_test_content,
+            response_json=session_test_content,
         )
 
     if backend == "python":
@@ -289,7 +289,7 @@ def test_pipeing_strategies(  # pylint: disable=too-many-statements
             f"{pipeline.url}{pipeline.settings.prefix}/session/{pipeline._session_id}",
             timeout=30,
         )
-        session: "Dict[str, Any]" = content_session.json()
+        session: "dict[str, Any]" = content_session.json()
     elif backend == "python":
         session_ids = [x for x in pipeline.cache if "session" in x]
         assert len(session_ids) == 1
@@ -338,7 +338,7 @@ def test_pipeing_strategies(  # pylint: disable=too-many-statements
             f"{pipeline.url}{pipeline.settings.prefix}/session/{pipeline._session_id}",
             timeout=30,
         )
-        session: "Dict[str, Any]" = content_session.json()
+        session: "dict[str, Any]" = content_session.json()
     elif backend == "python":
         session_ids = [x for x in pipeline.cache if "session" in x]
         assert len(session_ids) == 1

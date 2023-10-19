@@ -4,7 +4,7 @@
 #   pre-commit autoupdate
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
     - id: end-of-file-fixer
     - id: debug-statements
@@ -25,7 +25,7 @@ repos:
       args: ["--profile", "black", "--filter-files", "--skip-gitignore"]
 
   - repo: https://github.com/ambv/black
-    rev: 23.9.1
+    rev: 23.10.0
     hooks:
     - id: black
 
@@ -37,13 +37,13 @@ repos:
       files: ^otelib/.*$
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.5.1
+    rev: v1.6.0
     hooks:
     - id: mypy
       exclude: ^tests/.*$
       additional_dependencies:
         - "types-requests"
-        - "pydantic<2"
+        - "pydantic>=2,<3"
 
   - repo: local
     hooks:
