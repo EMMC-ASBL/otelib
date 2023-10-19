@@ -1,5 +1,4 @@
 """Generic tests for all strategies."""
-# pylint: disable=too-many-arguments,protected-access
 from typing import TYPE_CHECKING
 
 import pytest

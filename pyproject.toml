@@ -33,7 +33,6 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pre-commit ~=3.5",
-    "pylint ~=3.0",
     "pytest ~=7.4",
     "pytest-cov ~=4.1",
     "requests-mock ~=1.11",
@@ -55,15 +54,6 @@ warn_unused_configs = true
 show_error_codes = true
 allow_redefinition = true
 plugins = ["pydantic.mypy"]
-
-[tool.pylint.messages_control]
-max-line-length = 88
-disable = [
-    "no-name-in-module",
-    "no-self-argument",
-    "too-few-public-methods",
-    # "duplicate-code",
-]
 
 [tool.pytest.ini_options]
 minversion = "7.0"
