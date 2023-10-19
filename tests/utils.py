@@ -81,6 +81,10 @@ class ResourceType(str, Enum):
                 "Only 'get' and 'initialize' methods are allowed."
             ) from exc
 
+    def __str__(self) -> str:
+        """Return string representation of Backend."""
+        return self.value
+
 
 def strategy_create_kwargs() -> "list[tuple[str, dict[str, Any]]]":
     """Strategy to creation key-word-arguments."""

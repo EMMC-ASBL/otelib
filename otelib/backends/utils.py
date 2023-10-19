@@ -8,6 +8,10 @@ class Backend(str, Enum):
     PYTHON = "python"
     SERVICES = "services"
 
+    def __str__(self) -> str:
+        """Return string representation of Backend."""
+        return self.value
+
 
 class StrategyType(str, Enum):
     """Enumeration of strategy types."""
@@ -22,3 +26,7 @@ class StrategyType(str, Enum):
     def cls_name(self) -> str:
         """Return Python class name."""
         return {self.DATARESOURCE: "DataResource"}.get(self, self.capitalize())
+
+    def __str__(self) -> str:
+        """Return string representation of Backend."""
+        return self.value

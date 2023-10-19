@@ -92,6 +92,10 @@ class HTTPMethod(str, Enum):
     POST = "post"
     PUT = "put"
 
+    def __str__(self) -> str:
+        """Return string representation of Backend."""
+        return self.value
+
 
 def pytest_configure(config) -> None:
     """Method that runs before pytest collects tests, so no modules are imported."""
@@ -176,10 +180,7 @@ def mock_session(
     """
     from otelib.settings import Settings
 
-    if (
-        getattr(client._impl._backend, "value", client._impl._backend) == "services"
-        and "example" in server_url
-    ):
+    if str(client._impl._backend) == "services" and "example" in server_url:
         requests_mock.post(
             f"{client.url}{Settings().prefix}/session",
             json={"session_id": ids("session")},
