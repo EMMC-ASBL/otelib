@@ -1,7 +1,7 @@
 """OTE Client."""
 from typing import TYPE_CHECKING
 
-from pydantic import AnyHttpUrl, ValidationError, parse_obj_as
+from pydantic import AnyHttpUrl, ValidationError
 
 from otelib.backends.factories import client_factory
 from otelib.backends.utils import Backend, StrategyType
@@ -31,7 +31,7 @@ class OTEClient:
 
         """
         try:
-            parse_obj_as(AnyHttpUrl, url)
+            AnyHttpUrl(url)
         except ValidationError:
             backend = Backend.PYTHON
         else:

@@ -11,7 +11,7 @@ from otelib.backends.strategies import AbstractBaseStrategy
 from otelib.exceptions import ItemNotFoundInCache, PythonBackendException
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Any, Dict, Literal, Optional
+    from typing import Any, Literal, Optional
 
     from oteapi.models import AttrDict, SessionUpdate
 
@@ -29,7 +29,7 @@ class BasePythonStrategy(AbstractBaseStrategy):
 
     """
 
-    def __init__(self, source: str, cache: "Optional[Dict[str, Any]]" = None) -> None:
+    def __init__(self, source: str, cache: "Optional[dict[str, Any]]" = None) -> None:
         super().__init__(source)
 
         self.interpreter: "Optional[str]" = source
@@ -47,7 +47,7 @@ class BasePythonStrategy(AbstractBaseStrategy):
         data = self.strategy_config(**config)
 
         self.strategy_id = f"{self.strategy_name}-{uuid4()}"
-        self.cache[self.strategy_id] = data.json()
+        self.cache[self.strategy_id] = data.model_dump_json()
 
         if session_id:
             if session_id not in self.cache:

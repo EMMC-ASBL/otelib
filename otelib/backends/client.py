@@ -8,7 +8,7 @@ from otelib.backends.utils import Backend, StrategyType
 from otelib.warnings import IgnoringConfigOptions
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Any, Dict, Type, Union
+    from typing import Any, Union
 
     from otelib.backends.strategies import AbstractBaseStrategy
 
@@ -49,7 +49,7 @@ class AbstractBaseClient(ABC):
             )
         self._source = source
 
-    def _set_config(self, config: "Dict[str, Any]") -> None:
+    def _set_config(self, config: "dict[str, Any]") -> None:
         """Set the custom client configuration options."""
         if config:
             warnings.warn(
@@ -60,7 +60,7 @@ class AbstractBaseClient(ABC):
 
     @abstractmethod
     def _create_strategy(
-        self, strategy_cls: "Type[AbstractBaseStrategy]", **config
+        self, strategy_cls: "type[AbstractBaseStrategy]", **config
     ) -> "AbstractBaseStrategy":
         """Create a strategy.
 

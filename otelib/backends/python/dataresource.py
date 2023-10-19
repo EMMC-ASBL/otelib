@@ -9,8 +9,6 @@ from oteapi.plugins import create_strategy
 from otelib.backends.python.base import BasePythonStrategy
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Type
-
     from oteapi.models.sessionupdate import SessionUpdate
 
 
@@ -19,7 +17,7 @@ class DataResource(BasePythonStrategy):
     operations."""
 
     strategy_name = "dataresource"
-    strategy_config: "Type[ResourceConfig]" = ResourceConfig
+    strategy_config: "type[ResourceConfig]" = ResourceConfig
 
     def fetch(self, session_id: str) -> "SessionUpdate":
         self._sanity_checks(session_id)

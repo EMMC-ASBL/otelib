@@ -6,13 +6,13 @@ from otelib.backends.utils import Backend, StrategyType
 from otelib.exceptions import InvalidBackend, InvalidStrategy
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Type, Union
+    from typing import Union
 
     from otelib.backends.client import AbstractBaseClient
     from otelib.backends.strategies import AbstractBaseStrategy
 
 
-def client_factory(backend: "Union[str, Backend]") -> "Type[AbstractBaseClient]":
+def client_factory(backend: "Union[str, Backend]") -> "type[AbstractBaseClient]":
     """Return a backend client class."""
     try:
         backend = Backend(backend)
@@ -32,7 +32,7 @@ def client_factory(backend: "Union[str, Backend]") -> "Type[AbstractBaseClient]"
 
 def strategy_factory(
     backend: "Union[str, Backend]", strategy_type: "Union[str, StrategyType]"
-) -> "Type[AbstractBaseStrategy]":
+) -> "type[AbstractBaseStrategy]":
     """Return a backend-specific strategy class."""
     try:
         backend = Backend(backend)
