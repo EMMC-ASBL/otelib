@@ -1,6 +1,4 @@
 """Test the `otelib.pipe` module."""
-# pylint: disable=too-many-arguments,too-many-locals,protected-access,redefined-builtin
-# pylint: disable=too-many-branches
 from typing import TYPE_CHECKING
 
 import pytest
@@ -65,7 +63,7 @@ def test_pipe(
             method="post",
             endpoint=f"/{strategy_name}",
             response_json={
-                f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # pylint: disable=line-too-long
+                f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # noqa: E501
                 "_id": ids(strategy_name)
             },
         )
@@ -174,7 +172,7 @@ def test_pipe(
 
 
 @pytest.mark.usefixtures("mock_session")
-def test_pipeing_strategies(  # pylint: disable=too-many-statements
+def test_pipeing_strategies(
     backend: str,
     mock_ote_response: "OTEResponse",
     ids: "TestResourceIds",
@@ -349,7 +347,7 @@ def test_pipeing_strategies(  # pylint: disable=too-many-statements
         assert value == session[key]
 
 
-def test_pipeing_concatenate(  # pylint: disable=too-many-statements
+def test_pipeing_concatenate(
     backend: str,
     server_url: str,
 ) -> None:

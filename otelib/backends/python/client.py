@@ -14,7 +14,6 @@ if TYPE_CHECKING:  # pragma: no cover
 CACHE: "dict[str, Any]" = {}
 
 
-# pylint: disable=duplicate-code
 class OTEPythonClient(AbstractBaseClient):
     """The Python version of the OTEClient object.
 
@@ -55,7 +54,7 @@ class OTEPythonClient(AbstractBaseClient):
 
     def clear_cache(self) -> None:
         """Clear the global CACHE object."""
-        global CACHE  # pylint: disable=global-statement
+        global CACHE
         CACHE = {}
         if self._cache != CACHE and (self._cache or CACHE):
             raise PythonBackendException("Could not clear the global CACHE object.")

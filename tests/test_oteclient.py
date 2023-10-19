@@ -1,6 +1,4 @@
 """Test OTE Client."""
-# pylint: disable=protected-access,invalid-name,too-many-arguments,too-many-locals
-# pylint: disable=too-many-branches
 from typing import TYPE_CHECKING
 
 import pytest
