@@ -25,7 +25,7 @@ repos:
       args: ["--profile", "black", "--filter-files", "--skip-gitignore"]
 
   - repo: https://github.com/ambv/black
-    rev: 23.9.1
+    rev: 23.10.0
     hooks:
     - id: black
 
@@ -43,7 +43,7 @@ repos:
       exclude: ^tests/.*$
       additional_dependencies:
         - "types-requests"
-        - "pydantic<2"
+        - "pydantic>=2,<3"
 
   - repo: local
     hooks:

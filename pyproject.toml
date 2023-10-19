@@ -25,8 +25,8 @@ requires-python = "~=3.9"
 dynamic = ["version"]
 
 dependencies = [
-    "oteapi-core >=0.5.2,<0.6",
-    "pydantic <2",
+    "oteapi-core >=0.6.0,<1",
+    "pydantic-settings ~=2.0",
 ]
 
 [project.optional-dependencies]
@@ -68,6 +68,6 @@ disable = [
 minversion = "7.0"
 addopts = "-rs --cov=otelib --cov-report=term --durations=10"
 filterwarnings = [
-    "ignore:.*imp module.*:DeprecationWarning",
+    "ignore:.*No global cache used.*:UserWarning",
 ]
 requests_mock_case_sensitive = true

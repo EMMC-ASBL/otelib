@@ -3,7 +3,7 @@ from enum import Enum
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, List, Literal, Tuple
+    from typing import Any, Literal
 
 
 TEST_DATA = {
@@ -82,7 +82,7 @@ class ResourceType(str, Enum):
             ) from exc
 
 
-def strategy_create_kwargs() -> "List[Tuple[str, Dict[str, Any]]]":
+def strategy_create_kwargs() -> "list[tuple[str, dict[str, Any]]]":
     """Strategy to creation key-word-arguments."""
     return [
         (
