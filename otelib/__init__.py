@@ -6,6 +6,6 @@ from .client import OTEClient
 
 __all__ = ("OTEClient",)
 
-__version__ = "0.3.2"
+__version__ = "0.4.0"
 __author__ = "SINTEF"
 __author_email__ = "Team4.0@SINTEF.no"
