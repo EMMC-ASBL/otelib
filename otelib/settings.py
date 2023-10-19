@@ -1,16 +1,18 @@
 """Configuration settings for creating the OTE client."""
-from pydantic import BaseModel, Field
+from typing import Annotated
+
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class Settings(BaseModel):
+class Settings(BaseSettings):
     """Configuration settings for an OTE client."""
 
-    prefix: str = Field("/api/v1", description="Application route prefix.")
-    timeout: tuple[float, float] = Field(
-        (3.0, 27.0), description="Tuple for URL connect and read timeouts in seconds."
-    )
+    model_config = SettingsConfigDict(env_prefix="OTEAPI_")
 
-    class Config:
-        """Pydantic configuration class."""
+    prefix: Annotated[str, Field(description="Application route prefix.")] = "/api/v1"
 
-        env_prefix = "OTEAPI_"
+    timeout: Annotated[
+        tuple[float, float],
+        Field(description="Tuple for URL connect and read timeouts in seconds."),
+    ] = (3.0, 27.0)

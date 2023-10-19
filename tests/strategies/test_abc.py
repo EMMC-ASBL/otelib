@@ -5,14 +5,14 @@ import pytest
 from utils import strategy_create_kwargs
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Dict, Union
+    from typing import Any, Union
 
     from requests_mock import Mocker
 
     from otelib.backends.python.base import BasePythonStrategy
     from otelib.backends.services.base import BaseServicesStrategy
 
-    from ..conftest import OTEResponse, ResourceType
+    from ..conftest import OTEResponse, Testdata, TestResourceIds
 
     BaseStrategy = Union[BasePythonStrategy, BaseServicesStrategy]
 
@@ -26,11 +26,11 @@ if TYPE_CHECKING:
 def test_get(
     backend: str,
     mock_ote_response: "OTEResponse",
-    ids: "Callable[[Union[ResourceType, str]], str]",
-    testdata: "Callable[[Union[ResourceType, str]], dict]",
+    ids: "TestResourceIds",
+    testdata: "Testdata",
     server_url: str,
     strategy_name: str,
-    create_kwargs: "Dict[str, Any]",
+    create_kwargs: "dict[str, Any]",
     requests_mock: "Mocker",
 ) -> None:
     """Test `AbstractStrategy.get()`."""
@@ -52,7 +52,7 @@ def test_get(
         mock_ote_response(
             method="post",
             endpoint=f"/{strategy_name}",
-            return_json={
+            response_json={
                 f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # noqa: E501
                 "_id": ids(strategy_name)
             },
@@ -64,7 +64,7 @@ def test_get(
             method="post",
             endpoint=f"/{strategy_name}/{ids(strategy_name)}/initialize",
             params={"session_id": ids("session")},
-            return_json=(
+            response_json=(
                 testdata(strategy_name)
                 if strategy_name in ("filter", "mapping")
                 else {}
@@ -78,7 +78,7 @@ def test_get(
             method="get",
             endpoint=f"/{strategy_name}/{ids(strategy_name)}",
             params={"session_id": ids("session")},
-            return_json=(
+            response_json=(
                 testdata(strategy_name)
                 if strategy_name in ("dataresource", "transformation")
                 else {}
@@ -89,7 +89,7 @@ def test_get(
         mock_ote_response(
             method="get",
             endpoint=f"/session/{ids('session')}",
-            return_json=testdata(strategy_name),
+            response_json=testdata(strategy_name),
         )
 
     if backend == "python" and strategy_name == "dataresource":
@@ -142,7 +142,7 @@ def test_get(
             f"{strategy.url}{strategy.settings.prefix}/session/{strategy._session_id}",
             timeout=30,
         )
-        session: "Dict[str, Any]" = content_session.json()
+        session: "dict[str, Any]" = content_session.json()
     elif backend == "python":
         session_ids = [x for x in strategy.cache if "session" in x]
         assert len(session_ids) == 1
@@ -175,10 +175,10 @@ def test_get(
 )
 def test_services_get_fails(
     mock_ote_response: "OTEResponse",
-    ids: "Callable[[Union[ResourceType, str]], str]",
+    ids: "TestResourceIds",
     server_url: str,
     strategy_name: str,
-    create_kwargs: "Dict[str, Any]",
+    create_kwargs: "dict[str, Any]",
     requests_mock: "Mocker",
 ) -> None:
     """Check `AbstractStrategy.get()` raises `ApiError` upon request failure."""
@@ -192,7 +192,7 @@ def test_services_get_fails(
     mock_ote_response(
         method="post",
         endpoint=f"/{strategy_name}",
-        return_json={
+        response_json={
             f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # noqa: E501
             "_id": ids(strategy_name)
         },

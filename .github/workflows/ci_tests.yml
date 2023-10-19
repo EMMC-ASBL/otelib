@@ -10,7 +10,7 @@ on:
 jobs:
   basic:
     name: External
-    uses: SINTEF/ci-cd/.github/workflows/ci_tests.yml@v1
+    uses: SINTEF/ci-cd/.github/workflows/ci_tests.yml@v2.5.2
     with:
       # General settings
       install_extras: "[dev]"
@@ -35,7 +35,6 @@ jobs:
   pytest:
     name: pytest (${{ matrix.os[1] }}, py${{ matrix.python-version }})
     runs-on: ${{ matrix.os[0] }}
-    # timeout-minutes: 15
 
     strategy:
       fail-fast: false
@@ -66,7 +65,7 @@ jobs:
       run: pytest -vvv --cov-report=xml
 
     - name: Upload coverage to Codecov
-      if: matrix.python-version == 3.9 && github.repository == 'EMMC-ASBL/otelib'
+      if: matrix.python-version == '3.9' && github.repository == 'EMMC-ASBL/otelib'
       uses: codecov/codecov-action@v3
       with:
         files: coverage.xml

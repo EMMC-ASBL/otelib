@@ -7,11 +7,11 @@ from otelib.backends.client import AbstractBaseClient
 from otelib.exceptions import PythonBackendException
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Any, Dict, Type
+    from typing import Any
 
     from otelib.backends.python.base import BasePythonStrategy
 
-CACHE: "Dict[str, Any]" = {}
+CACHE: "dict[str, Any]" = {}
 
 
 class OTEPythonClient(AbstractBaseClient):
@@ -46,7 +46,7 @@ class OTEPythonClient(AbstractBaseClient):
         super()._validate_source(source)
 
     def _create_strategy(  # type: ignore[override]
-        self, strategy_cls: "Type[BasePythonStrategy]", **config
+        self, strategy_cls: "type[BasePythonStrategy]", **config
     ) -> "BasePythonStrategy":
         strategy = strategy_cls(self.interpreter, self._cache)
         strategy.create(**config)
