@@ -2,8 +2,8 @@
 from platform import python_version
 from typing import TYPE_CHECKING
 
-if python_version() < "3.11":  # pragma: no cover
-    from enum import StrEnum  # type: ignore[attr-defined]
+if python_version() >= "3.11":  # pragma: no cover
+    from enum import StrEnum
 else:  # pragma: no cover
     from enum import Enum
 
