@@ -1,6 +1,15 @@
 """Fixtures and configuration for pytest."""
-from enum import Enum
+from platform import python_version
 from typing import TYPE_CHECKING
+
+if python_version() < "3.11":  # pragma: no cover
+    from enum import StrEnum  # type: ignore[attr-defined]
+else:  # pragma: no cover
+    from enum import Enum
+
+    class StrEnum(str, Enum):  # type: ignore[no-redef]
+        """Pre-3.11 style string-Enums."""
+
 
 import pytest
 
@@ -78,7 +87,7 @@ if TYPE_CHECKING:
             ...
 
 
-class HTTPMethod(str, Enum):
+class HTTPMethod(StrEnum):
     """Allowed HTTP methods.
 
     See `requests_mock.mocker` for the reference list.
@@ -91,10 +100,6 @@ class HTTPMethod(str, Enum):
     PATCH = "patch"
     POST = "post"
     PUT = "put"
-
-    def __str__(self) -> str:
-        """Return string representation of Backend."""
-        return self.value
 
 
 def pytest_configure(config) -> None:

@@ -1,19 +1,23 @@
 """Utility function and classes for use in the Backends module."""
-from enum import Enum
+from platform import python_version
+
+if python_version() < "3.11":  # pragma: no cover
+    from enum import StrEnum  # type: ignore[attr-defined]
+else:  # pragma: no cover
+    from enum import Enum
+
+    class StrEnum(str, Enum):  # type: ignore[no-redef]
+        """Pre-3.11 style string-Enums."""
 
 
-class Backend(str, Enum):
+class Backend(StrEnum):
     """Backend enumeration."""
 
     PYTHON = "python"
     SERVICES = "services"
 
-    def __str__(self) -> str:
-        """Return string representation of Backend."""
-        return self.value
 
-
-class StrategyType(str, Enum):
+class StrategyType(StrEnum):
     """Enumeration of strategy types."""
 
     DATARESOURCE = "dataresource"
@@ -26,7 +30,3 @@ class StrategyType(str, Enum):
     def cls_name(self) -> str:
         """Return Python class name."""
         return {self.DATARESOURCE: "DataResource"}.get(self, self.capitalize())
-
-    def __str__(self) -> str:
-        """Return string representation of Backend."""
-        return self.value
