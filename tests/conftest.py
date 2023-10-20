@@ -1,13 +1,13 @@
 """Fixtures and configuration for pytest."""
-from platform import python_version
 from typing import TYPE_CHECKING
 
-if python_version() >= "3.11":  # pragma: no cover
+try:
+    # For Python >= 3.11
     from enum import StrEnum
-else:  # pragma: no cover
+except ImportError:
     from enum import Enum
 
-    class StrEnum(str, Enum):  # type: ignore[no-redef]
+    class StrEnum(str, Enum):
         """Pre-3.11 style string-Enums."""
 
 

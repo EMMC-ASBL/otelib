@@ -1,9 +1,8 @@
 """Utility function and classes for use in the Backends module."""
-from platform import python_version
-
-if python_version() >= "3.11":  # pragma: no cover
+try:
+    # For Python >= 3.11
     from enum import StrEnum  # type: ignore[attr-defined]
-else:  # pragma: no cover
+except ImportError:
     from enum import Enum
 
     class StrEnum(str, Enum):  # type: ignore[no-redef]
