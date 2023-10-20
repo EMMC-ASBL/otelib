@@ -69,7 +69,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         self.strategy_id = (
             response_json.pop(f"{self.strategy_name}_id")
             if f"{self.strategy_name}_id" in response_json
-            else response_json.pop(f"{str(self.strategy_name)[len('data'):]}_id")
+            else response_json.pop(f"{self.strategy_name[len('data'):]}_id")
         )
 
     def fetch(self, session_id: str) -> bytes:
@@ -82,8 +82,8 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         if response.ok:
             return response.content
         strategy_name = (
-            str(self.strategy_name)[len("data") :]
-            if str(self.strategy_name).startswith("data")
+            self.strategy_name[len("data") :]
+            if self.strategy_name.startswith("data")
             else self.strategy_name
         )
         raise ApiError(
@@ -107,8 +107,8 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         if response.ok:
             return response.content
         strategy_name = (
-            str(self.strategy_name)[len("data") :]
-            if str(self.strategy_name).startswith("data")
+            self.strategy_name[len("data") :]
+            if self.strategy_name.startswith("data")
             else self.strategy_name
         )
         raise ApiError(

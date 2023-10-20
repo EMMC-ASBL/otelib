@@ -39,12 +39,12 @@ def test_create_strategies(
     import requests
 
     if strategy == "function":
-        if str(client._impl._backend) == "services" and "example" in client.url:
+        if client._impl._backend == "services" and "example" in client.url:
             pass
         else:
             pytest.skip("No function strategy exists in oteapi-core yet.")
 
-    backend = str(client._impl._backend)
+    backend = client._impl._backend
 
     if backend == "services":
         # Mock URL responses

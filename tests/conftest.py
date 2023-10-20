@@ -185,7 +185,7 @@ def mock_session(
     """
     from otelib.settings import Settings
 
-    if str(client._impl._backend) == "services" and "example" in server_url:
+    if client._impl._backend == "services" and "example" in server_url:
         requests_mock.post(
             f"{client.url}{Settings().prefix}/session",
             json={"session_id": ids("session")},
