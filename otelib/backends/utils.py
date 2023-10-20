@@ -1,5 +1,9 @@
 """Utility function and classes for use in the Backends module."""
-try:
+try:  # pragma: no cover
+    # Don't cover this block in codecoverage because we're only uploading coverage
+    # reports for Python 3.9 runs. We are testing this code on Python 3.9-3.11, so the
+    # block _will_ be tested.
+
     # For Python >= 3.11
     from enum import StrEnum  # type: ignore[attr-defined]
 except ImportError:
