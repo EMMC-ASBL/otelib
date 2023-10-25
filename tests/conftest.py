@@ -1,6 +1,15 @@
 """Fixtures and configuration for pytest."""
-from enum import Enum
 from typing import TYPE_CHECKING
+
+try:
+    # For Python >= 3.11
+    from enum import StrEnum
+except ImportError:
+    from enum import Enum
+
+    class StrEnum(str, Enum):
+        """Pre-3.11 style string-Enums."""
+
 
 import pytest
 
@@ -78,7 +87,7 @@ if TYPE_CHECKING:
             ...
 
 
-class HTTPMethod(str, Enum):
+class HTTPMethod(StrEnum):
     """Allowed HTTP methods.
 
     See `requests_mock.mocker` for the reference list.

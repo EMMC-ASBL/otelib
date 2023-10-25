@@ -109,7 +109,7 @@ def test_create_strategies(
         assert json.loads(content) == {}
     elif (
         strategy in ("transformation",)
-        and client._impl._backend == "services"
+        and backend == "services"
         and "example" not in client.url
     ):
         # Real backend !
