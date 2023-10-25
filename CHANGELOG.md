@@ -1,6 +1,38 @@
 # Changelog
 
-## [v0.3.2](https://github.com/EMMC-ASBL/otelib/tree/v0.3.2) (2023-06-08)
+## [v0.4.0](https://github.com/EMMC-ASBL/otelib/tree/v0.4.0) (2023-10-19)
+
+[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.3.2...v0.4.0)
+
+**Implemented enhancements:**
+
+- Use ruff [\#130](https://github.com/EMMC-ASBL/otelib/issues/130)
+- Migrate to pydantic v2 [\#129](https://github.com/EMMC-ASBL/otelib/issues/129)
+
+**Fixed bugs:**
+
+- Fix test issue [\#132](https://github.com/EMMC-ASBL/otelib/pull/132) ([CasperWA](https://github.com/CasperWA))
+
+**Closed issues:**
+
+- Use latest SINTEF/ci-cd [\#137](https://github.com/EMMC-ASBL/otelib/issues/137)
+- Revert update of codecov-action from v4 to v3 [\#127](https://github.com/EMMC-ASBL/otelib/issues/127)
+- Update documentation [\#7](https://github.com/EMMC-ASBL/otelib/issues/7)
+
+**Merged pull requests:**
+
+- \[Auto-generated\] Update dependencies [\#145](https://github.com/EMMC-ASBL/otelib/pull/145) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#144](https://github.com/EMMC-ASBL/otelib/pull/144) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#142](https://github.com/EMMC-ASBL/otelib/pull/142) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#140](https://github.com/EMMC-ASBL/otelib/pull/140) ([TEAM4-0](https://github.com/TEAM4-0))
+- Update SINTEF/ci-cd usage to v2.5.2 \(was v1\) [\#135](https://github.com/EMMC-ASBL/otelib/pull/135) ([CasperWA](https://github.com/CasperWA))
+- Migrate to pydantic v2 [\#133](https://github.com/EMMC-ASBL/otelib/pull/133) ([CasperWA](https://github.com/CasperWA))
+- Use ruff [\#131](https://github.com/EMMC-ASBL/otelib/pull/131) ([CasperWA](https://github.com/CasperWA))
+- \[Auto-generated\] Update dependencies [\#124](https://github.com/EMMC-ASBL/otelib/pull/124) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#123](https://github.com/EMMC-ASBL/otelib/pull/123) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#119](https://github.com/EMMC-ASBL/otelib/pull/119) ([TEAM4-0](https://github.com/TEAM4-0))
+
+## [v0.3.2](https://github.com/EMMC-ASBL/otelib/tree/v0.3.2) (2023-06-20)
 
 [Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.3.1...v0.3.2)
 

@@ -1,6 +1,15 @@
 """Utility functions for tests."""
-from enum import Enum
 from typing import TYPE_CHECKING
+
+try:
+    # For Python >= 3.11
+    from enum import StrEnum
+except ImportError:
+    from enum import Enum
+
+    class StrEnum(str, Enum):
+        """Pre-3.11 style string-Enums."""
+
 
 if TYPE_CHECKING:
     from typing import Any, Literal
@@ -38,7 +47,7 @@ TEST_DATA = {
 }
 
 
-class ResourceType(str, Enum):
+class ResourceType(StrEnum):
     """Enumeration of resource types."""
 
     DATARESOURCE = "dataresource"
