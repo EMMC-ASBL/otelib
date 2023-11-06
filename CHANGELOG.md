@@ -1,5 +1,22 @@
 # Changelog
 
+## [Unreleased](https://github.com/EMMC-ASBL/otelib/tree/HEAD)
+
+[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.4.1...HEAD)
+
+**Closed issues:**
+
+- Support Python 3.11 [\#120](https://github.com/EMMC-ASBL/otelib/issues/120)
+
+## [v0.4.1](https://github.com/EMMC-ASBL/otelib/tree/v0.4.1) (2023-10-25)
+
+[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.4.0...v0.4.1)
+
+**Merged pull requests:**
+
+- \[Auto-generated\] Update dependencies [\#146](https://github.com/EMMC-ASBL/otelib/pull/146) ([TEAM4-0](https://github.com/TEAM4-0))
+- Extend support to Python 3.11 [\#136](https://github.com/EMMC-ASBL/otelib/pull/136) ([CasperWA](https://github.com/CasperWA))
+
 ## [v0.4.0](https://github.com/EMMC-ASBL/otelib/tree/v0.4.0) (2023-10-19)
 
 [Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.3.2...v0.4.0)
