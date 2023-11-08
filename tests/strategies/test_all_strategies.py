@@ -125,14 +125,7 @@ def test_fetch(
     # We must first create the resource - getting a resource ID
     strategy.create(**dict(strategy_create_kwargs())[strategy_type.value])
 
-    print("backend", backend)
-    print("strategy_type", strategy_type)
-    print("strategy_type.DATARESOURCE", strategy_type.DATARESOURCE)
     if backend == "python" and strategy_type == strategy_type.DATARESOURCE:
-        print(
-            "mocking URL:",
-            dict(strategy_create_kwargs())[strategy_type.value]["downloadUrl"],
-        )
         # Mock URL responses
         requests_mock.request(
             method="get",

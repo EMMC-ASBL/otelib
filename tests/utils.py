@@ -88,6 +88,11 @@ class ResourceType(StrEnum):
 
 def strategy_create_kwargs() -> "list[tuple[str, dict[str, Any]]]":
     """Strategy to creation key-word-arguments."""
+    path_to_sample_json = STATIC_DIR / "sample.json"
+    assert path_to_sample_json.exists()
+    relative_postix_path_to_sample_json = path_to_sample_json.relative_to(
+        REPOSITORY_DIR
+    ).as_posix()
     return [
         (
             ResourceType.DATARESOURCE.value,
@@ -95,7 +100,7 @@ def strategy_create_kwargs() -> "list[tuple[str, dict[str, Any]]]":
                 "downloadUrl": (
                     "https://raw.githubusercontent.com/EMMC-ASBL/otelib"
                     f"/{HEAD_COMMIT_SHA}"
-                    f"/{(STATIC_DIR / 'sample.json').relative_to(REPOSITORY_DIR)}"
+                    f"/{relative_postix_path_to_sample_json}"
                 ),
                 "mediaType": "application/json",
             },
