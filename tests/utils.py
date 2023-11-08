@@ -19,7 +19,9 @@ if TYPE_CHECKING:
 
 REPOSITORY_DIR = (Path(__file__).resolve().parent.parent).resolve()
 STATIC_DIR = (Path(__file__).resolve().parent / "static").resolve()
-HEAD_COMMIT_SHA = run(["git", "rev-parse", "HEAD"], capture_output=True).stdout.decode()
+HEAD_COMMIT_SHA = run(
+    ["git", "rev-parse", "HEAD"], capture_output=True, check=True
+).stdout.decode()
 
 TEST_DATA = {
     "dataresource": {"content": json.loads((STATIC_DIR / "sample.json").read_text())},
