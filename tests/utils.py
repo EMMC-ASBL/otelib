@@ -1,4 +1,7 @@
 """Utility functions for tests."""
+import json
+from pathlib import Path
+from subprocess import run
 from typing import TYPE_CHECKING
 
 try:
@@ -14,22 +17,12 @@ except ImportError:
 if TYPE_CHECKING:
     from typing import Any, Literal
 
+REPOSITORY_DIR = (Path(__file__).resolve().parent.parent).resolve()
+STATIC_DIR = (Path(__file__).resolve().parent / "static").resolve()
+HEAD_COMMIT_SHA = run(["git", "rev-parse", "HEAD"], capture_output=True).stdout.decode()
 
 TEST_DATA = {
-    "dataresource": {
-        "content": {
-            "firstName": "Joe",
-            "lastName": "Jackson",
-            "gender": "male",
-            "age": 28,
-            "address": {
-                "streetAddress": "101",
-                "city": "San Diego",
-                "state": "CA",
-            },
-            "phoneNumbers": [{"type": "home", "number": "7349282382"}],
-        }
-    },
+    "dataresource": {"content": json.loads((STATIC_DIR / "sample.json").read_text())},
     "filter": {"sqlquery": "DROP TABLE myTable;"},
     "function": {},
     "mapping": {
@@ -97,7 +90,11 @@ def strategy_create_kwargs() -> "list[tuple[str, dict[str, Any]]]":
         (
             ResourceType.DATARESOURCE.value,
             {
-                "downloadUrl": "https://filesamples.com/samples/code/json/sample2.json",
+                "downloadUrl": (
+                    "https://raw.githubusercontent.com/EMMC-ASBL/otelib"
+                    f"/{HEAD_COMMIT_SHA}"
+                    f"/{(STATIC_DIR / 'sample.json').relative_to(REPOSITORY_DIR)}"
+                ),
                 "mediaType": "application/json",
             },
         ),
