@@ -1,11 +1,15 @@
 """Common strategy for Download, Parse and Resource strategies."""
 import json
 from copy import deepcopy
+from typing import TYPE_CHECKING
 
 from oteapi.models import ResourceConfig
 from oteapi.plugins import create_strategy
 
 from otelib.backends.python.base import BasePythonStrategy
+
+if TYPE_CHECKING:  # pragma: no cover
+    from oteapi.models.sessionupdate import SessionUpdate
 
 
 class DataResource(BasePythonStrategy):
@@ -15,7 +19,7 @@ class DataResource(BasePythonStrategy):
     strategy_name = "dataresource"
     strategy_config: "type[ResourceConfig]" = ResourceConfig
 
-    def fetch(self, session_id: str) -> bytes:
+    def fetch(self, session_id: str) -> "SessionUpdate":
         self._sanity_checks(session_id)
 
         config = self.strategy_config(**json.loads(self.cache[self.strategy_id]))
@@ -40,9 +44,9 @@ class DataResource(BasePythonStrategy):
             )
             self.cache[session_id].update(session_update)
 
-        return session_update.model_dump_json().encode(encoding="utf-8")
+        return session_update
 
-    def initialize(self, session_id: str) -> bytes:
+    def initialize(self, session_id: str) -> "SessionUpdate":
         self._sanity_checks(session_id)
 
         config = self.strategy_config(**json.loads(self.cache[self.strategy_id]))
@@ -67,4 +71,4 @@ class DataResource(BasePythonStrategy):
             )
             self.cache[session_id].update(session_update)
 
-        return session_update.model_dump_json().encode(encoding="utf-8")
+        return session_update

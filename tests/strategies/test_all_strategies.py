@@ -4,8 +4,6 @@ from typing import TYPE_CHECKING
 import pytest
 
 if TYPE_CHECKING:
-    from typing import Any
-
     from requests_mock import Mocker
 
     from ..conftest import OTEResponse, ResourceType, Testdata, TestResourceIds
@@ -89,8 +87,6 @@ def test_fetch(
     requests_mock: "Mocker",
 ) -> None:
     """Test the `fetch()` method."""
-    import json
-
     from utils import strategy_create_kwargs
 
     strategy_cls, strategy_type, backend = strategy_implementation
@@ -144,11 +140,10 @@ def test_fetch(
         # Real backend for transformation strategy
         # Dynamic response content - just check keys are the same and values are
         # non-empty
-        _content: "dict[str, Any]" = json.loads(content)
-        assert list(_content) == list(testdata(strategy_type, "get"))
-        assert all(_content.values())
+        assert list(content) == list(testdata(strategy_type, "get"))
+        assert all(content.values())
     else:
-        assert json.loads(content) == testdata(strategy_type, "get")
+        assert content == testdata(strategy_type, "get")
 
 
 def test_fetch_fails(
@@ -202,8 +197,6 @@ def test_initialize(
     testdata: "Testdata",
 ) -> None:
     """Test `DataResource.initialize()`."""
-    import json
-
     from utils import strategy_create_kwargs
 
     strategy_cls, strategy_type, backend = strategy_implementation
@@ -240,16 +233,15 @@ def test_initialize(
 
     content = strategy.initialize(session_id)
 
-    loaded_content = json.loads(content)
     testdata_strategy = testdata(strategy_type, "initialize")
     if strategy_type == strategy_type.MAPPING and (
         backend == "python" or "example" not in strategy.url
     ):
         # "triples" is a Set and must be "sorted"
-        loaded_content["triples"] = sorted(loaded_content["triples"])
+        content["triples"] = sorted(content["triples"])
         testdata_strategy["triples"] = sorted(testdata_strategy["triples"])
-
-    assert loaded_content == testdata_strategy
+    else:
+        assert content == testdata_strategy
 
 
 def test_initialize_fails(

@@ -38,9 +38,9 @@ def test_get(
         pytest.skip("No function strategy exists in oteapi-core yet.")
 
     import importlib
-    import json
 
     import requests
+    from oteapi.models.genericconfig import AttrDict
 
     strategies = importlib.import_module(f"otelib.backends.{backend}")
     server_url = server_url if backend != "python" else backend
@@ -115,9 +115,9 @@ def test_get(
     assert strategy.strategy_name == strategy_name
 
     content = strategy.get()
-    assert isinstance(content, bytes)
+    assert isinstance(content, AttrDict)
     if strategy_name in ("filter", "mapping"):
-        assert json.loads(content) == {}
+        assert not content
     elif (
         strategy_name in ("transformation",)
         and backend == "services"
@@ -126,11 +126,10 @@ def test_get(
         # Real backend !
         # Dynamic response content - just check keys are the same and values are
         # non-empty
-        _content: "dict[str, Any]" = json.loads(content)
-        assert list(_content) == list(testdata(strategy_name))
-        assert all(_content.values())
+        assert list(content) == list(testdata(strategy_name))
+        assert all(content.values())
     else:
-        assert json.loads(content) == testdata(strategy_name)
+        assert content == testdata(strategy_name)
 
     ## The testdata should always be in the full session
     assert (

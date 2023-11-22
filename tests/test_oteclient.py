@@ -34,8 +34,6 @@ def test_create_strategies(
     requests_mock: "Mocker",
 ) -> None:
     """Test creating any strategy and calling it's `get()` method."""
-    import json
-
     import requests
 
     if strategy == "function":
@@ -106,7 +104,7 @@ def test_create_strategies(
 
     content = created_strategy.get()
     if strategy in ("filter", "mapping"):
-        assert json.loads(content) == {}
+        assert not content
     elif (
         strategy in ("transformation",)
         and backend == "services"
@@ -115,11 +113,10 @@ def test_create_strategies(
         # Real backend !
         # Dynamic response content - just check keys are the same and values are
         # non-empty
-        _content: "dict[str, Any]" = json.loads(content)
-        assert list(_content) == list(testdata(strategy))
-        assert all(_content.values())
+        assert list(content) == list(testdata(strategy))
+        assert all(content.values())
     else:
-        assert json.loads(content) == testdata(strategy)
+        assert content == testdata(strategy)
 
     # The testdata should always be in the full session
     assert (

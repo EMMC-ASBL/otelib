@@ -9,7 +9,7 @@ from otelib.pipe import Pipe
 if TYPE_CHECKING:  # pragma: no cover
     from typing import Optional, Union
 
-    from oteapi.models.genericconfig import GenericConfig
+    from oteapi.models.genericconfig import AttrDict, GenericConfig
 
 
 class AbstractBaseStrategy(ABC):
@@ -39,7 +39,7 @@ class AbstractBaseStrategy(ABC):
         """
 
     @abstractmethod
-    def fetch(self, session_id: str) -> bytes:
+    def fetch(self, session_id: str) -> "AttrDict":
         """Returns the result of the current strategy.
 
         This method is called by `get()` while propagating up the pipeline.
@@ -53,7 +53,7 @@ class AbstractBaseStrategy(ABC):
         """
 
     @abstractmethod
-    def initialize(self, session_id: str) -> bytes:
+    def initialize(self, session_id: str) -> "AttrDict":
         """Initialise the current strategy.
 
         This method is called by `get()` when propagating down the pipeline.
@@ -66,7 +66,7 @@ class AbstractBaseStrategy(ABC):
 
         """
 
-    def get(self, session_id: "Optional[str]" = None) -> bytes:
+    def get(self, session_id: "Optional[str]" = None) -> "AttrDict":
         """Executes a pipeline.
 
         This will call `initialize()` and then the `get()` method on the
