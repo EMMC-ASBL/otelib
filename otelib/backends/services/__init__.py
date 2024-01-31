@@ -1,4 +1,5 @@
 """The strategies to be created by the client."""
+
 from .dataresource import DataResource
 from .filter import Filter
 from .function import Function

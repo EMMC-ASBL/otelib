@@ -1,4 +1,5 @@
 """Function strategy."""
+
 from oteapi.models import FunctionConfig
 
 from otelib.backends.python.base import BasePythonStrategy

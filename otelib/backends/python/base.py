@@ -1,4 +1,5 @@
 """Base class for strategies in the Python backend."""
+
 import json
 import warnings
 from copy import deepcopy

@@ -1,4 +1,5 @@
 """OTE Client."""
+
 from typing import TYPE_CHECKING
 
 from pydantic import AnyHttpUrl, ValidationError

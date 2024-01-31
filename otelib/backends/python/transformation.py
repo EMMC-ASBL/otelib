@@ -1,4 +1,5 @@
 """Transformation strategy."""
+
 from oteapi.models import TransformationConfig
 
 from otelib.backends.python.base import BasePythonStrategy

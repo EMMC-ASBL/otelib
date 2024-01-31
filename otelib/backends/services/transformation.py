@@ -1,4 +1,5 @@
 """Filter strategy."""
+
 from oteapi.models import TransformationConfig
 
 from otelib.backends.services.base import BaseServicesStrategy

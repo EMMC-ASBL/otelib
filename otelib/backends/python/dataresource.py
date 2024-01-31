@@ -1,4 +1,5 @@
 """Common strategy for Download, Parse and Resource strategies."""
+
 import json
 from copy import deepcopy
 

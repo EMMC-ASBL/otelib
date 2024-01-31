@@ -1,4 +1,5 @@
 """Base API for backend strategies."""
+
 import os
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING

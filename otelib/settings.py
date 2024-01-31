@@ -1,4 +1,5 @@
 """Configuration settings for creating the OTE client."""
+
 from typing import Annotated
 
 from pydantic import Field

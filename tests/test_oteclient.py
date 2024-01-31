@@ -1,4 +1,5 @@
 """Test OTE Client."""
+
 from typing import TYPE_CHECKING
 
 import pytest
