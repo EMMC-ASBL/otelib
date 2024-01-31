@@ -1,4 +1,5 @@
 """Common strategy for Download, Prase and Resource strategies."""
+
 from oteapi.models import ResourceConfig
 
 from otelib.backends.services.base import BaseServicesStrategy

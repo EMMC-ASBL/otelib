@@ -1,4 +1,5 @@
 """Mapping strategy."""
+
 from oteapi.models import MappingConfig
 
 from otelib.backends.python.base import BasePythonStrategy

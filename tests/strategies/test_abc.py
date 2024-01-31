@@ -1,4 +1,5 @@
 """Tests for `otelib.strategies.abc`."""
+
 from typing import TYPE_CHECKING
 
 import pytest

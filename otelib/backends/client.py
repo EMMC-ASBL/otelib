@@ -1,4 +1,5 @@
 """Base API for backend client."""
+
 import warnings
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING

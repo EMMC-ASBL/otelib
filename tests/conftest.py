@@ -1,4 +1,5 @@
 """Fixtures and configuration for pytest."""
+
 from typing import TYPE_CHECKING
 
 try:
@@ -25,8 +26,7 @@ if TYPE_CHECKING:
         """Defines a protocol for fetching a test ID based on the provided resource
         type."""
 
-        def __call__(self, resource_type: Union[ResourceType, str]) -> str:
-            ...
+        def __call__(self, resource_type: Union[ResourceType, str]) -> str: ...
 
     class OTEResponse(Protocol):
         """Defines a protocol for mocking a response from an OTE services server using
@@ -61,8 +61,7 @@ if TYPE_CHECKING:
             response_json: Optional[Union[dict, str]] = None,
             response_text: Optional[str] = None,
             ote_client: Optional[OTEClient] = None,
-        ) -> None:
-            ...
+        ) -> None: ...
 
     class Testdata(Protocol):
         """Defines a protocol for fetching test data corresponding to a specified
@@ -83,8 +82,7 @@ if TYPE_CHECKING:
             self,
             resource_type: Union[ResourceType, str],
             method: Optional[Literal["get", "initialize"]] = None,
-        ) -> dict:
-            ...
+        ) -> dict: ...
 
 
 class HTTPMethod(StrEnum):

@@ -1,4 +1,5 @@
 """Pipe object for creating a pipeline."""
+
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:  # pragma: no cover

@@ -2,6 +2,7 @@
 
 A package to interact with the Open Translation Environment (OTE) API.
 """
+
 from .client import OTEClient
 
 __all__ = ("OTEClient",)

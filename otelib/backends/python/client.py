@@ -1,4 +1,5 @@
 """Client for python backend."""
+
 from typing import TYPE_CHECKING
 
 from oteapi.plugins import load_strategies

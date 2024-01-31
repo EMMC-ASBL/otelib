@@ -1,4 +1,5 @@
 """Base class for strategies in the service/REST API backend."""
+
 import json
 from typing import TYPE_CHECKING
 

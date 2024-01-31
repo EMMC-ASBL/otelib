@@ -1,4 +1,5 @@
 """Filter strategy."""
+
 from oteapi.models import FilterConfig
 
 from otelib.backends.python.base import BasePythonStrategy
