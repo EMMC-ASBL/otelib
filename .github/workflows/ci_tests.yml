@@ -68,6 +68,7 @@ jobs:
       if: matrix.python-version == '3.9' && github.repository == 'EMMC-ASBL/otelib'
       uses: codecov/codecov-action@v4
       with:
+        token: ${{ secrets.CODECOV_TOKEN }}
         files: coverage.xml
         flags: ${{ matrix.os[1] }}
 
