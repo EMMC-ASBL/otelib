@@ -19,8 +19,8 @@ It makes it very simple to configure, set up and run a pipeline based on the pip
 * [Overview](#overview)
 * [How to use OTELib](#how-to-use-otelib)
 * [Session](#session)
-* [How to run the pore fraction example](#how-to-run-the-pore-fraction-example)
 * [License](#license)
+* [Acknowledgment](#acknowledgment)
 
 ## Overview
 
