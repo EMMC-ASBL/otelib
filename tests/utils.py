@@ -48,6 +48,7 @@ class ResourceType(StrEnum):
 
     DATARESOURCE = "dataresource"
     FILTER = "filter"
+    PARSER = "parser"
     FUNCTION = "function"
     MAPPING = "mapping"
     SESSION = "session"
@@ -77,7 +78,7 @@ class ResourceType(StrEnum):
             return (
                 self
                 in {
-                    "get": [self.DATARESOURCE, self.FUNCTION, self.TRANSFORMATION],
+                    "get": [self.DATARESOURCE, self.PARSER, self.FUNCTION, self.TRANSFORMATION],
                     "initialize": [self.FILTER, self.MAPPING],
                 }[method]
             )

@@ -58,6 +58,17 @@ class OTEClient:
 
         """
         return self._impl.create_strategy(StrategyType.DATARESOURCE, **config)
+    
+    def create_parser(self, **config) -> "AbstractBaseStrategy":
+        """Create a new data resource.
+
+        Any given keyword arguments are passed on to the `create_strategy()` method.
+
+        Returns:
+            The newly created parser.
+
+        """
+        return self._impl.create_strategy(StrategyType.PARSER, **config)
 
     def create_filter(self, **config) -> "AbstractBaseStrategy":
         """Create a new filter.

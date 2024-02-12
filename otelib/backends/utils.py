@@ -25,6 +25,7 @@ class StrategyType(StrEnum):
     """Enumeration of strategy types."""
 
     DATARESOURCE = "dataresource"
+    PARSER = "parser"
     FILTER = "filter"
     FUNCTION = "function"
     MAPPING = "mapping"
