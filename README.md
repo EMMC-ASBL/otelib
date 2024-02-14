@@ -19,8 +19,8 @@ It makes it very simple to configure, set up and run a pipeline based on the pip
 * [Overview](#overview)
 * [How to use OTELib](#how-to-use-otelib)
 * [Session](#session)
-* [How to run the pore fraction example](#how-to-run-the-pore-fraction-example)
 * [License](#license)
+* [Acknowledgment](#acknowledgment)
 
 ## Overview
 
@@ -91,7 +91,7 @@ data_resource = client.create_dataresource(
     mediaType="image/jpeg",
 )
 mapping = client.create_mapping(mappingType="triples")
-transformation = client.create_transformation(transformation_type="celery/remote")
+transformation = client.create_transformation(transformationType="celery/remote")
 ```
 
 Before you easily and elegant can combine them into a pipeline:
