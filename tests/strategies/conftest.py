@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 
 
 @pytest.fixture(
-    params=["dataresource","parser", "filter", "function", "mapping", "transformation"]
+    params=["dataresource", "parser", "filter", "function", "mapping", "transformation"]
 )
 def strategy_implementation(
     request: pytest.FixtureRequest,

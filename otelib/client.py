@@ -58,7 +58,7 @@ class OTEClient:
 
         """
         return self._impl.create_strategy(StrategyType.DATARESOURCE, **config)
-    
+
     def create_parser(self, **config) -> "AbstractBaseStrategy":
         """Create a new data resource.
 
