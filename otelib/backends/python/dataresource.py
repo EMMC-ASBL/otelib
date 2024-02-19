@@ -21,21 +21,9 @@ class DataResource(BasePythonStrategy):
 
         config = self.strategy_config(**json.loads(self.cache[self.strategy_id]))
 
-        if config.downloadUrl and config.mediaType:
-            # Download strategy
-            session_update = create_strategy("download", config).get(
-                session=deepcopy(self.cache[session_id])
-            )
-            self.cache[session_id].update(session_update)
-
-            # Parse strategy
-            session_update = create_strategy("parse", config).get(
-                session=deepcopy(self.cache[session_id])
-            )
-            self.cache[session_id].update(session_update)
-
-        elif config.accessUrl and config.accessService:
-            # Resource strategy
+        if (config.downloadUrl and config.mediaType) or (
+            config.accessUrl and config.accessService
+        ):
             session_update = create_strategy("resource", config).get(
                 session=deepcopy(self.cache[session_id])
             )
@@ -48,21 +36,9 @@ class DataResource(BasePythonStrategy):
 
         config = self.strategy_config(**json.loads(self.cache[self.strategy_id]))
 
-        if config.downloadUrl and config.mediaType:
-            # Download strategy
-            session_update = create_strategy("download", config).initialize(
-                session=deepcopy(self.cache[session_id])
-            )
-            self.cache[session_id].update(session_update)
-
-            # Parse strategy
-            session_update = create_strategy("parse", config).initialize(
-                session=deepcopy(self.cache[session_id])
-            )
-            self.cache[session_id].update(session_update)
-
-        elif config.accessUrl and config.accessService:
-            # Resource strategy
+        if (config.downloadUrl and config.mediaType) or (
+            config.accessUrl and config.accessService
+        ):
             session_update = create_strategy("resource", config).initialize(
                 session=deepcopy(self.cache[session_id])
             )
