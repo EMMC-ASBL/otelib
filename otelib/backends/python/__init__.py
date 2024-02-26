@@ -3,12 +3,14 @@
 from .dataresource import DataResource
 from .filter import Filter
 from .function import Function
+from .parser import Parser
 from .mapping import Mapping
 from .transformation import Transformation
 
 __all__ = (
     "DataResource",
     "Filter",
+    "Parser"
     "Function",
     "Mapping",
     "Transformation",
