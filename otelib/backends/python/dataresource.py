@@ -1,7 +1,6 @@
 """Common strategy for Download, Parse and Resource strategies."""
 
 import json
-from copy import deepcopy
 
 from oteapi.models import ResourceConfig
 from oteapi.plugins import create_strategy
@@ -24,9 +23,7 @@ class DataResource(BasePythonStrategy):
         if (config.downloadUrl and config.mediaType) or (
             config.accessUrl and config.accessService
         ):
-            session_update = create_strategy("resource", config).get(
-                session=deepcopy(self.cache[session_id])
-            )
+            session_update = create_strategy("resource", config).get()
             self.cache[session_id].update(session_update)
 
         return session_update.model_dump_json().encode(encoding="utf-8")
@@ -39,9 +36,7 @@ class DataResource(BasePythonStrategy):
         if (config.downloadUrl and config.mediaType) or (
             config.accessUrl and config.accessService
         ):
-            session_update = create_strategy("resource", config).initialize(
-                session=deepcopy(self.cache[session_id])
-            )
+            session_update = create_strategy("resource", config).initialize()
             self.cache[session_id].update(session_update)
 
         return session_update.model_dump_json().encode(encoding="utf-8")
