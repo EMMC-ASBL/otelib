@@ -104,7 +104,7 @@ def test_pipe(
             response_json=testdata(strategy_name),
         )
 
-    if backend == "python" and strategy_name == "dataresource":
+    if backend == "python" and strategy_name == "parser":
         # Mock URL responses to ensure we don't hit the real (external) URL
         requests_mock.request(
             method="get",
@@ -265,9 +265,9 @@ def test_pipeing_strategies(
         # Mock URL responses to ensure we don't hit the real (external) URL
         requests_mock.request(
             method="get",
-            url=dict(strategy_create_kwargs())["dataresource"]["downloadUrl"],
+            url=dict(strategy_create_kwargs())["parser"]["configuration"]["downloadUrl"],
             status_code=200,
-            json=testdata("dataresource", "get")["content"],
+            json=testdata("parser", "get")["content"],
         )
 
     strategy_kwargs = {}
