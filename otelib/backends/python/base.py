@@ -142,15 +142,10 @@ class BasePythonStrategy(AbstractBaseStrategy):
             session_id: The ID of the session shared by the pipeline.
 
         """
-        if not self.strategy_id or self.strategy_id not in self.cache:
-            raise ItemNotFoundInCache(
-                "Run create() prior to initialize()", self.strategy_id
-            )
-
         if session_id not in self.cache or not isinstance(
             self.cache.get(session_id, {}), dict
         ):
             raise ItemNotFoundInCache(
                 "Did you run this method through get()?", session_id
             )
-        return deepcopy(self.cache[session_id])
+        return self.cache[session_id]
