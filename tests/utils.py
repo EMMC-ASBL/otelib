@@ -25,9 +25,13 @@ HEAD_COMMIT_SHA = run(
 ).stdout.decode()
 
 TEST_DATA = {
-    "dataresource": {"content": json.loads((STATIC_DIR / "sample.json").read_text())},
+    "dataresource": {
+        "downloadUrl": "https://filesamples.com/samples/code/json/sample2.json",
+        "mediaType": "application/json",
+    },
     "filter": {"sqlquery": "DROP TABLE myTable;"},
     "function": {},
+    "parser": {"content": json.loads((STATIC_DIR / "sample.json").read_text())},
     "mapping": {
         "prefixes": {
             "map": "http://example.org/0.0.1/mapping_ontology#",
@@ -117,6 +121,22 @@ def strategy_create_kwargs() -> "list[tuple[str, dict[str, Any]]]":
             {
                 "filterType": "filter/sql",
                 "query": TEST_DATA[ResourceType.FILTER.value]["sqlquery"],
+            },
+        ),
+        (
+            ResourceType.PARSER.value,
+            {
+                "configuration": {
+                    "downloadUrl": (
+                        "https://raw.githubusercontent.com/EMMC-ASBL/otelib"
+                        f"/{HEAD_COMMIT_SHA}"
+                        f"/{relative_postix_path_to_sample_json}"
+                    ),
+                    "mediaType": "application/json",
+                },
+                "description": "Parser Strategy Data Configuration.",
+                "entity": "http://onto-ns.com/meta/0.4/dummy_entity",
+                "parserType": "parser/json",
             },
         ),
         (
