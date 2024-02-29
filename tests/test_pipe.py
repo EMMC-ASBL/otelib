@@ -108,7 +108,7 @@ def test_pipe(
         # Mock URL responses to ensure we don't hit the real (external) URL
         requests_mock.request(
             method="get",
-            url=create_kwargs["downloadUrl"],
+            url=create_kwargs["configuration"]["downloadUrl"],
             status_code=200,
             json=testdata(strategy_name, "get")["content"],
         )
@@ -265,7 +265,9 @@ def test_pipeing_strategies(
         # Mock URL responses to ensure we don't hit the real (external) URL
         requests_mock.request(
             method="get",
-            url=dict(strategy_create_kwargs())["parser"]["configuration"]["downloadUrl"],
+            url=dict(strategy_create_kwargs())["parser"]["configuration"][
+                "downloadUrl"
+            ],
             status_code=200,
             json=testdata("parser", "get")["content"],
         )
@@ -279,16 +281,19 @@ def test_pipeing_strategies(
     data_resource: "DataResource" = strategies.DataResource(
         server_url, **strategy_kwargs
     )
+    parser: "Parser" = strategies.Parser(server_url, **strategy_kwargs)
     filter: "Filter" = strategies.Filter(server_url, **strategy_kwargs)
 
     # We must create the data resource and filter - getting IDs
     create_kwargs = dict(strategy_create_kwargs())
     data_resource.create(**create_kwargs["dataresource"])
     assert data_resource.strategy_id
+    parser.create(**create_kwargs["parser"])
+    assert data_resource.strategy_id
     filter.create(**create_kwargs["filter"])
     assert filter.strategy_id
 
-    pipeline = data_resource >> filter
+    pipeline = data_resource >> parser >> filter
 
     content = pipeline.get()
 

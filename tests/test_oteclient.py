@@ -92,11 +92,11 @@ def test_create_strategies(
             response_json=testdata(strategy),
         )
 
-    if backend == "python" and strategy == "dataresource":
+    if backend == "python" and strategy == "parser":
         # Mock URL responses to ensure we don't hit the real (external) URL
         requests_mock.request(
             method="get",
-            url=create_kwargs["downloadUrl"],
+            url=create_kwargs ["configuration"]["downloadUrl"],
             status_code=200,
             json=testdata(strategy, "get")["content"],
         )
