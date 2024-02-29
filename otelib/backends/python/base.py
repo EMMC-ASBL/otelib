@@ -1,8 +1,8 @@
 """Base class for strategies in the Python backend."""
 
 import json
-import typing
 import warnings
+import typing
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
@@ -135,7 +135,7 @@ class BasePythonStrategy(AbstractBaseStrategy):
                 "Did you run this method through get()?", session_id
             )
 
-    def _fetch_session_data(self, session_id: str) -> typing.Dict[str, Any]:
+    def _fetch_session_data(self, session_id: str) -> dict[str, typing.Any]:
         """Perform sanity checks before running a strategy method.
 
         Parameters:
