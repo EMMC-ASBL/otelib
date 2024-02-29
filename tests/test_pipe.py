@@ -112,7 +112,7 @@ def test_pipe(
             json=testdata(strategy_name, "get")["content"],
         )
 
-    strategy_name_map = {"dataresource": "DataResource"}
+    strategy_name_map = {"dataresource": "DataResource", "parser": "Parser"}
 
     strategy: "BaseStrategy" = getattr(
         strategies, strategy_name_map.get(strategy_name, strategy_name.capitalize())
