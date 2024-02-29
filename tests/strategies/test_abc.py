@@ -102,7 +102,7 @@ def test_get(
             json=testdata(strategy_name, "get")["content"],
         )
 
-    strategy_name_map = {"dataresource": "DataResource","parser":"Parser"}
+    strategy_name_map = {"dataresource": "DataResource", "parser": "Parser"}
 
     strategy: "BaseStrategy" = getattr(
         strategies, strategy_name_map.get(strategy_name, strategy_name.capitalize())
@@ -206,7 +206,7 @@ def test_services_get_fails(
         content=b"Internal Server Error",
     )
 
-    strategy_name_map = {"dataresource": "DataResource", "parser":"Parser"}
+    strategy_name_map = {"dataresource": "DataResource", "parser": "Parser"}
 
     strategy: "BaseStrategy" = getattr(
         strategies, strategy_name_map.get(strategy_name, strategy_name.capitalize())

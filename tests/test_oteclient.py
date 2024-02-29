@@ -80,7 +80,7 @@ def test_create_strategies(
             params={"session_id": ids("session")},
             response_json=(
                 testdata(strategy)
-                if strategy in ("dataresource", "transformation")
+                if strategy in ("dataresource", "transformation", "parser")
                 else {}
             ),
         )
