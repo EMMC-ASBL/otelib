@@ -134,7 +134,7 @@ class BasePythonStrategy(AbstractBaseStrategy):
             raise ItemNotFoundInCache(
                 "Did you run this method through get()?", session_id
             )
-
+    from typing import Any
     def _fetch_session_data(self, session_id: str) -> dict[str, Any]:
         """Perform sanity checks before running a strategy method.
 
