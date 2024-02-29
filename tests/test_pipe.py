@@ -289,7 +289,7 @@ def test_pipeing_strategies(
     data_resource.create(**create_kwargs["dataresource"])
     assert data_resource.strategy_id
     parser.create(**create_kwargs["parser"])
-    assert data_resource.strategy_id
+    assert parser.strategy_id
     filter.create(**create_kwargs["filter"])
     assert filter.strategy_id
 

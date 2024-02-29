@@ -96,7 +96,7 @@ def test_create_strategies(
         # Mock URL responses to ensure we don't hit the real (external) URL
         requests_mock.request(
             method="get",
-            url=create_kwargs ["configuration"]["downloadUrl"],
+            url=create_kwargs["configuration"]["downloadUrl"],
             status_code=200,
             json=testdata(strategy, "get")["content"],
         )

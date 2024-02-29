@@ -4,7 +4,7 @@ import json
 
 from oteapi.models import ParserConfig
 from oteapi.plugins import create_strategy
-
+from oteapi.utils.config_updater import populate_config_from_session
 from otelib.backends.python.base import BasePythonStrategy
 
 
@@ -17,8 +17,9 @@ class Parser(BasePythonStrategy):
 
     def fetch(self, session_id: str) -> bytes:
         self._sanity_checks(session_id)
-
+        session_data = self._fetch_session_data(session_id)
         config = self.strategy_config(**json.loads(self.cache[self.strategy_id]))
+        populate_config_from_session(session_data, config)
         session_update = create_strategy("parse", config).get()
         self.cache[session_id].update(session_update)
 
@@ -26,8 +27,9 @@ class Parser(BasePythonStrategy):
 
     def initialize(self, session_id: str) -> bytes:
         self._sanity_checks(session_id)
-
+        session_data = self._fetch_session_data(session_id)
         config = self.strategy_config(**json.loads(self.cache[self.strategy_id]))
+        populate_config_from_session(session_data, config)
 
         session_update = create_strategy("parse", config).initialize()
         self.cache[session_id].update(session_update)
