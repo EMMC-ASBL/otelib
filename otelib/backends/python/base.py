@@ -1,6 +1,7 @@
 """Base class for strategies in the Python backend."""
 
 import json
+import typing
 import warnings
 from typing import TYPE_CHECKING
 from uuid import uuid4
@@ -11,7 +12,7 @@ from otelib.backends.strategies import AbstractBaseStrategy
 from otelib.exceptions import ItemNotFoundInCache, PythonBackendException
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Any, Literal, Optional, Dict
+    from typing import Any, Literal, Optional
 
     from oteapi.models import SessionUpdate
 
@@ -134,7 +135,7 @@ class BasePythonStrategy(AbstractBaseStrategy):
                 "Did you run this method through get()?", session_id
             )
 
-    def _fetch_session_data(self, session_id: str) -> Dict[str, Any]:
+    def _fetch_session_data(self, session_id: str) -> typing.Dict[str, Any]:
         """Perform sanity checks before running a strategy method.
 
         Parameters:
