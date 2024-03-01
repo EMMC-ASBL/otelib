@@ -60,7 +60,14 @@ plugins = ["pydantic.mypy"]
 minversion = "7.0"
 addopts = "-rs --cov=otelib --cov-report=term-missing:skip-covered --no-cov-on-fail"
 filterwarnings = [
+    # Treat any warning as an error.
     "error",
+
+    # A local warning emitted during tests.
     "ignore:.*No global cache used.*:UserWarning",
+
+    # In Python 3.10+ the `SelectableGroups` dict interface is deprecated,
+    # which is used in OTEAPI-Core for handling the entry points.
+    "ignore:.*SelectableGroups dict interface is deprecated.*:DeprecationWarning",
 ]
 requests_mock_case_sensitive = true
