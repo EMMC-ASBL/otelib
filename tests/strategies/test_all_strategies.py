@@ -241,7 +241,7 @@ def test_initialize(
     # We must first create the resource - getting a resource ID
     strategy.create(**dict(strategy_create_kwargs())[strategy_type.value])
 
-    content = strategy.initialize()
+    content = strategy.initialize(session_id)
 
     loaded_content = json.loads(content)
     testdata_strategy = testdata(strategy_type, "initialize")
