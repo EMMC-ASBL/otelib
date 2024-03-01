@@ -90,7 +90,7 @@ class AbstractBaseStrategy(ABC):
         if self.debug:
             self._session_id = session_id
 
-        self.initialize(session_id)
+        self.initialize()
         if self.input_pipe:
             self.input_pipe.get(session_id)
         return self.fetch(session_id)
