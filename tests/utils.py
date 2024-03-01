@@ -28,6 +28,7 @@ TEST_DATA = {
     "dataresource": {
         "downloadUrl": "https://filesamples.com/samples/code/json/sample2.json",
         "mediaType": "application/json",
+        "resourceType": "resource/url",
     },
     "filter": {"sqlquery": "DROP TABLE myTable;"},
     "function": {},

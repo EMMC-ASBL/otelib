@@ -22,8 +22,11 @@ class DataResource(BasePythonStrategy):
         config = self.strategy_config(**json.loads(self.cache[self.strategy_id]))
         populate_config_from_session(session_data, config)
 
-        if (config.downloadUrl and config.mediaType) or (
-            config.accessUrl and config.accessService
+        if config.resourceType and (
+            (
+                (config.downloadUrl and config.mediaType)
+                or (config.accessUrl and config.accessService)
+            )
         ):
             session_update = create_strategy("resource", config).get()
             self.cache[session_id].update(session_update)
@@ -36,8 +39,11 @@ class DataResource(BasePythonStrategy):
         config = self.strategy_config(**json.loads(self.cache[self.strategy_id]))
         populate_config_from_session(session_data, config)
 
-        if (config.downloadUrl and config.mediaType) or (
-            config.accessUrl and config.accessService
+        if config.resourceType and (
+            (
+                (config.downloadUrl and config.mediaType)
+                or (config.accessUrl and config.accessService)
+            )
         ):
             session_update = create_strategy("resource", config).initialize()
             self.cache[session_id].update(session_update)
