@@ -2,11 +2,12 @@
 
 import json
 import warnings
-import typing
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
+from oteapi.models import AttrDict
 from oteapi.plugins import create_strategy
+from oteapi.utils.config_updater import populate_config_from_session
 
 from otelib.backends.strategies import AbstractBaseStrategy
 from otelib.exceptions import ItemNotFoundInCache, PythonBackendException
@@ -14,7 +15,7 @@ from otelib.exceptions import ItemNotFoundInCache, PythonBackendException
 if TYPE_CHECKING:  # pragma: no cover
     from typing import Any, Literal, Optional
 
-    from oteapi.models import SessionUpdate
+    from oteapi.models import GenericConfig
 
 
 class BasePythonStrategy(AbstractBaseStrategy):
@@ -47,8 +48,8 @@ class BasePythonStrategy(AbstractBaseStrategy):
         session_id = config.pop("session_id", None)
         data = self.strategy_config(**config)
 
-        self.strategy_id = f"{self.strategy_name}-{uuid4()}"
-        self.cache[self.strategy_id] = data.model_dump_json()
+        self.strategy_id = f"{self.strategy_type}-{uuid4()}"
+        self.cache[self.strategy_id] = data.model_dump_json(exclude_unset=True)
 
         if session_id:
             if session_id not in self.cache:
@@ -57,7 +58,7 @@ class BasePythonStrategy(AbstractBaseStrategy):
                 )
 
             # Add strategy ID information to the session object.
-            list_key = f"{self.strategy_name}_info"
+            list_key = f"{self.strategy_type}_info"
             if list_key in self.cache[session_id]:
                 if not isinstance(self.cache[session_id][list_key], list):
                     raise TypeError(
@@ -100,27 +101,45 @@ class BasePythonStrategy(AbstractBaseStrategy):
                 "method_name should be either 'get' or 'initialize'."
             )
 
-        self._sanity_checks(session_id)
-
+        # Get and update the strategy configuration with the session data
         config = self.strategy_config(**json.loads(self.cache[self.strategy_id]))
-        strategy = create_strategy(self.strategy_name, config)
+        session_data = self._fetch_session_data(session_id)
+        populate_config_from_session(session_data, config)
+
+        # Perform sanity checks, including session_id and the updated config
+        self._sanity_checks(session_id, config)
+
+        # Create strategy and run the method
+        strategy = create_strategy(
+            self.strategy_type.oteapi_strategy_type,
+            config.model_dump(mode="json", exclude_unset=True),
+        )
 
         if not hasattr(strategy, method_name):
             raise PythonBackendException(
                 f"{method_name!r} is not a valid method for {strategy}"
             )
 
-        session_update: "SessionUpdate" = getattr(strategy, method_name)()
+        session_update = getattr(strategy, method_name)()
 
-        self.cache[session_id].update(session_update)
+        if isinstance(session_update, dict):
+            session_update = AttrDict(**session_update)
 
-        return session_update.model_dump_json().encode(encoding="utf-8")
+        self.cache[session_id].update(
+            session_update.model_dump(mode="json", exclude_unset=True)
+        )
 
-    def _sanity_checks(self, session_id: str) -> None:
+        return session_update.model_dump_json(exclude_unset=True).encode(
+            encoding="utf-8"
+        )
+
+    def _sanity_checks(self, session_id: str, config: "GenericConfig") -> None:
         """Perform sanity checks before running a strategy method.
 
         Parameters:
             session_id: The ID of the session shared by the pipeline.
+            config: The strategy configuration object updated with the current session
+                data.
 
         """
         if not self.strategy_id or self.strategy_id not in self.cache:
@@ -135,7 +154,7 @@ class BasePythonStrategy(AbstractBaseStrategy):
                 "Did you run this method through get()?", session_id
             )
 
-    def _fetch_session_data(self, session_id: str) -> dict[str, typing.Any]:
+    def _fetch_session_data(self, session_id: str) -> "dict[str, Any]":
         """Perform sanity checks before running a strategy method.
 
         Parameters:

@@ -26,7 +26,8 @@ requires-python = "~=3.9"
 dynamic = ["version"]
 
 dependencies = [
-    "oteapi-core ~=0.7.0.dev0",
+    # "oteapi-core ~=0.7.0.dev0",
+    "oteapi-core @ git+https://github.com/EMMC-ASBL/oteapi-core@cwa/fix-resource-strategy",
     "pydantic-settings ~=2.2",
 ]
 
@@ -57,8 +58,9 @@ plugins = ["pydantic.mypy"]
 
 [tool.pytest.ini_options]
 minversion = "7.0"
-addopts = "-rs --cov=otelib --cov-report=term --durations=10"
+addopts = "-rs --cov=otelib --cov-report=term-missing:skip-covered --no-cov-on-fail"
 filterwarnings = [
+    "error",
     "ignore:.*No global cache used.*:UserWarning",
 ]
 requests_mock_case_sensitive = true

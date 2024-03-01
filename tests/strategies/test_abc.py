@@ -102,7 +102,7 @@ def test_get(
             json=testdata(strategy_name, "get")["content"],
         )
 
-    strategy_name_map = {"dataresource": "DataResource", "parser": "Parser"}
+    strategy_name_map = {"dataresource": "DataResource"}
 
     strategy: "BaseStrategy" = getattr(
         strategies, strategy_name_map.get(strategy_name, strategy_name.capitalize())
@@ -112,7 +112,7 @@ def test_get(
     strategy.create(**create_kwargs)
     assert strategy.strategy_id
 
-    # There must be a strategy name associated with the strategy
+    # There must be a strategy name and type associated with the strategy
     assert strategy.strategy_name == strategy_name
 
     content = strategy.get()

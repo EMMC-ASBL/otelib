@@ -1,10 +1,6 @@
-"""Common strategy for Download, Prase and Resource strategies."""
-
-import json
+"""Common strategy for Download, Parse and Resource strategies."""
 
 from oteapi.models import ParserConfig
-from oteapi.plugins import create_strategy
-from oteapi.utils.config_updater import populate_config_from_session
 from otelib.backends.python.base import BasePythonStrategy
 
 
@@ -14,24 +10,3 @@ class Parser(BasePythonStrategy):
 
     strategy_name = "parser"
     strategy_config: "type[ParserConfig]" = ParserConfig
-
-    def fetch(self, session_id: str) -> bytes:
-        self._sanity_checks(session_id)
-        session_data = self._fetch_session_data(session_id)
-        config = self.strategy_config(**json.loads(self.cache[self.strategy_id]))
-        populate_config_from_session(session_data, config)
-        session_update = create_strategy("parse", config).get()
-        self.cache[session_id].update(session_update)
-
-        return session_update.model_dump_json().encode(encoding="utf-8")
-
-    def initialize(self, session_id: str) -> bytes:
-        self._sanity_checks(session_id)
-        session_data = self._fetch_session_data(session_id)
-        config = self.strategy_config(**json.loads(self.cache[self.strategy_id]))
-        populate_config_from_session(session_data, config)
-
-        session_update = create_strategy("parse", config).initialize()
-        self.cache[session_id].update(session_update)
-
-        return session_update.model_dump_json().encode(encoding="utf-8")

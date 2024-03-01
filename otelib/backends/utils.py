@@ -35,3 +35,10 @@ class StrategyType(StrEnum):
     def cls_name(self) -> str:
         """Return Python class name."""
         return {self.DATARESOURCE: "DataResource"}.get(self, self.capitalize())
+
+    @property
+    def oteapi_strategy_type(self) -> str:
+        """Return the OTEAPI strategy type."""
+        return {self.DATARESOURCE: "resource", self.PARSER: "parse"}.get(
+            self, self.lower()
+        )

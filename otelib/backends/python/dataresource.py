@@ -1,11 +1,12 @@
 """Common strategy for Download, Parse and Resource strategies."""
 
-import json
+from typing import TYPE_CHECKING
 
 from oteapi.models import ResourceConfig
-from oteapi.utils.config_updater import populate_config_from_session
-from oteapi.plugins import create_strategy
 from otelib.backends.python.base import BasePythonStrategy
+
+if TYPE_CHECKING:  # pragma: no cover
+    from oteapi.models import GenericConfig
 
 
 class DataResource(BasePythonStrategy):
@@ -15,11 +16,9 @@ class DataResource(BasePythonStrategy):
     strategy_name = "dataresource"
     strategy_config: "type[ResourceConfig]" = ResourceConfig
 
-    def fetch(self, session_id: str) -> bytes:
-        self._sanity_checks(session_id)
-        session_data = self._fetch_session_data(session_id)
-        config = self.strategy_config(**json.loads(self.cache[self.strategy_id]))
-        populate_config_from_session(session_data, config)
+    def _sanity_checks(self, session_id: str, config: "GenericConfig") -> None:
+        """Extend the base sanity checks with some config-specific checks."""
+        super()._sanity_checks(session_id, config)
 
         if (not config.resourceType) or (
             not (
@@ -30,27 +29,3 @@ class DataResource(BasePythonStrategy):
             raise ValueError(
                 "Missing resourceType or downloadUrl/mediaType or accessUrl/accessService identifier"
             )
-        session_update = create_strategy("resource", config).get()
-        self.cache[session_id].update(session_update)
-
-        return json.dumps(session_update).encode(encoding="utf-8")
-
-    def initialize(self, session_id: str) -> bytes:
-        self._sanity_checks(session_id)
-        session_data = self._fetch_session_data(session_id)
-        config = self.strategy_config(**json.loads(self.cache[self.strategy_id]))
-        populate_config_from_session(session_data, config)
-
-        if (not config.resourceType) or (
-            not (
-                (config.downloadUrl and config.mediaType)
-                or (config.accessUrl and config.accessService)
-            )
-        ):
-            raise ValueError(
-                "Missing resourceType or downloadUrl/mediaType or accessUrl/accessService identifier"
-            )
-        session_update = create_strategy("resource", config).initialize()
-        self.cache[session_id].update(session_update)
-
-        return json.dumps(session_update).encode(encoding="utf-8")
