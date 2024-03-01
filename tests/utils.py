@@ -115,6 +115,7 @@ def strategy_create_kwargs() -> "list[tuple[str, dict[str, Any]]]":
                     f"/{relative_postix_path_to_sample_json}"
                 ),
                 "mediaType": "application/json",
+                "resourceType": "resource/url",
             },
         ),
         (
