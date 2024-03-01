@@ -33,7 +33,7 @@ class DataResource(BasePythonStrategy):
         session_update = create_strategy("resource", config).get()
         self.cache[session_id].update(session_update)
 
-        return session_update.model_dump_json().encode(encoding="utf-8")
+        return json.dumps(session_update).encode(encoding="utf-8")
 
     def initialize(self, session_id: str) -> bytes:
         self._sanity_checks(session_id)
@@ -53,4 +53,4 @@ class DataResource(BasePythonStrategy):
         session_update = create_strategy("resource", config).initialize()
         self.cache[session_id].update(session_update)
 
-        return session_update.model_dump_json().encode(encoding="utf-8")
+        return json.dumps(session_update).encode(encoding="utf-8")
