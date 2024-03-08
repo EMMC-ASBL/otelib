@@ -27,7 +27,7 @@ dynamic = ["version"]
 
 dependencies = [
     # "oteapi-core ~=0.7.0.dev0",
-    "oteapi-core @ git+https://github.com/EMMC-ASBL/oteapi-core@cwa/fix-resource-strategy",
+    "oteapi-core @ git+https://github.com/EMMC-ASBL/oteapi-core@master",
     "pydantic-settings ~=2.2",
 ]
 
