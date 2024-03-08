@@ -1,16 +1,43 @@
 # Changelog
 
-## [Unreleased](https://github.com/EMMC-ASBL/otelib/tree/HEAD)
+## [v0.5.0.dev0](https://github.com/EMMC-ASBL/otelib/tree/v0.5.0.dev0) (2024-03-08)
 
-[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.4.1...HEAD)
+[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.4.1...v0.5.0.dev0)
+
+**Fixed bugs:**
+
+- Real backend tests failing [\#151](https://github.com/EMMC-ASBL/otelib/issues/151)
 
 **Closed issues:**
 
-- Support Python 3.11 [\#120](https://github.com/EMMC-ASBL/otelib/issues/120)
+- Fix otelib to handle parser [\#178](https://github.com/EMMC-ASBL/otelib/issues/178)
+
+**Merged pull requests:**
+
+- \[Auto-generated\] Update dependencies [\#183](https://github.com/EMMC-ASBL/otelib/pull/183) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#179](https://github.com/EMMC-ASBL/otelib/pull/179) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#175](https://github.com/EMMC-ASBL/otelib/pull/175) ([TEAM4-0](https://github.com/TEAM4-0))
+- Add create parser function [\#174](https://github.com/EMMC-ASBL/otelib/pull/174) ([Treesarj](https://github.com/Treesarj))
+- Update README [\#173](https://github.com/EMMC-ASBL/otelib/pull/173) ([torhaugl](https://github.com/torhaugl))
+- \[Auto-generated\] Update dependencies [\#170](https://github.com/EMMC-ASBL/otelib/pull/170) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#168](https://github.com/EMMC-ASBL/otelib/pull/168) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#167](https://github.com/EMMC-ASBL/otelib/pull/167) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#165](https://github.com/EMMC-ASBL/otelib/pull/165) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#164](https://github.com/EMMC-ASBL/otelib/pull/164) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#162](https://github.com/EMMC-ASBL/otelib/pull/162) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#156](https://github.com/EMMC-ASBL/otelib/pull/156) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#155](https://github.com/EMMC-ASBL/otelib/pull/155) ([TEAM4-0](https://github.com/TEAM4-0))
+- Don't use filesamples.com [\#152](https://github.com/EMMC-ASBL/otelib/pull/152) ([CasperWA](https://github.com/CasperWA))
+- \[Auto-generated\] Update dependencies [\#150](https://github.com/EMMC-ASBL/otelib/pull/150) ([TEAM4-0](https://github.com/TEAM4-0))
+- \[Auto-generated\] Update dependencies [\#149](https://github.com/EMMC-ASBL/otelib/pull/149) ([TEAM4-0](https://github.com/TEAM4-0))
 
 ## [v0.4.1](https://github.com/EMMC-ASBL/otelib/tree/v0.4.1) (2023-10-25)
 
 [Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.4.0...v0.4.1)
+
+**Closed issues:**
+
+- Support Python 3.11 [\#120](https://github.com/EMMC-ASBL/otelib/issues/120)
 
 **Merged pull requests:**
 
