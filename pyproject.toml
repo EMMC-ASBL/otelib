@@ -26,8 +26,7 @@ requires-python = "~=3.9"
 dynamic = ["version"]
 
 dependencies = [
-    # "oteapi-core ~=0.7.0.dev0",
-    "oteapi-core @ git+https://github.com/EMMC-ASBL/oteapi-core@master",
+    "oteapi-core ~=0.7.0.dev1",
     "pydantic-settings ~=2.2",
 ]
 
