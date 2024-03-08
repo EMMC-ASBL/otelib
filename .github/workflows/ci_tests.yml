@@ -104,9 +104,6 @@ jobs:
         pip install -U setuptools wheel
         pip install -e .[dev]
 
-    - name: Retrieve OTEAPI Core
-      run: git clone -b cwa/safely-dump-configs https://github.com/EMMC-ASBL/oteapi-core.git /tmp/oteapi_core
-
     - name: Run OTE server
       run: |
         docker pull ghcr.io/emmc-asbl/oteapi:${DOCKER_OTEAPI_VERSION}
@@ -116,10 +113,7 @@ jobs:
           --env "OTEAPI_REDIS_PORT=6379" \
           --env "OTEAPI_prefix=${OTEAPI_prefix}" \
           --network "host" \
-          --entrypoint "/bin/bash" \
-          -v "/tmp/oteapi_core:/oteapi_core" \
-          ghcr.io/emmc-asbl/oteapi:${DOCKER_OTEAPI_VERSION} \
-          -c "pip install --force-reinstall -e /oteapi_core && ./entrypoint.sh" &
+          ghcr.io/emmc-asbl/oteapi:${DOCKER_OTEAPI_VERSION} &
 
         .github/utils/wait_for_it.sh localhost:${PORT} -t 240
         sleep 5
