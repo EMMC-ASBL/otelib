@@ -126,11 +126,13 @@ def test_fetch(
     # We must first create the resource - getting a resource ID
     strategy.create(**dict(strategy_create_kwargs())[strategy_type.value])
 
-    if backend == "python" and strategy_type == strategy_type.DATARESOURCE:
+    if backend == "python" and strategy_type == strategy_type.PARSER:
         # Mock URL responses
         requests_mock.request(
             method="get",
-            url=dict(strategy_create_kwargs())[strategy_type.value]["downloadUrl"],
+            url=dict(strategy_create_kwargs())[strategy_type.value]["configuration"][
+                "downloadUrl"
+            ],
             status_code=200,
             json=testdata(strategy_type, "get")["content"],
         )

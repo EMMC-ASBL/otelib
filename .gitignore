@@ -204,6 +204,9 @@ dmypy.json
 # profiling data
 .prof
 
+# ruff
+.ruff_cache/
+
 ### VisualStudioCode ###
 .vscode/*
 !.vscode/tasks.json

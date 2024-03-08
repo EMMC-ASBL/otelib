@@ -81,7 +81,7 @@ def test_get(
             params={"session_id": ids("session")},
             response_json=(
                 testdata(strategy_name)
-                if strategy_name in ("dataresource", "transformation")
+                if strategy_name in ("dataresource", "transformation", "parser")
                 else {}
             ),
         )
@@ -93,11 +93,11 @@ def test_get(
             response_json=testdata(strategy_name),
         )
 
-    if backend == "python" and strategy_name == "dataresource":
+    if backend == "python" and strategy_name == "parser":
         # Mock URL responses to ensure we don't hit the real (external) URL
         requests_mock.request(
             method="get",
-            url=create_kwargs["downloadUrl"],
+            url=create_kwargs["configuration"]["downloadUrl"],
             status_code=200,
             json=testdata(strategy_name, "get")["content"],
         )
@@ -112,7 +112,7 @@ def test_get(
     strategy.create(**create_kwargs)
     assert strategy.strategy_id
 
-    # There must be a strategy name associated with the strategy
+    # There must be a strategy name and type associated with the strategy
     assert strategy.strategy_name == strategy_name
 
     content = strategy.get()
@@ -206,7 +206,7 @@ def test_services_get_fails(
         content=b"Internal Server Error",
     )
 
-    strategy_name_map = {"dataresource": "DataResource"}
+    strategy_name_map = {"dataresource": "DataResource", "parser": "Parser"}
 
     strategy: "BaseStrategy" = getattr(
         strategies, strategy_name_map.get(strategy_name, strategy_name.capitalize())
