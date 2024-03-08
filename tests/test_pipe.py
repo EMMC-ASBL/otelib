@@ -20,6 +20,7 @@ if TYPE_CHECKING:
     BaseStrategy = Union[BasePythonStrategy, BaseServicesStrategy]
 
     DataResource = Union[python_backend.DataResource, services_backend.DataResource]
+    Parser = Union[python_backend.Parser, services_backend.DataResource]
     Filter = Union[python_backend.Filter, services_backend.Filter]
 
 
@@ -83,7 +84,7 @@ def test_pipe(
         )
 
         # fetch()
-        # The data resource and transformation returns everything from their `get()`
+        # The data resource, parser and transformation returns everything from their `get()`
         # method.
         mock_ote_response(
             method="get",
@@ -91,7 +92,7 @@ def test_pipe(
             params={"session_id": ids("session")},
             response_json=(
                 testdata(strategy_name)
-                if strategy_name in ("dataresource", "transformation")
+                if strategy_name in ("dataresource", "transformation", "parser")
                 else {}
             ),
         )
@@ -103,16 +104,16 @@ def test_pipe(
             response_json=testdata(strategy_name),
         )
 
-    if backend == "python" and strategy_name == "dataresource":
+    if backend == "python" and strategy_name == "parser":
         # Mock URL responses to ensure we don't hit the real (external) URL
         requests_mock.request(
             method="get",
-            url=create_kwargs["downloadUrl"],
+            url=create_kwargs["configuration"]["downloadUrl"],
             status_code=200,
             json=testdata(strategy_name, "get")["content"],
         )
 
-    strategy_name_map = {"dataresource": "DataResource"}
+    strategy_name_map = {"dataresource": "DataResource", "parser": "Parser"}
 
     strategy: "BaseStrategy" = getattr(
         strategies, strategy_name_map.get(strategy_name, strategy_name.capitalize())
@@ -204,6 +205,11 @@ def test_pipeing_strategies(
         )
         mock_ote_response(
             method="post",
+            endpoint="/parser",
+            response_json={"parser_id": ids("parser")},
+        )
+        mock_ote_response(
+            method="post",
             endpoint="/filter",
             response_json={"filter_id": ids("filter")},
         )
@@ -212,6 +218,12 @@ def test_pipeing_strategies(
         mock_ote_response(
             method="post",
             endpoint=f"/dataresource/{ids('dataresource')}/initialize",
+            params={"session_id": ids("session")},
+            response_json={},
+        )
+        mock_ote_response(
+            method="post",
+            endpoint=f"/parser/{ids('parser')}/initialize",
             params={"session_id": ids("session")},
             response_json={},
         )
@@ -231,6 +243,12 @@ def test_pipeing_strategies(
         )
         mock_ote_response(
             method="get",
+            endpoint=f"/parser/{ids('parser')}",
+            params={"session_id": ids("session")},
+            response_json=testdata("parser"),
+        )
+        mock_ote_response(
+            method="get",
             endpoint=f"/filter/{ids('filter')}",
             params={"session_id": ids("session")},
             response_json={},
@@ -247,9 +265,11 @@ def test_pipeing_strategies(
         # Mock URL responses to ensure we don't hit the real (external) URL
         requests_mock.request(
             method="get",
-            url=dict(strategy_create_kwargs())["dataresource"]["downloadUrl"],
+            url=dict(strategy_create_kwargs())["parser"]["configuration"][
+                "downloadUrl"
+            ],
             status_code=200,
-            json=testdata("dataresource", "get")["content"],
+            json=testdata("parser", "get")["content"],
         )
 
     strategy_kwargs = {}
@@ -261,16 +281,19 @@ def test_pipeing_strategies(
     data_resource: "DataResource" = strategies.DataResource(
         server_url, **strategy_kwargs
     )
+    parser: "Parser" = strategies.Parser(server_url, **strategy_kwargs)
     filter: "Filter" = strategies.Filter(server_url, **strategy_kwargs)
 
     # We must create the data resource and filter - getting IDs
     create_kwargs = dict(strategy_create_kwargs())
     data_resource.create(**create_kwargs["dataresource"])
     assert data_resource.strategy_id
+    parser.create(**create_kwargs["parser"])
+    assert parser.strategy_id
     filter.create(**create_kwargs["filter"])
     assert filter.strategy_id
 
-    pipeline = data_resource >> filter
+    pipeline = data_resource >> parser >> filter
 
     content = pipeline.get()
 
@@ -371,26 +394,34 @@ def test_pipeing_concatenate(
         server_url, **strategy_kwargs
     )
     dataid1 = data_resource1.strategy_id
+    parser1: "Parser" = strategies.Parser(server_url, **strategy_kwargs)
+    parserid1 = parser1.strategy_id
     filter1: "Filter" = strategies.Filter(server_url, **strategy_kwargs)
     filterid1 = filter1.strategy_id
-    pipeline1 = data_resource1 >> filter1
+    pipeline1 = data_resource1 >> parser1 >> filter1
 
     data_resource2: "DataResource" = strategies.DataResource(
         server_url, **strategy_kwargs
     )
     dataid2 = data_resource2.strategy_id
+    parser2: "Parser" = strategies.Parser(server_url, **strategy_kwargs)
+    parserid2 = parser2.strategy_id
     filter2: "Filter" = strategies.Filter(server_url, **strategy_kwargs)
     filterid2 = filter2.strategy_id
     pipeline2 = data_resource2 >> filter2
 
-    pipeline_combined = pipeline1 >> pipeline2
+    pipeline_combined = pipeline1 >> parser2 >> pipeline2
 
     # confirm that we can retrieve the strategy ids
     pipeline_tail = pipeline_combined  # or should it be pipeline head?
     assert pipeline_tail.strategy_id == dataid1
     pipeline_tail = pipeline_tail.input_pipe.input
+    assert pipeline_tail.strategy_id == parserid1
+    pipeline_tail = pipeline_tail.input_pipe.input
     assert pipeline_tail.strategy_id == filterid1
     pipeline_tail = pipeline_tail.input_pipe.input
     assert pipeline_tail.strategy_id == dataid2
+    pipeline_tail = pipeline_tail.input_pipe.input
+    assert pipeline_tail.strategy_id == parserid2
     pipeline_tail = pipeline_tail.input_pipe.input
     assert pipeline_tail.strategy_id == filterid2

@@ -20,6 +20,7 @@ if TYPE_CHECKING:
         python_backend.Transformation,
         services_backend.DataResource,
         services_backend.Filter,
+        services_backend.Parser,
         services_backend.Function,
         services_backend.Mapping,
         services_backend.Transformation,
@@ -27,7 +28,7 @@ if TYPE_CHECKING:
 
 
 @pytest.fixture(
-    params=["dataresource", "filter", "function", "mapping", "transformation"]
+    params=["dataresource", "parser", "filter", "function", "mapping", "transformation"]
 )
 def strategy_implementation(
     request: pytest.FixtureRequest,

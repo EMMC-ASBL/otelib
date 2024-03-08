@@ -20,14 +20,27 @@ if TYPE_CHECKING:
 
 REPOSITORY_DIR = (Path(__file__).resolve().parent.parent).resolve()
 STATIC_DIR = (Path(__file__).resolve().parent / "static").resolve()
-HEAD_COMMIT_SHA = run(
-    ["git", "rev-parse", "HEAD"], capture_output=True, check=True
-).stdout.decode()
+HEAD_COMMIT_SHA = (
+    run(["git", "rev-parse", "HEAD"], capture_output=True, check=True)
+    .stdout.decode()
+    .rstrip("\n")
+)
+path_to_sample_json = STATIC_DIR / "sample.json"
+relative_posix_path_to_sample_json = path_to_sample_json.relative_to(
+    REPOSITORY_DIR
+).as_posix()
 
 TEST_DATA = {
-    "dataresource": {"content": json.loads((STATIC_DIR / "sample.json").read_text())},
+    "dataresource": {
+        "downloadUrl": (
+            "https://raw.githubusercontent.com/EMMC-ASBL/otelib"
+            f"/{HEAD_COMMIT_SHA}/{relative_posix_path_to_sample_json}"
+        ),
+        "mediaType": "application/json",
+    },
     "filter": {"sqlquery": "DROP TABLE myTable;"},
     "function": {},
+    "parser": {"content": json.loads((STATIC_DIR / "sample.json").read_text())},
     "mapping": {
         "prefixes": {
             "map": "http://example.org/0.0.1/mapping_ontology#",
@@ -48,6 +61,7 @@ class ResourceType(StrEnum):
 
     DATARESOURCE = "dataresource"
     FILTER = "filter"
+    PARSER = "parser"
     FUNCTION = "function"
     MAPPING = "mapping"
     SESSION = "session"
@@ -77,7 +91,12 @@ class ResourceType(StrEnum):
             return (
                 self
                 in {
-                    "get": [self.DATARESOURCE, self.FUNCTION, self.TRANSFORMATION],
+                    "get": [
+                        self.DATARESOURCE,
+                        self.PARSER,
+                        self.FUNCTION,
+                        self.TRANSFORMATION,
+                    ],
                     "initialize": [self.FILTER, self.MAPPING],
                 }[method]
             )
@@ -88,12 +107,7 @@ class ResourceType(StrEnum):
 
 
 def strategy_create_kwargs() -> "list[tuple[str, dict[str, Any]]]":
-    """Strategy to creation key-word-arguments."""
-    path_to_sample_json = STATIC_DIR / "sample.json"
-    assert path_to_sample_json.exists()
-    relative_postix_path_to_sample_json = path_to_sample_json.relative_to(
-        REPOSITORY_DIR
-    ).as_posix()
+    """List of strategy-to-configuration mapping."""
     return [
         (
             ResourceType.DATARESOURCE.value,
@@ -101,9 +115,10 @@ def strategy_create_kwargs() -> "list[tuple[str, dict[str, Any]]]":
                 "downloadUrl": (
                     "https://raw.githubusercontent.com/EMMC-ASBL/otelib"
                     f"/{HEAD_COMMIT_SHA}"
-                    f"/{relative_postix_path_to_sample_json}"
+                    f"/{relative_posix_path_to_sample_json}"
                 ),
                 "mediaType": "application/json",
+                "resourceType": "resource/url",
             },
         ),
         (
@@ -114,12 +129,21 @@ def strategy_create_kwargs() -> "list[tuple[str, dict[str, Any]]]":
             },
         ),
         (
-            ResourceType.FUNCTION.value,
+            ResourceType.PARSER.value,
             {
-                "functionType": "function/demo",
-                **TEST_DATA[ResourceType.FUNCTION.value],
+                "configuration": {
+                    "downloadUrl": (
+                        "https://raw.githubusercontent.com/EMMC-ASBL/otelib"
+                        f"/{HEAD_COMMIT_SHA}"
+                        f"/{relative_posix_path_to_sample_json}"
+                    ),
+                    "mediaType": "application/json",
+                },
+                "entity": "http://onto-ns.com/meta/0.4/dummy_entity",
+                "parserType": "parser/json",
             },
         ),
+        (ResourceType.FUNCTION.value, {"functionType": "function/demo"}),
         (
             ResourceType.MAPPING.value,
             {
