@@ -26,7 +26,7 @@ requires-python = "~=3.9"
 dynamic = ["version"]
 
 dependencies = [
-    "oteapi-core ~=0.6.1",
+    "oteapi-core ~=0.7.0.dev1",
     "pydantic-settings ~=2.2",
 ]
 
@@ -34,7 +34,7 @@ dependencies = [
 dev = [
     "pre-commit ~=3.7",
     "pytest >=7.4.0,<9",
-    "pytest-cov >=4.1.0,<6",
+    "pytest-cov ~=5.0",
     "requests-mock ~=1.12",
 ]
 
