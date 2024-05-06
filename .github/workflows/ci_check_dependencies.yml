@@ -18,7 +18,7 @@ jobs:
       install_extras: "[dev]"
       pr_labels: "CI/CD"
       ignore: |
-        dependency-name=oteapi-core...versions=>=1
+        dependency-name=oteapi-core
         dependency-name=pydantic...versions=>=2
 
     secrets:
