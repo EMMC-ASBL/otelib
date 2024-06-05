@@ -24,7 +24,13 @@ jobs:
       run_safety: true
       # Ignore ID 44715 for now.
       # See this NumPy issue for more information: https://github.com/numpy/numpy/issues/19038
-      safety_options: --ignore=44715
+      # ID: 70612
+      #   Package: Jinja2
+      #   Has been disputed by the maintainer and multiple third parties.
+      #   For more information see: https://github.com/advisories/GHSA-f6pv-j8mr-w6rr
+      safety_options: |
+        --ignore=44715
+        --ignore=70612
 
       # Build package
       run_build_package: true
