@@ -27,7 +27,7 @@ dynamic = ["version"]
 
 dependencies = [
     "oteapi-core ~=0.7.0.dev1",
-    "pydantic-settings ~=2.2",
+    "pydantic-settings ~=2.3",
 ]
 
 [project.optional-dependencies]
