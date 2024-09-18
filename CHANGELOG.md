@@ -1,5 +1,36 @@
 # Changelog
 
+## [Unreleased](https://github.com/EMMC-ASBL/otelib/tree/HEAD)
+
+[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.5.0.dev1...HEAD)
+
+## DX and dependency updates
+
+Remove the use of an extra permanent dependencies branch to create aggregated dependency update PRs.
+Instead use dependabot's groups feature.
+
+Update the dependencies and dev tools.
+
+**Implemented enhancements:**
+
+- Optimize CI/CD by using dependabot's groups [\#238](https://github.com/EMMC-ASBL/otelib/issues/238)
+- Use Trusted Publisher from PyPI [\#237](https://github.com/EMMC-ASBL/otelib/issues/237)
+
+## [v0.5.0.dev1](https://github.com/EMMC-ASBL/otelib/tree/v0.5.0.dev1) (2024-09-18)
+
+[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.5.0.dev0...v0.5.0.dev1)
+
+## DX and dependency updates
+
+Remove the use of an extra permanent dependencies branch to create aggregated dependency update PRs.
+Instead use dependabot's groups feature.
+
+Update the dependencies and dev tools.
+
+**Merged pull requests:**
+
+- Update CI/CD and use Trusted Publisher from PyPI [\#236](https://github.com/EMMC-ASBL/otelib/pull/236) ([CasperWA](https://github.com/CasperWA))
+
 ## [v0.5.0.dev0](https://github.com/EMMC-ASBL/otelib/tree/v0.5.0.dev0) (2024-03-08)
 
 [Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.4.1...v0.5.0.dev0)
@@ -14,22 +45,9 @@
 
 **Merged pull requests:**
 
-- \[Auto-generated\] Update dependencies [\#183](https://github.com/EMMC-ASBL/otelib/pull/183) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#179](https://github.com/EMMC-ASBL/otelib/pull/179) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#175](https://github.com/EMMC-ASBL/otelib/pull/175) ([TEAM4-0](https://github.com/TEAM4-0))
 - Add create parser function [\#174](https://github.com/EMMC-ASBL/otelib/pull/174) ([Treesarj](https://github.com/Treesarj))
 - Update README [\#173](https://github.com/EMMC-ASBL/otelib/pull/173) ([torhaugl](https://github.com/torhaugl))
-- \[Auto-generated\] Update dependencies [\#170](https://github.com/EMMC-ASBL/otelib/pull/170) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#168](https://github.com/EMMC-ASBL/otelib/pull/168) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#167](https://github.com/EMMC-ASBL/otelib/pull/167) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#165](https://github.com/EMMC-ASBL/otelib/pull/165) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#164](https://github.com/EMMC-ASBL/otelib/pull/164) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#162](https://github.com/EMMC-ASBL/otelib/pull/162) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#156](https://github.com/EMMC-ASBL/otelib/pull/156) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#155](https://github.com/EMMC-ASBL/otelib/pull/155) ([TEAM4-0](https://github.com/TEAM4-0))
 - Don't use filesamples.com [\#152](https://github.com/EMMC-ASBL/otelib/pull/152) ([CasperWA](https://github.com/CasperWA))
-- \[Auto-generated\] Update dependencies [\#150](https://github.com/EMMC-ASBL/otelib/pull/150) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#149](https://github.com/EMMC-ASBL/otelib/pull/149) ([TEAM4-0](https://github.com/TEAM4-0))
 
 ## [v0.4.1](https://github.com/EMMC-ASBL/otelib/tree/v0.4.1) (2023-10-25)
 
@@ -41,7 +59,6 @@
 
 **Merged pull requests:**
 
-- \[Auto-generated\] Update dependencies [\#146](https://github.com/EMMC-ASBL/otelib/pull/146) ([TEAM4-0](https://github.com/TEAM4-0))
 - Extend support to Python 3.11 [\#136](https://github.com/EMMC-ASBL/otelib/pull/136) ([CasperWA](https://github.com/CasperWA))
 
 ## [v0.4.0](https://github.com/EMMC-ASBL/otelib/tree/v0.4.0) (2023-10-19)
@@ -65,16 +82,9 @@
 
 **Merged pull requests:**
 
-- \[Auto-generated\] Update dependencies [\#145](https://github.com/EMMC-ASBL/otelib/pull/145) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#144](https://github.com/EMMC-ASBL/otelib/pull/144) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#142](https://github.com/EMMC-ASBL/otelib/pull/142) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#140](https://github.com/EMMC-ASBL/otelib/pull/140) ([TEAM4-0](https://github.com/TEAM4-0))
 - Update SINTEF/ci-cd usage to v2.5.2 \(was v1\) [\#135](https://github.com/EMMC-ASBL/otelib/pull/135) ([CasperWA](https://github.com/CasperWA))
 - Migrate to pydantic v2 [\#133](https://github.com/EMMC-ASBL/otelib/pull/133) ([CasperWA](https://github.com/CasperWA))
 - Use ruff [\#131](https://github.com/EMMC-ASBL/otelib/pull/131) ([CasperWA](https://github.com/CasperWA))
-- \[Auto-generated\] Update dependencies [\#124](https://github.com/EMMC-ASBL/otelib/pull/124) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#123](https://github.com/EMMC-ASBL/otelib/pull/123) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#119](https://github.com/EMMC-ASBL/otelib/pull/119) ([TEAM4-0](https://github.com/TEAM4-0))
 
 ## [v0.3.2](https://github.com/EMMC-ASBL/otelib/tree/v0.3.2) (2023-06-20)
 
@@ -86,7 +96,6 @@
 
 **Merged pull requests:**
 
-- \[Auto-generated\] Update dependencies [\#117](https://github.com/EMMC-ASBL/otelib/pull/117) ([TEAM4-0](https://github.com/TEAM4-0))
 - Doi badge [\#115](https://github.com/EMMC-ASBL/otelib/pull/115) ([jesper-friis](https://github.com/jesper-friis))
 - Add checks to make sure input\_pipe is set to the first filter [\#111](https://github.com/EMMC-ASBL/otelib/pull/111) ([Treesarj](https://github.com/Treesarj))
 
@@ -96,7 +105,6 @@
 
 **Merged pull requests:**
 
-- \[Auto-generated\] Update dependencies [\#113](https://github.com/EMMC-ASBL/otelib/pull/113) ([TEAM4-0](https://github.com/TEAM4-0))
 - Enh/add auth [\#96](https://github.com/EMMC-ASBL/otelib/pull/96) ([MBueschelberger](https://github.com/MBueschelberger))
 
 ## [v0.3.0](https://github.com/EMMC-ASBL/otelib/tree/v0.3.0) (2023-04-19)
@@ -120,17 +128,8 @@
 
 **Merged pull requests:**
 
-- \[Auto-generated\] Update dependencies [\#107](https://github.com/EMMC-ASBL/otelib/pull/107) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#105](https://github.com/EMMC-ASBL/otelib/pull/105) ([TEAM4-0](https://github.com/TEAM4-0))
 - Celery updates [\#103](https://github.com/EMMC-ASBL/otelib/pull/103) ([CasperWA](https://github.com/CasperWA))
-- \[Auto-generated\] Update dependencies [\#100](https://github.com/EMMC-ASBL/otelib/pull/100) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#98](https://github.com/EMMC-ASBL/otelib/pull/98) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#95](https://github.com/EMMC-ASBL/otelib/pull/95) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#93](https://github.com/EMMC-ASBL/otelib/pull/93) ([TEAM4-0](https://github.com/TEAM4-0))
 - Renamed argument of Pipe.get\(\) to `session_id` to reduce confusion [\#91](https://github.com/EMMC-ASBL/otelib/pull/91) ([jesper-friis](https://github.com/jesper-friis))
-- \[Auto-generated\] Update dependencies [\#90](https://github.com/EMMC-ASBL/otelib/pull/90) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#89](https://github.com/EMMC-ASBL/otelib/pull/89) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#82](https://github.com/EMMC-ASBL/otelib/pull/82) ([TEAM4-0](https://github.com/TEAM4-0))
 - Update CI/CD & use `flit` build system [\#77](https://github.com/EMMC-ASBL/otelib/pull/77) ([CasperWA](https://github.com/CasperWA))
 
 ## [v0.2.0](https://github.com/EMMC-ASBL/otelib/tree/v0.2.0) (2022-11-09)
@@ -153,25 +152,10 @@
 **Merged pull requests:**
 
 - Use recursive option for pylint-tests in CI [\#80](https://github.com/EMMC-ASBL/otelib/pull/80) ([CasperWA](https://github.com/CasperWA))
-- \[Auto-generated\] Update dependencies [\#71](https://github.com/EMMC-ASBL/otelib/pull/71) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#70](https://github.com/EMMC-ASBL/otelib/pull/70) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#64](https://github.com/EMMC-ASBL/otelib/pull/64) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#63](https://github.com/EMMC-ASBL/otelib/pull/63) ([TEAM4-0](https://github.com/TEAM4-0))
 - Split client backends - add Python backend [\#60](https://github.com/EMMC-ASBL/otelib/pull/60) ([daniel-sintef](https://github.com/daniel-sintef))
 - Use docker instead of docker-compose for CI [\#58](https://github.com/EMMC-ASBL/otelib/pull/58) ([CasperWA](https://github.com/CasperWA))
-- \[Auto-generated\] Update dependencies [\#57](https://github.com/EMMC-ASBL/otelib/pull/57) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#55](https://github.com/EMMC-ASBL/otelib/pull/55) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#53](https://github.com/EMMC-ASBL/otelib/pull/53) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#49](https://github.com/EMMC-ASBL/otelib/pull/49) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#47](https://github.com/EMMC-ASBL/otelib/pull/47) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#45](https://github.com/EMMC-ASBL/otelib/pull/45) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#44](https://github.com/EMMC-ASBL/otelib/pull/44) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#43](https://github.com/EMMC-ASBL/otelib/pull/43) ([TEAM4-0](https://github.com/TEAM4-0))
-- \[Auto-generated\] Update dependencies [\#39](https://github.com/EMMC-ASBL/otelib/pull/39) ([TEAM4-0](https://github.com/TEAM4-0))
 - Added PR template with checklist for reviewers. [\#37](https://github.com/EMMC-ASBL/otelib/pull/37) ([francescalb](https://github.com/francescalb))
-- \[Auto-generated\] Update dependencies [\#36](https://github.com/EMMC-ASBL/otelib/pull/36) ([TEAM4-0](https://github.com/TEAM4-0))
 - Update README.md [\#34](https://github.com/EMMC-ASBL/otelib/pull/34) ([quaat](https://github.com/quaat))
-- \[Auto-generated\] Update dependencies [\#32](https://github.com/EMMC-ASBL/otelib/pull/32) ([TEAM4-0](https://github.com/TEAM4-0))
 
 ## [v0.1.0](https://github.com/EMMC-ASBL/otelib/tree/v0.1.0) (2022-03-15)
 
@@ -206,7 +190,6 @@
 - Add more tests [\#27](https://github.com/EMMC-ASBL/otelib/pull/27) ([CasperWA](https://github.com/CasperWA))
 - Fix testing for filters [\#26](https://github.com/EMMC-ASBL/otelib/pull/26) ([CasperWA](https://github.com/CasperWA))
 - Correct typo in readme [\#23](https://github.com/EMMC-ASBL/otelib/pull/23) ([jesper-friis](https://github.com/jesper-friis))
-- \[Auto-generated\] Update dependencies [\#22](https://github.com/EMMC-ASBL/otelib/pull/22) ([TEAM4-0](https://github.com/TEAM4-0))
 - Fix tests and implement extra debugging messages [\#17](https://github.com/EMMC-ASBL/otelib/pull/17) ([CasperWA](https://github.com/CasperWA))
 - Add dependabot for dependency updates [\#15](https://github.com/EMMC-ASBL/otelib/pull/15) ([CasperWA](https://github.com/CasperWA))
 - Add CI/CD and pre-commit [\#11](https://github.com/EMMC-ASBL/otelib/pull/11) ([CasperWA](https://github.com/CasperWA))
