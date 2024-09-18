@@ -6,7 +6,7 @@ on:
     - published
 
 jobs:
-  publish:
+  build:
     name: External
     uses: SINTEF/ci-cd/.github/workflows/cd_release.yml@v2.8.2
     if: github.repository == 'EMMC-ASBL/otelib' && startsWith(github.ref, 'refs/tags/v')
@@ -23,10 +23,36 @@ jobs:
       python_version_build: "3.9"
       build_libs: "flit"
       build_cmd: "flit build"
-      publish_on_pypi: true
+      publish_on_pypi: false
+      upload_distribution: true
+      changelog_exclude_labels: "skip-changelog,duplicate,question,invalid,wontfix"
 
       # Documentation
       update_docs: false
     secrets:
-      PyPI_token: ${{ secrets.PYPI_TOKEN }}
       PAT: ${{ secrets.RELEASE_PAT }}
+
+  publish:
+    name: Publish to PyPI
+    needs: build
+    runs-on: ubuntu-latest
+
+    # Using environments is recommended by PyPI when using Trusted Publishers
+    environment:
+      name: pypi
+      url: https://pypi.org/project/otelib
+
+    # The id-token:write permission is required by the PyPI upload action for
+    # Trusted Publishers
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Download distribution
+        uses: actions/download-artifact@v4
+        with:
+          name: dist  # The artifact will always be called 'dist'
+          path: dist
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
