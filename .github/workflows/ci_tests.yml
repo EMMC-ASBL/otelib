@@ -7,6 +7,9 @@ on:
       - 'master'
       - 'push-action/**'  # Allow pushing to protected branches (using CasperWA/push-protected)
 
+env:
+  PYTEST_ADDOPTS: --color=yes
+
 jobs:
   basic:
     name: External
@@ -48,7 +51,7 @@ jobs:
         os:
         - ["ubuntu-latest", "linux"]
         - ["windows-latest", "windows"]
-        python-version: ["3.9", "3.10", "3.11"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
 
     steps:
     - name: Checkout repository
@@ -71,12 +74,16 @@ jobs:
       run: pytest -vvv --cov-report=xml
 
     - name: Upload coverage to Codecov
-      if: matrix.python-version == '3.9' && github.repository == 'EMMC-ASBL/otelib'
+      if: github.repository == 'EMMC-ASBL/otelib'
       uses: codecov/codecov-action@v4
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         files: coverage.xml
         flags: ${{ matrix.os[1] }}
+        env_vars: OS,PYTHON
+      env:
+        OS: ${{ matrix.os[1] }}
+        PYTHON: ${{ matrix.python-version }}
 
   pytest-real-backend:
     runs-on: ubuntu-latest
