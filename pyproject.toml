@@ -17,6 +17,8 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     # "Framework :: OTE-API",
     "Natural Language :: English",
     "Operating System :: OS Independent",
@@ -26,7 +28,7 @@ requires-python = "~=3.9"
 dynamic = ["version"]
 
 dependencies = [
-    "oteapi-core >=0.7.0.dev3",
+    "oteapi-core >=0.7.0.dev4",
     "pydantic-settings ~=2.5",
 ]
 
