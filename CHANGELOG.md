@@ -2,7 +2,36 @@
 
 ## [Unreleased](https://github.com/EMMC-ASBL/otelib/tree/HEAD)
 
-[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.5.0.dev1...HEAD)
+[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.5.0.dev2...HEAD)
+
+**Fixed bugs:**
+
+- Import from pydantic\_core instead of pydantic.networks [\#257](https://github.com/EMMC-ASBL/otelib/issues/257)
+
+## [v0.5.0.dev2](https://github.com/EMMC-ASBL/otelib/tree/v0.5.0.dev2) (2024-11-25)
+
+[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.5.0.dev1...v0.5.0.dev2)
+
+# Support Python 3.13
+
+Add support for Python 3.13.
+
+Update dependencies and other developer tools.
+
+Furthermore, support the latest OTEAPI Core version, which deals with pydantic v2.10 issues.
+
+**Implemented enhancements:**
+
+- Support Python 3.13 [\#245](https://github.com/EMMC-ASBL/otelib/issues/245)
+
+**Merged pull requests:**
+
+- Use the latest oteapi-core version [\#258](https://github.com/EMMC-ASBL/otelib/pull/258) ([CasperWA](https://github.com/CasperWA))
+- Add support for Python 3.12 & 3.13 [\#246](https://github.com/EMMC-ASBL/otelib/pull/246) ([CasperWA](https://github.com/CasperWA))
+
+## [v0.5.0.dev1](https://github.com/EMMC-ASBL/otelib/tree/v0.5.0.dev1) (2024-09-18)
+
+[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.5.0.dev0...v0.5.0.dev1)
 
 ## DX and dependency updates
 
@@ -15,17 +44,6 @@ Update the dependencies and dev tools.
 
 - Optimize CI/CD by using dependabot's groups [\#238](https://github.com/EMMC-ASBL/otelib/issues/238)
 - Use Trusted Publisher from PyPI [\#237](https://github.com/EMMC-ASBL/otelib/issues/237)
-
-## [v0.5.0.dev1](https://github.com/EMMC-ASBL/otelib/tree/v0.5.0.dev1) (2024-09-18)
-
-[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.5.0.dev0...v0.5.0.dev1)
-
-## DX and dependency updates
-
-Remove the use of an extra permanent dependencies branch to create aggregated dependency update PRs.
-Instead use dependabot's groups feature.
-
-Update the dependencies and dev tools.
 
 **Merged pull requests:**
 
