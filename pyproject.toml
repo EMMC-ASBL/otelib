@@ -28,14 +28,14 @@ requires-python = "~=3.9"
 dynamic = ["version"]
 
 dependencies = [
-    "oteapi-core >=0.7.0.dev4",
-    "pydantic-settings ~=2.5",
+    "oteapi-core >=0.7.0.dev6",
+    "pydantic-settings ~=2.6",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pre-commit ~=4.0",
-    "pytest >=7.4.0,<9",
+    "pytest ~=8.3",
     "pytest-cov ~=6.0",
     "requests-mock ~=1.12",
 ]
@@ -58,7 +58,7 @@ allow_redefinition = true
 plugins = ["pydantic.mypy"]
 
 [tool.pytest.ini_options]
-minversion = "7.0"
+minversion = "8"
 addopts = "-rs --cov=otelib --cov-report=term-missing:skip-covered --no-cov-on-fail"
 filterwarnings = [
     # Treat any warning as an error.
