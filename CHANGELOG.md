@@ -2,11 +2,25 @@
 
 ## [Unreleased](https://github.com/EMMC-ASBL/otelib/tree/HEAD)
 
-[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.5.0.dev2...HEAD)
+[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.5.0...HEAD)
 
-**Fixed bugs:**
+# Update to OTEAPI Core v0.7.0
 
-- Import from pydantic\_core instead of pydantic.networks [\#257](https://github.com/EMMC-ASBL/otelib/issues/257)
+This is based on pydantic v2 and a rethinking of the `session` object.
+The latest dev-versions of OTELib has already implemented support for these changes.
+
+## [v0.5.0](https://github.com/EMMC-ASBL/otelib/tree/v0.5.0) (2025-04-07)
+
+[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.5.0.dev2...v0.5.0)
+
+# Update to OTEAPI Core v0.7.0
+
+This is based on pydantic v2 and a rethinking of the `session` object.
+The latest dev-versions of OTELib has already implemented support for these changes.
+
+**Merged pull requests:**
+
+- Use non-dev version of oteapi-core [\#277](https://github.com/EMMC-ASBL/otelib/pull/277) ([CasperWA](https://github.com/CasperWA))
 
 ## [v0.5.0.dev2](https://github.com/EMMC-ASBL/otelib/tree/v0.5.0.dev2) (2024-11-25)
 
@@ -23,6 +37,10 @@ Furthermore, support the latest OTEAPI Core version, which deals with pydantic v
 **Implemented enhancements:**
 
 - Support Python 3.13 [\#245](https://github.com/EMMC-ASBL/otelib/issues/245)
+
+**Fixed bugs:**
+
+- Import from pydantic\_core instead of pydantic.networks [\#257](https://github.com/EMMC-ASBL/otelib/issues/257)
 
 **Merged pull requests:**
 
