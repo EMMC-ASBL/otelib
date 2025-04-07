@@ -8,8 +8,6 @@
 [![GitHub last commit](https://img.shields.io/github/last-commit/EMMC-ASBL/otelib?logo=github)](https://github.com/EMMC-ASBL/otelib/pulse)
 [![DOI](https://zenodo.org/badge/447285057.svg)](https://zenodo.org/badge/latestdoi/447285057)
 
-
-
 OTELib is a small Python library on top of the OTEAPI, that provides a simple and pythonic interface to the REST services.
 
 It makes it very simple to configure, set up and run a pipeline based on the pipes and filter design pattern.
