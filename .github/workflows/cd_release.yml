@@ -20,7 +20,7 @@ jobs:
       python_package: true
       package_dirs: otelib
       install_extras: "[dev]"
-      python_version_build: "3.9"
+      python_version_build: "3.10"
       build_libs: "flit"
       build_cmd: "flit build"
       publish_on_pypi: false

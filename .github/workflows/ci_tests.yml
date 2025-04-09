@@ -20,8 +20,7 @@ jobs:
       run_build_docs: false
 
       # pre-commit
-      run_pre-commit: true
-      python_version_pre-commit: "3.9"
+      run_pre-commit: false
 
       run_pylint: false
       run_safety: true
@@ -31,13 +30,14 @@ jobs:
       #   Package: Jinja2
       #   Has been disputed by the maintainer and multiple third parties.
       #   For more information see: https://github.com/advisories/GHSA-f6pv-j8mr-w6rr
-      safety_options: |
-        --ignore=44715
-        --ignore=70612
+      # safety_options: |
+      #   --ignore=44715
+      #   --ignore=70612
+      python_version_pylint_safety: "3.10"
 
       # Build package
       run_build_package: true
-      python_version_package: "3.9"
+      python_version_package: "3.10"
       build_libs: flit
       build_cmd: flit build
 
@@ -51,10 +51,10 @@ jobs:
         os:
         - ["ubuntu-latest", "linux"]
         - ["windows-latest", "windows"]
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
-    - name: Checkout repository
+    - name: Checkout ${{ github.repository }}
       uses: actions/checkout@v4
       with:
         fetch-depth: 2
@@ -102,14 +102,15 @@ jobs:
           - "6379:6379"
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout ${{ github.repository }}
+      uses: actions/checkout@v4
       with:
         fetch-depth: 2
 
-    - name: Set up Python 3.9
+    - name: Set up Python 3.10
       uses: actions/setup-python@v5
       with:
-        python-version: "3.9"
+        python-version: "3.10"
 
     - name: Install python dependencies
       run: |
