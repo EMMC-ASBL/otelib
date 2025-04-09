@@ -53,6 +53,12 @@ repos:
     hooks:
     - id: black
 
+  - repo: https://github.com/adamchainz/blacken-docs
+    rev: 1.19.1
+    hooks:
+    - id: blacken-docs
+      additional_dependencies: [black]
+
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.11.4
     hooks:
