@@ -1,5 +1,7 @@
 """Filter strategy."""
 
+from __future__ import annotations
+
 from oteapi.models import FilterConfig
 
 from otelib.backends.services.base import BaseServicesStrategy

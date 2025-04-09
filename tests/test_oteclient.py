@@ -1,5 +1,7 @@
 """Test OTE Client."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 import pytest
@@ -20,19 +22,19 @@ if TYPE_CHECKING:
 
 
 @pytest.mark.parametrize(
-    "strategy,create_kwargs",
+    ("strategy", "create_kwargs"),
     strategy_create_kwargs(),
     ids=[_[0] for _ in strategy_create_kwargs()],
 )
 @pytest.mark.usefixtures("mock_session")
 def test_create_strategies(
-    client: "OTEClient",
-    ids: "TestResourceIds",
-    mock_ote_response: "OTEResponse",
-    testdata: "Testdata",
+    client: OTEClient,
+    ids: TestResourceIds,
+    mock_ote_response: OTEResponse,
+    testdata: Testdata,
     strategy: str,
-    create_kwargs: "dict[str, Any]",
-    requests_mock: "Mocker",
+    create_kwargs: dict[str, Any],
+    requests_mock: Mocker,
 ) -> None:
     """Test creating any strategy and calling it's `get()` method."""
     import json
@@ -101,7 +103,7 @@ def test_create_strategies(
             json=testdata(strategy, "get")["content"],
         )
 
-    created_strategy: "BaseStrategy" = getattr(client, f"create_{strategy}")(
+    created_strategy: BaseStrategy = getattr(client, f"create_{strategy}")(
         **create_kwargs
     )
 
@@ -116,7 +118,7 @@ def test_create_strategies(
         # Real backend !
         # Dynamic response content - just check keys are the same and values are
         # non-empty
-        _content: "dict[str, Any]" = json.loads(content)
+        _content: dict[str, Any] = json.loads(content)
         assert list(_content) == list(testdata(strategy))
         assert all(_content.values())
     else:
@@ -134,7 +136,7 @@ def test_create_strategies(
             f"{created_strategy.url}{strategy_prefix}/session/{startegy_sessionid}",
             timeout=30,
         )
-        session: "dict[str, Any]" = content_session.json()
+        session: dict[str, Any] = content_session.json()
 
     elif backend == "python":
         session_ids = [
@@ -157,6 +159,6 @@ def test_create_strategies(
         ):
             # The task ID is dynamically generated.
             # Simply check the value is non-empty
-            assert key in session and session[key]
+            assert session.get(key)
         else:
             assert value == session[key]

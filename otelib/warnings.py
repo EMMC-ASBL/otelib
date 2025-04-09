@@ -1,5 +1,7 @@
 """OTElib warnings."""
 
+from __future__ import annotations
+
 
 class BaseOtelibWarning(Warning):
     """A base OTElib warning."""

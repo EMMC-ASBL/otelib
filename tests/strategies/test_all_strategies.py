@@ -1,5 +1,7 @@
 """Generic tests for all strategies."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 import pytest
@@ -14,9 +16,9 @@ if TYPE_CHECKING:
 
 
 def test_create(
-    strategy_implementation: "tuple[type[StrategyCls], ResourceType, str]",
-    mock_ote_response: "OTEResponse",
-    ids: "TestResourceIds",
+    strategy_implementation: tuple[type[StrategyCls], ResourceType, str],
+    mock_ote_response: OTEResponse,
+    ids: TestResourceIds,
     server_url: str,
 ) -> None:
     """Test the `create()` method."""
@@ -43,8 +45,8 @@ def test_create(
 
 
 def test_create_fails(
-    strategy_implementation: "tuple[type[StrategyCls], ResourceType, str]",
-    mock_ote_response: "OTEResponse",
+    strategy_implementation: tuple[type[StrategyCls], ResourceType, str],
+    mock_ote_response: OTEResponse,
     server_url: str,
 ) -> None:
     """Check `create()` raises `ApiError` upon request failure."""
@@ -82,12 +84,12 @@ def test_create_fails(
 
 
 def test_fetch(
-    strategy_implementation: "tuple[type[StrategyCls], ResourceType, str]",
-    mock_ote_response: "OTEResponse",
-    ids: "TestResourceIds",
+    strategy_implementation: tuple[type[StrategyCls], ResourceType, str],
+    mock_ote_response: OTEResponse,
+    ids: TestResourceIds,
     server_url: str,
-    testdata: "Testdata",
-    requests_mock: "Mocker",
+    testdata: Testdata,
+    requests_mock: Mocker,
 ) -> None:
     """Test the `fetch()` method."""
     import json
@@ -147,7 +149,7 @@ def test_fetch(
         # Real backend for transformation strategy
         # Dynamic response content - just check keys are the same and values are
         # non-empty
-        _content: "dict[str, Any]" = json.loads(content)
+        _content: dict[str, Any] = json.loads(content)
         assert list(_content) == list(testdata(strategy_type, "get"))
         assert all(_content.values())
     else:
@@ -155,9 +157,9 @@ def test_fetch(
 
 
 def test_fetch_fails(
-    strategy_implementation: "tuple[type[StrategyCls], ResourceType, str]",
-    mock_ote_response: "OTEResponse",
-    ids: "TestResourceIds",
+    strategy_implementation: tuple[type[StrategyCls], ResourceType, str],
+    mock_ote_response: OTEResponse,
+    ids: TestResourceIds,
     server_url: str,
 ) -> None:
     """Check `fetch()` raises `ApiError` upon request failure."""
@@ -198,11 +200,11 @@ def test_fetch_fails(
 
 
 def test_initialize(
-    strategy_implementation: "tuple[type[StrategyCls], ResourceType, str]",
-    mock_ote_response: "OTEResponse",
-    ids: "TestResourceIds",
+    strategy_implementation: tuple[type[StrategyCls], ResourceType, str],
+    mock_ote_response: OTEResponse,
+    ids: TestResourceIds,
     server_url: str,
-    testdata: "Testdata",
+    testdata: Testdata,
 ) -> None:
     """Test `DataResource.initialize()`."""
     import json
@@ -256,9 +258,9 @@ def test_initialize(
 
 
 def test_initialize_fails(
-    strategy_implementation: "tuple[type[StrategyCls], ResourceType, str]",
-    mock_ote_response: "OTEResponse",
-    ids: "TestResourceIds",
+    strategy_implementation: tuple[type[StrategyCls], ResourceType, str],
+    mock_ote_response: OTEResponse,
+    ids: TestResourceIds,
     server_url: str,
 ) -> None:
     """Check `DataResource.initialize()` raises `ApiError` upon request failure."""

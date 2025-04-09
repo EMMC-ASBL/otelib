@@ -1,5 +1,7 @@
 """Mapping strategy."""
 
+from __future__ import annotations
+
 from oteapi.models import MappingConfig
 
 from otelib.backends.python.base import BasePythonStrategy
@@ -10,4 +12,4 @@ class Mapping(BasePythonStrategy):
     operations."""
 
     strategy_name = "mapping"
-    strategy_config: "type[MappingConfig]" = MappingConfig
+    strategy_config: type[MappingConfig] = MappingConfig

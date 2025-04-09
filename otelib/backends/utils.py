@@ -1,5 +1,7 @@
 """Utility function and classes for use in the Backends module."""
 
+from __future__ import annotations
+
 import sys
 
 if sys.version_info >= (3, 11):

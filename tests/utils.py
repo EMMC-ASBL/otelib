@@ -1,5 +1,7 @@
 """Utility functions for tests."""
 
+from __future__ import annotations
+
 import json
 import sys
 from pathlib import Path
@@ -85,7 +87,7 @@ class ResourceType(StrEnum):
             return "resource_id"
         return f"{self.value}_id"
 
-    def map_method_to_data(self, method: "Literal['get', 'initialize']") -> bool:
+    def map_method_to_data(self, method: Literal["get", "initialize"]) -> bool:
         """Return whether a given method should return non-empty (test) data."""
         try:
             return (
@@ -106,7 +108,7 @@ class ResourceType(StrEnum):
             ) from exc
 
 
-def strategy_create_kwargs() -> "list[tuple[str, dict[str, Any]]]":
+def strategy_create_kwargs() -> list[tuple[str, dict[str, Any]]]:
     """List of strategy-to-configuration mapping."""
     return [
         (

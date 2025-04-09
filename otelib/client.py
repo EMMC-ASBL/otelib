@@ -1,5 +1,7 @@
 """OTE Client."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from pydantic import AnyHttpUrl, ValidationError
@@ -48,7 +50,7 @@ class OTEClient:
         """
         return self._impl.source
 
-    def create_dataresource(self, **config) -> "AbstractBaseStrategy":
+    def create_dataresource(self, **config) -> AbstractBaseStrategy:
         """Create a new data resource.
 
         Any given keyword arguments are passed on to the `create_strategy()` method.
@@ -59,7 +61,7 @@ class OTEClient:
         """
         return self._impl.create_strategy(StrategyType.DATARESOURCE, **config)
 
-    def create_parser(self, **config) -> "AbstractBaseStrategy":
+    def create_parser(self, **config) -> AbstractBaseStrategy:
         """Create a new data resource.
 
         Any given keyword arguments are passed on to the `create_strategy()` method.
@@ -70,7 +72,7 @@ class OTEClient:
         """
         return self._impl.create_strategy(StrategyType.PARSER, **config)
 
-    def create_filter(self, **config) -> "AbstractBaseStrategy":
+    def create_filter(self, **config) -> AbstractBaseStrategy:
         """Create a new filter.
 
         Any given keyword arguments are passed on to the `create_strategy()` method.
@@ -81,7 +83,7 @@ class OTEClient:
         """
         return self._impl.create_strategy(StrategyType.FILTER, **config)
 
-    def create_function(self, **config) -> "AbstractBaseStrategy":
+    def create_function(self, **config) -> AbstractBaseStrategy:
         """Create a new function.
 
         Any given keyword arguments are passed on to the `create_strategy()` method.
@@ -92,7 +94,7 @@ class OTEClient:
         """
         return self._impl.create_strategy(StrategyType.FUNCTION, **config)
 
-    def create_mapping(self, **config) -> "AbstractBaseStrategy":
+    def create_mapping(self, **config) -> AbstractBaseStrategy:
         """Create a new mapping.
 
         Any given keyword arguments are passed on to the `create_strategy()` method.
@@ -103,7 +105,7 @@ class OTEClient:
         """
         return self._impl.create_strategy(StrategyType.MAPPING, **config)
 
-    def create_transformation(self, **config) -> "AbstractBaseStrategy":
+    def create_transformation(self, **config) -> AbstractBaseStrategy:
         """Create a new transformation.
 
         Any given keyword arguments are passed on to the `create_strategy()` method.

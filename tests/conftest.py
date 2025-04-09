@@ -1,5 +1,8 @@
 """Fixtures and configuration for pytest."""
 
+from __future__ import annotations
+
+import logging
 import sys
 from typing import TYPE_CHECKING
 
@@ -15,7 +18,7 @@ else:
 import pytest
 
 if TYPE_CHECKING:
-    from typing import Any, Literal, Optional, Protocol, Union
+    from typing import Any, Literal, Protocol
 
     from requests_mock import Mocker
     from utils import ResourceType
@@ -52,7 +55,7 @@ if TYPE_CHECKING:
 
         def __call__(
             self,
-            method: Union["HTTPMethod", str],
+            method: HTTPMethod | str,
             endpoint: str,
             status_code: int = 200,
             params: dict[str, Any] | str | None = None,
@@ -100,7 +103,7 @@ class HTTPMethod(StrEnum):
     PUT = "put"
 
 
-def pytest_configure(config) -> None:
+def pytest_configure(config) -> None:  # noqa: ARG001
     """Method that runs before pytest collects tests, so no modules are imported."""
     import os
 
@@ -120,7 +123,7 @@ def server_url() -> str:
 
 
 @pytest.fixture
-def resource_type_cls() -> "type[ResourceType]":
+def resource_type_cls() -> type[ResourceType]:
     """Return the `ResourceType` Enum."""
     from utils import ResourceType
 
@@ -128,14 +131,14 @@ def resource_type_cls() -> "type[ResourceType]":
 
 
 @pytest.fixture
-def ids() -> "TestResourceIds":
+def ids() -> TestResourceIds:
     """Provide a function to return a test resource id.
 
     By "resource", any resource is meant, e.g., `sessions`, `filter`, etc.
     """
     from utils import ResourceType
 
-    def _ids(resource_type: "Union[ResourceType, str]") -> str:
+    def _ids(resource_type: ResourceType | str) -> str:
         """Return a test id for the given `resource_type`."""
         resource_type = ResourceType(resource_type)
         return f"{resource_type.get_idprefix()}test"
@@ -155,7 +158,7 @@ def backend(request: pytest.FixtureRequest) -> str:
 
 
 @pytest.fixture
-def client(server_url: str, backend: str) -> "OTEClient":
+def client(server_url: str, backend: str) -> OTEClient:
     """Create an `OTEClient` test client."""
     from otelib.client import OTEClient
 
@@ -172,9 +175,9 @@ def client(server_url: str, backend: str) -> "OTEClient":
 
 @pytest.fixture
 def mock_session(
-    requests_mock: "Mocker",
-    client: "OTEClient",
-    ids: "TestResourceIds",
+    requests_mock: Mocker,
+    client: OTEClient,
+    ids: TestResourceIds,
     server_url: str,
 ) -> None:
     """Mock `POST /session`.
@@ -194,22 +197,22 @@ def mock_session(
 
 
 @pytest.fixture
-def mock_ote_response(requests_mock: "Mocker", server_url: str) -> "OTEResponse":
+def mock_ote_response(requests_mock: Mocker, server_url: str) -> OTEResponse:
     """Provide a function to mock OTE services responses."""
     from urllib.parse import parse_qs
 
     from otelib.settings import Settings
 
     def _mock_response(
-        method: "Union[HTTPMethod, str]",
+        method: HTTPMethod | str,
         endpoint: str,
         status_code: int = 200,
-        params: "Optional[Union[dict[str, Any], str]]" = None,
-        headers: "Optional[dict]" = None,
-        response_content: "Optional[bytes]" = None,
-        response_json: "Optional[Union[dict, str]]" = None,
-        response_text: "Optional[str]" = None,
-        ote_client: "Optional[OTEClient]" = None,
+        params: dict[str, Any] | str | None = None,
+        headers: dict | None = None,
+        response_content: bytes | None = None,
+        response_json: dict | str | None = None,
+        response_text: str | None = None,
+        ote_client: OTEClient | None = None,
     ) -> None:
         """Use `requests_mock` to mock a response from an OTE services server.
 
@@ -265,12 +268,15 @@ def mock_ote_response(requests_mock: "Mocker", server_url: str) -> "OTEResponse"
         if headers is not None:
             mock_kwargs["headers"] = headers
 
-        print(
-            f"Mocking request: {method} "
-            f"{ote_client.url if ote_client else server_url}{Settings().prefix}"
-            f"{endpoint}{params} "
-            f"status_code={status_code} "
-            + " ".join(f"{key}={value}" for key, value in mock_kwargs.items())
+        logging.debug(
+            "Mocking request: %s %s%s%s%s status_Code=%s %s",
+            method,
+            ote_client.url if ote_client else server_url,
+            Settings().prefix,
+            endpoint,
+            params,
+            status_code,
+            " ".join(f"{key}={value}" for key, value in mock_kwargs.items()),
         )
 
         requests_mock.request(
@@ -287,7 +293,7 @@ def mock_ote_response(requests_mock: "Mocker", server_url: str) -> "OTEResponse"
 
 
 @pytest.fixture
-def raw_test_data() -> "dict[str, Any]":
+def raw_test_data() -> dict[str, Any]:
     """Return raw test data."""
     from copy import deepcopy
 
@@ -297,13 +303,13 @@ def raw_test_data() -> "dict[str, Any]":
 
 
 @pytest.fixture
-def testdata(raw_test_data: "dict[str, Any]") -> "Testdata":
+def testdata(raw_test_data: dict[str, Any]) -> Testdata:
     """Test data for OTE resource."""
     from utils import ResourceType
 
     def _testdata(
-        resource_type: "Union[ResourceType, str]",
-        method: "Optional[Literal['get', 'initialize']]" = None,
+        resource_type: ResourceType | str,
+        method: Literal["get", "initialize"] | None = None,
     ) -> dict:
         """Return test data for a given resource.
 
@@ -331,7 +337,7 @@ def testdata(raw_test_data: "dict[str, Any]") -> "Testdata":
 
 @pytest.fixture(autouse=True)
 def mock_celery_transformation_strategy(
-    monkeypatch: pytest.MonkeyPatch, raw_test_data: "dict[str, Any]"
+    monkeypatch: pytest.MonkeyPatch, raw_test_data: dict[str, Any]
 ) -> None:
     """Use celery_worker always for all things.
 
@@ -348,5 +354,5 @@ def mock_celery_transformation_strategy(
 
     monkeypatch.setattr(
         "oteapi.strategies.transformation.celery_remote.CELERY_APP.send_task",
-        lambda *args, **kwargs: MockResult(),
+        lambda *args, **kwargs: MockResult(),  # noqa: ARG005
     )

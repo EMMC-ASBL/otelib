@@ -1,5 +1,7 @@
 """Common strategy for Download, Prase and Resource strategies."""
 
+from __future__ import annotations
+
 from oteapi.models import ParserConfig
 
 from otelib.backends.services.base import BaseServicesStrategy

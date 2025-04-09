@@ -1,5 +1,7 @@
 """Filter strategy."""
 
+from __future__ import annotations
+
 from oteapi.models import FilterConfig
 
 from otelib.backends.python.base import BasePythonStrategy
@@ -10,4 +12,4 @@ class Filter(BasePythonStrategy):
     operations."""
 
     strategy_name = "filter"
-    strategy_config: "type[FilterConfig]" = FilterConfig
+    strategy_config: type[FilterConfig] = FilterConfig

@@ -1,5 +1,7 @@
 """Client for python backend."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from oteapi.plugins import load_strategies
@@ -12,7 +14,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
     from otelib.backends.python.base import BasePythonStrategy
 
-CACHE: "dict[str, Any]" = {}
+CACHE: dict[str, Any] = {}
 
 
 class OTEPythonClient(AbstractBaseClient):
@@ -47,15 +49,15 @@ class OTEPythonClient(AbstractBaseClient):
         super()._validate_source(source)
 
     def _create_strategy(  # type: ignore[override]
-        self, strategy_cls: "type[BasePythonStrategy]", **config
-    ) -> "BasePythonStrategy":
+        self, strategy_cls: type[BasePythonStrategy], **config
+    ) -> BasePythonStrategy:
         strategy = strategy_cls(self.interpreter, self._cache)
         strategy.create(**config)
         return strategy
 
     def clear_cache(self) -> None:
         """Clear the global CACHE object."""
-        global CACHE
+        global CACHE  # noqa: PLW0603
         CACHE = {}
         if self._cache != CACHE and (self._cache or CACHE):
             raise PythonBackendException("Could not clear the global CACHE object.")

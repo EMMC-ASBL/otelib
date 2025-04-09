@@ -1,5 +1,7 @@
 """Transformation strategy."""
 
+from __future__ import annotations
+
 from oteapi.models import TransformationConfig
 
 from otelib.backends.python.base import BasePythonStrategy
@@ -10,4 +12,4 @@ class Transformation(BasePythonStrategy):
     operations."""
 
     strategy_name = "transformation"
-    strategy_config: "type[TransformationConfig]" = TransformationConfig
+    strategy_config: type[TransformationConfig] = TransformationConfig
