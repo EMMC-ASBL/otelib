@@ -8,7 +8,7 @@ import pytest
 from utils import strategy_create_kwargs
 
 if TYPE_CHECKING:
-    from typing import Any, Union
+    from typing import Any
 
     from requests_mock import Mocker
 
@@ -19,11 +19,11 @@ if TYPE_CHECKING:
 
     from .conftest import OTEResponse, Testdata, TestResourceIds
 
-    BaseStrategy = Union[BasePythonStrategy, BaseServicesStrategy]
+    BaseStrategy = BasePythonStrategy | BaseServicesStrategy
 
-    DataResource = Union[python_backend.DataResource, services_backend.DataResource]
-    Parser = Union[python_backend.Parser, services_backend.DataResource]
-    Filter = Union[python_backend.Filter, services_backend.Filter]
+    DataResource = python_backend.DataResource | services_backend.DataResource
+    Parser = python_backend.Parser | services_backend.DataResource
+    Filter = python_backend.Filter | services_backend.Filter
 
 
 @pytest.mark.parametrize(

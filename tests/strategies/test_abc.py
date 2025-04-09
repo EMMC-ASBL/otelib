@@ -8,7 +8,7 @@ import pytest
 from utils import strategy_create_kwargs
 
 if TYPE_CHECKING:
-    from typing import Any, Union
+    from typing import Any
 
     from requests_mock import Mocker
 
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
     from ..conftest import OTEResponse, Testdata, TestResourceIds
 
-    BaseStrategy = Union[BasePythonStrategy, BaseServicesStrategy]
+    BaseStrategy = BasePythonStrategy | BaseServicesStrategy
 
 
 @pytest.mark.parametrize(

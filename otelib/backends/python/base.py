@@ -29,7 +29,7 @@ class BasePythonStrategy(AbstractBaseStrategy):
 
     Attributes:
         interpreter (str): This is always `python` for the Python backend.
-        input_pipe (Optional[Pipe]): An input pipeline.
+        input_pipe (Pipe | None): An input pipeline.
 
     """
 

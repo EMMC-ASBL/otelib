@@ -24,7 +24,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
     Attributes:
         url (str): The base URL of the OTEAPI Service.
         settings (otelib.settings.Settings): OTEAPI Service settings.
-        input_pipe (Optional[Pipe]): An input pipeline.
+        input_pipe (Pipe | None): An input pipeline.
 
     """
 

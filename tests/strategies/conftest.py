@@ -7,26 +7,26 @@ from typing import TYPE_CHECKING
 import pytest
 
 if TYPE_CHECKING:
-    from typing import Literal, Union
+    from typing import Literal
 
     from otelib.backends import python as python_backend
     from otelib.backends import services as services_backend
 
     from ..conftest import ResourceType
 
-    StrategyCls = Union[
-        python_backend.DataResource,
-        python_backend.Filter,
-        python_backend.Function,
-        python_backend.Mapping,
-        python_backend.Transformation,
-        services_backend.DataResource,
-        services_backend.Filter,
-        services_backend.Parser,
-        services_backend.Function,
-        services_backend.Mapping,
-        services_backend.Transformation,
-    ]
+    StrategyCls = (
+        python_backend.DataResource
+        | python_backend.Filter
+        | python_backend.Function
+        | python_backend.Mapping
+        | python_backend.Transformation
+        | services_backend.DataResource
+        | services_backend.Filter
+        | services_backend.Parser
+        | services_backend.Function
+        | services_backend.Mapping
+        | services_backend.Transformation
+    )
 
 
 @pytest.fixture(
