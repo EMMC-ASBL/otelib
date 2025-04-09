@@ -1,11 +1,11 @@
 """Fixtures and configuration for pytest."""
 
+import sys
 from typing import TYPE_CHECKING
 
-try:
-    # For Python >= 3.11
+if sys.version_info >= (3, 11):
     from enum import StrEnum
-except ImportError:
+else:
     from enum import Enum
 
     class StrEnum(str, Enum):
@@ -26,7 +26,7 @@ if TYPE_CHECKING:
         """Defines a protocol for fetching a test ID based on the provided resource
         type."""
 
-        def __call__(self, resource_type: Union[ResourceType, str]) -> str: ...
+        def __call__(self, resource_type: ResourceType | str) -> str: ...
 
     class OTEResponse(Protocol):
         """Defines a protocol for mocking a response from an OTE services server using
@@ -55,12 +55,12 @@ if TYPE_CHECKING:
             method: Union["HTTPMethod", str],
             endpoint: str,
             status_code: int = 200,
-            params: Optional[Union[dict[str, Any], str]] = None,
-            headers: Optional[dict] = None,
-            response_content: Optional[bytes] = None,
-            response_json: Optional[Union[dict, str]] = None,
-            response_text: Optional[str] = None,
-            ote_client: Optional[OTEClient] = None,
+            params: dict[str, Any] | str | None = None,
+            headers: dict | None = None,
+            response_content: bytes | None = None,
+            response_json: dict | str | None = None,
+            response_text: str | None = None,
+            ote_client: OTEClient | None = None,
         ) -> None: ...
 
     class Testdata(Protocol):
@@ -80,8 +80,8 @@ if TYPE_CHECKING:
 
         def __call__(
             self,
-            resource_type: Union[ResourceType, str],
-            method: Optional[Literal["get", "initialize"]] = None,
+            resource_type: ResourceType | str,
+            method: Literal["get", "initialize"] | None = None,
         ) -> dict: ...
 
 

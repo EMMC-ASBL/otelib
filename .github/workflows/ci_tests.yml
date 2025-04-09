@@ -90,14 +90,12 @@ jobs:
     name: pytest-real backend
 
     env:
-      PORT: 8080
-      OTEAPI_prefix: "/api/v1"
+      OTEAPI_PORT: 8080
+      OTEAPI_PREFIX: "/api/v1"
 
     services:
       redis:
         image: redis:latest
-        volumes:
-          - redis-persist:/data
         ports:
           - "6379:6379"
 
@@ -125,11 +123,11 @@ jobs:
           --env "OTEAPI_REDIS_TYPE=redis" \
           --env "OTEAPI_REDIS_HOST=localhost" \
           --env "OTEAPI_REDIS_PORT=6379" \
-          --env "OTEAPI_prefix=${OTEAPI_prefix}" \
+          --env OTEAPI_PREFIX \
           --network "host" \
           ghcr.io/emmc-asbl/oteapi:${DOCKER_OTEAPI_VERSION} &
 
-        .github/utils/wait_for_it.sh localhost:${PORT} -t 240
+        .github/utils/wait_for_it.sh localhost:${OTEAPI_PORT} -t 240
         sleep 5
       env:
         DOCKER_OTEAPI_VERSION: latest
@@ -137,4 +135,4 @@ jobs:
     - name: Test with pytest
       run: pytest -vvv
       env:
-        OTELIB_TEST_OTE_SERVER_URL: "http://localhost:${{ env.PORT }}"
+        OTELIB_TEST_OTE_SERVER_URL: "http://localhost:${{ env.OTEAPI_PORT }}"

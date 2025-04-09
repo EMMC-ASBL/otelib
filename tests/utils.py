@@ -1,14 +1,14 @@
 """Utility functions for tests."""
 
 import json
+import sys
 from pathlib import Path
 from subprocess import run
 from typing import TYPE_CHECKING
 
-try:
-    # For Python >= 3.11
+if sys.version_info >= (3, 11):
     from enum import StrEnum
-except ImportError:
+else:
     from enum import Enum
 
     class StrEnum(str, Enum):
