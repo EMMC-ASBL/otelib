@@ -1,30 +1,32 @@
 """Pytest fixtures for everything in tests/strategies."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 import pytest
 
 if TYPE_CHECKING:
-    from typing import Literal, Union
+    from typing import Literal
 
     from otelib.backends import python as python_backend
     from otelib.backends import services as services_backend
 
     from ..conftest import ResourceType
 
-    StrategyCls = Union[
-        python_backend.DataResource,
-        python_backend.Filter,
-        python_backend.Function,
-        python_backend.Mapping,
-        python_backend.Transformation,
-        services_backend.DataResource,
-        services_backend.Filter,
-        services_backend.Parser,
-        services_backend.Function,
-        services_backend.Mapping,
-        services_backend.Transformation,
-    ]
+    StrategyCls = (
+        python_backend.DataResource
+        | python_backend.Filter
+        | python_backend.Function
+        | python_backend.Mapping
+        | python_backend.Transformation
+        | services_backend.DataResource
+        | services_backend.Filter
+        | services_backend.Parser
+        | services_backend.Function
+        | services_backend.Mapping
+        | services_backend.Transformation
+    )
 
 
 @pytest.fixture(
@@ -33,8 +35,8 @@ if TYPE_CHECKING:
 def strategy_implementation(
     request: pytest.FixtureRequest,
     backend: str,
-    resource_type_cls: "type[ResourceType]",
-) -> "tuple[type[StrategyCls], ResourceType, Literal['python', 'services']]":
+    resource_type_cls: type[ResourceType],
+) -> tuple[type[StrategyCls], ResourceType, Literal["python", "services"]]:
     """Return a given strategy class implementation as well as the current backend.
 
     Returns:

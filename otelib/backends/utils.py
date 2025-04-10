@@ -1,11 +1,15 @@
 """Utility function and classes for use in the Backends module."""
 
-try:
-    from enum import StrEnum  # type: ignore[attr-defined]
-except ImportError:
+from __future__ import annotations
+
+import sys
+
+if sys.version_info >= (3, 11):
+    from enum import StrEnum
+else:
     from enum import Enum
 
-    class StrEnum(str, Enum):  # type: ignore[no-redef]
+    class StrEnum(str, Enum):
         """Pre-3.11 style string-Enums."""
 
 

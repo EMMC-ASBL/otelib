@@ -1,12 +1,14 @@
 """Tests for `otelib.strategies.abc`."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 import pytest
 from utils import strategy_create_kwargs
 
 if TYPE_CHECKING:
-    from typing import Any, Union
+    from typing import Any
 
     from requests_mock import Mocker
 
@@ -15,24 +17,24 @@ if TYPE_CHECKING:
 
     from ..conftest import OTEResponse, Testdata, TestResourceIds
 
-    BaseStrategy = Union[BasePythonStrategy, BaseServicesStrategy]
+    BaseStrategy = BasePythonStrategy | BaseServicesStrategy
 
 
 @pytest.mark.parametrize(
-    "strategy_name,create_kwargs",
+    ("strategy_name", "create_kwargs"),
     strategy_create_kwargs(),
     ids=[_[0] for _ in strategy_create_kwargs()],
 )
 @pytest.mark.usefixtures("mock_session")
 def test_get(
     backend: str,
-    mock_ote_response: "OTEResponse",
-    ids: "TestResourceIds",
-    testdata: "Testdata",
+    mock_ote_response: OTEResponse,
+    ids: TestResourceIds,
+    testdata: Testdata,
     server_url: str,
     strategy_name: str,
-    create_kwargs: "dict[str, Any]",
-    requests_mock: "Mocker",
+    create_kwargs: dict[str, Any],
+    requests_mock: Mocker,
 ) -> None:
     """Test `AbstractStrategy.get()`."""
     if strategy_name == "function":
@@ -54,7 +56,7 @@ def test_get(
             method="post",
             endpoint=f"/{strategy_name}",
             response_json={
-                f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # noqa: E501
+                f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"
                 "_id": ids(strategy_name)
             },
         )
@@ -104,7 +106,7 @@ def test_get(
 
     strategy_name_map = {"dataresource": "DataResource"}
 
-    strategy: "BaseStrategy" = getattr(
+    strategy: BaseStrategy = getattr(
         strategies, strategy_name_map.get(strategy_name, strategy_name.capitalize())
     )(server_url)
 
@@ -127,7 +129,7 @@ def test_get(
         # Real backend !
         # Dynamic response content - just check keys are the same and values are
         # non-empty
-        _content: "dict[str, Any]" = json.loads(content)
+        _content: dict[str, Any] = json.loads(content)
         assert list(_content) == list(testdata(strategy_name))
         assert all(_content.values())
     else:
@@ -143,7 +145,7 @@ def test_get(
             f"{strategy.url}{strategy.settings.prefix}/session/{strategy._session_id}",
             timeout=30,
         )
-        session: "dict[str, Any]" = content_session.json()
+        session: dict[str, Any] = content_session.json()
     elif backend == "python":
         session_ids = [x for x in strategy.cache if "session" in x]
         assert len(session_ids) == 1
@@ -164,23 +166,23 @@ def test_get(
         ):
             # The task ID is dynamically generated.
             # Simply check the value is non-empty
-            assert key in session and session[key]
+            assert session.get(key)
         else:
             assert value == session[key]
 
 
 @pytest.mark.parametrize(
-    "strategy_name,create_kwargs",
+    ("strategy_name", "create_kwargs"),
     strategy_create_kwargs(),
     ids=[_[0] for _ in strategy_create_kwargs()],
 )
 def test_services_get_fails(
-    mock_ote_response: "OTEResponse",
-    ids: "TestResourceIds",
+    mock_ote_response: OTEResponse,
+    ids: TestResourceIds,
     server_url: str,
     strategy_name: str,
-    create_kwargs: "dict[str, Any]",
-    requests_mock: "Mocker",
+    create_kwargs: dict[str, Any],
+    requests_mock: Mocker,
 ) -> None:
     """Check `AbstractStrategy.get()` raises `ApiError` upon request failure."""
     from otelib.backends import services as strategies
@@ -194,7 +196,7 @@ def test_services_get_fails(
         method="post",
         endpoint=f"/{strategy_name}",
         response_json={
-            f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # noqa: E501
+            f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"
             "_id": ids(strategy_name)
         },
     )
@@ -208,7 +210,7 @@ def test_services_get_fails(
 
     strategy_name_map = {"dataresource": "DataResource", "parser": "Parser"}
 
-    strategy: "BaseStrategy" = getattr(
+    strategy: BaseStrategy = getattr(
         strategies, strategy_name_map.get(strategy_name, strategy_name.capitalize())
     )(server_url)
 
@@ -216,7 +218,7 @@ def test_services_get_fails(
     strategy.create(**create_kwargs)
     assert strategy.strategy_id
 
-    with pytest.raises(ApiError, match=f"^{ApiError.__name__}.*"):
+    with pytest.raises(ApiError, match=f"^{ApiError.__name__}.*"):  # noqa: PT012
         # Change `url` attribute to hit a wrong URL and raise
         strategy.url = wrong_url
         strategy.get()

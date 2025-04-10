@@ -1,5 +1,7 @@
 """Base API for backend strategies."""
 
+from __future__ import annotations
+
 import os
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
@@ -8,7 +10,6 @@ from otelib.backends.utils import StrategyType
 from otelib.pipe import Pipe
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Optional
 
     from oteapi.models.genericconfig import GenericConfig
 
@@ -16,21 +17,21 @@ if TYPE_CHECKING:  # pragma: no cover
 class AbstractBaseStrategy(ABC):
     """The abstract base class defining the API for strategies."""
 
-    strategy_name: "str"
-    strategy_config: "type[GenericConfig]"
+    strategy_name: str
+    strategy_config: type[GenericConfig]
 
     def __init__(self, source: str) -> None:
         """Initiates a strategy."""
         if not source:
             raise ValueError("source must be provided.")
 
-        self.input_pipe: "Optional[Pipe]" = None
+        self.input_pipe: Pipe | None = None
         self.strategy_id: str = ""
         self.strategy_type = StrategyType(self.strategy_name)
 
         # For debugging/testing
         self.debug = bool(os.getenv("OTELIB_DEBUG", ""))
-        self._session_id: "Optional[str]" = None
+        self._session_id: str | None = None
 
     @abstractmethod
     def create(self, **kwargs) -> None:
@@ -67,7 +68,7 @@ class AbstractBaseStrategy(ABC):
 
         """
 
-    def get(self, session_id: "Optional[str]" = None) -> bytes:
+    def get(self, session_id: str | None = None) -> bytes:
         """Executes a pipeline.
 
         This will call `initialize()` and then the `get()` method on the
@@ -119,7 +120,7 @@ class AbstractBaseStrategy(ABC):
         start_filter = _find_start_filter(self)
         start_filter.input_pipe = input_pipe
 
-    def __rshift__(self, other: "AbstractBaseStrategy") -> "AbstractBaseStrategy":
+    def __rshift__(self, other: AbstractBaseStrategy) -> AbstractBaseStrategy:
         """Implements strategy concatenation using the `>>` symbol.
 
         Parameters:

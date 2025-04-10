@@ -1,5 +1,7 @@
 """Function strategy."""
 
+from __future__ import annotations
+
 from oteapi.models import FunctionConfig
 
 from otelib.backends.services.base import BaseServicesStrategy

@@ -1,5 +1,7 @@
 """Base API for backend client."""
 
+from __future__ import annotations
+
 import warnings
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
@@ -9,7 +11,7 @@ from otelib.backends.utils import Backend, StrategyType
 from otelib.warnings import IgnoringConfigOptions
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Any, Union
+    from typing import Any
 
     from otelib.backends.strategies import AbstractBaseStrategy
 
@@ -17,7 +19,7 @@ if TYPE_CHECKING:  # pragma: no cover
 class AbstractBaseClient(ABC):
     """The abstract base class defining the API for a backend client."""
 
-    _backend: "Union[Backend, str]"
+    _backend: Backend | str
 
     def __init__(self, source: str, **config) -> None:
         """Initiates a client."""
@@ -50,19 +52,20 @@ class AbstractBaseClient(ABC):
             )
         self._source = source
 
-    def _set_config(self, config: "dict[str, Any]") -> None:
+    def _set_config(self, config: dict[str, Any]) -> None:
         """Set the custom client configuration options."""
         if config:
             warnings.warn(
                 f"The given configuration option(s) for {tuple(config)} is/are "
                 "ignored.",
                 IgnoringConfigOptions,
+                stacklevel=2,
             )
 
     @abstractmethod
     def _create_strategy(
-        self, strategy_cls: "type[AbstractBaseStrategy]", **config
-    ) -> "AbstractBaseStrategy":
+        self, strategy_cls: type[AbstractBaseStrategy], **config
+    ) -> AbstractBaseStrategy:
         """Create a strategy.
 
         This method should not be run by a user, hence it is "private".
@@ -75,8 +78,8 @@ class AbstractBaseClient(ABC):
         """
 
     def create_strategy(
-        self, strategy_type: "Union[str, StrategyType]", **config
-    ) -> "AbstractBaseStrategy":
+        self, strategy_type: str | StrategyType, **config
+    ) -> AbstractBaseStrategy:
         """Create a strategy."""
         strategy_cls = strategy_factory(self._backend, strategy_type)
         return self._create_strategy(strategy_cls, **config)

@@ -1,5 +1,7 @@
 """Backend factory functions."""
 
+from __future__ import annotations
+
 import importlib
 from typing import TYPE_CHECKING
 
@@ -7,13 +9,12 @@ from otelib.backends.utils import Backend, StrategyType
 from otelib.exceptions import InvalidBackend, InvalidStrategy
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Union
 
     from otelib.backends.client import AbstractBaseClient
     from otelib.backends.strategies import AbstractBaseStrategy
 
 
-def client_factory(backend: "Union[str, Backend]") -> "type[AbstractBaseClient]":
+def client_factory(backend: str | Backend) -> type[AbstractBaseClient]:
     """Return a backend client class."""
     try:
         backend = Backend(backend)
@@ -23,17 +24,17 @@ def client_factory(backend: "Union[str, Backend]") -> "type[AbstractBaseClient]"
     client_module = importlib.import_module(f"otelib.backends.{backend}.client")
 
     if backend == backend.PYTHON:
-        return getattr(client_module, "OTEPythonClient")
+        return client_module.OTEPythonClient
 
     if backend == backend.SERVICES:
-        return getattr(client_module, "OTEServiceClient")
+        return client_module.OTEServiceClient
 
     raise InvalidBackend(f"{str(backend)!r} is not a valid backend.")
 
 
 def strategy_factory(
-    backend: "Union[str, Backend]", strategy_type: "Union[str, StrategyType]"
-) -> "type[AbstractBaseStrategy]":
+    backend: str | Backend, strategy_type: str | StrategyType
+) -> type[AbstractBaseStrategy]:
     """Return a backend-specific strategy class."""
     try:
         backend = Backend(backend)

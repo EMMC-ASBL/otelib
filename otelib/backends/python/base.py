@@ -1,5 +1,7 @@
 """Base class for strategies in the Python backend."""
 
+from __future__ import annotations
+
 import json
 import warnings
 from typing import TYPE_CHECKING
@@ -13,7 +15,7 @@ from otelib.backends.strategies import AbstractBaseStrategy
 from otelib.exceptions import ItemNotFoundInCache, PythonBackendException
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Any, Literal, Optional
+    from typing import Any, Literal
 
     from oteapi.models import GenericConfig
 
@@ -27,16 +29,18 @@ class BasePythonStrategy(AbstractBaseStrategy):
 
     Attributes:
         interpreter (str): This is always `python` for the Python backend.
-        input_pipe (Optional[Pipe]): An input pipeline.
+        input_pipe (Pipe | None): An input pipeline.
 
     """
 
-    def __init__(self, source: str, cache: "Optional[dict[str, Any]]" = None) -> None:
+    def __init__(self, source: str, cache: dict[str, Any] | None = None) -> None:
         super().__init__(source)
 
-        self.interpreter: "Optional[str]" = source
+        self.interpreter: str | None = source
         if cache is None:
-            warnings.warn(f"No global cache used for Python backend strategy {self}")
+            warnings.warn(
+                f"No global cache used for Python backend strategy {self}", stacklevel=2
+            )
         self.cache = cache if cache is not None else {}
 
         if self.interpreter != "python":
@@ -81,7 +85,7 @@ class BasePythonStrategy(AbstractBaseStrategy):
         return session_id
 
     def _run_strategy_method(
-        self, method_name: "Literal['get', 'initialize']", session_id: str
+        self, method_name: Literal["get", "initialize"], session_id: str
     ) -> bytes:
         """Generic implementation of the `fetch()` and `initialize()` methods.
 
@@ -133,7 +137,9 @@ class BasePythonStrategy(AbstractBaseStrategy):
             encoding="utf-8"
         )
 
-    def _sanity_checks(self, session_id: str, config: "GenericConfig") -> None:
+    def _sanity_checks(
+        self, session_id: str, config: GenericConfig  # noqa: ARG002
+    ) -> None:
         """Perform sanity checks before running a strategy method.
 
         Parameters:
@@ -154,7 +160,7 @@ class BasePythonStrategy(AbstractBaseStrategy):
                 "Did you run this method through get()?", session_id
             )
 
-    def _fetch_session_data(self, session_id: str) -> "dict[str, Any]":
+    def _fetch_session_data(self, session_id: str) -> dict[str, Any]:
         """Perform sanity checks before running a strategy method.
 
         Parameters:

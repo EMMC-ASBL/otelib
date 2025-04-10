@@ -1,12 +1,14 @@
 """Test the `otelib.pipe` module."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 import pytest
 from utils import strategy_create_kwargs
 
 if TYPE_CHECKING:
-    from typing import Any, Union
+    from typing import Any
 
     from requests_mock import Mocker
 
@@ -17,28 +19,28 @@ if TYPE_CHECKING:
 
     from .conftest import OTEResponse, Testdata, TestResourceIds
 
-    BaseStrategy = Union[BasePythonStrategy, BaseServicesStrategy]
+    BaseStrategy = BasePythonStrategy | BaseServicesStrategy
 
-    DataResource = Union[python_backend.DataResource, services_backend.DataResource]
-    Parser = Union[python_backend.Parser, services_backend.DataResource]
-    Filter = Union[python_backend.Filter, services_backend.Filter]
+    DataResource = python_backend.DataResource | services_backend.DataResource
+    Parser = python_backend.Parser | services_backend.DataResource
+    Filter = python_backend.Filter | services_backend.Filter
 
 
 @pytest.mark.parametrize(
-    "strategy_name,create_kwargs",
+    ("strategy_name", "create_kwargs"),
     strategy_create_kwargs(),
     ids=[_[0] for _ in strategy_create_kwargs()],
 )
 @pytest.mark.usefixtures("mock_session")
 def test_pipe(
     backend: str,
-    mock_ote_response: "OTEResponse",
-    ids: "TestResourceIds",
-    testdata: "Testdata",
+    mock_ote_response: OTEResponse,
+    ids: TestResourceIds,
+    testdata: Testdata,
     server_url: str,
     strategy_name: str,
-    create_kwargs: "dict[str, Any]",
-    requests_mock: "Mocker",
+    create_kwargs: dict[str, Any],
+    requests_mock: Mocker,
 ) -> None:
     """Test creating a `Pipe` and run the `get()` method."""
     if strategy_name == "function":
@@ -65,7 +67,7 @@ def test_pipe(
             method="post",
             endpoint=f"/{strategy_name}",
             response_json={
-                f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"  # noqa: E501
+                f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"
                 "_id": ids(strategy_name)
             },
         )
@@ -115,7 +117,7 @@ def test_pipe(
 
     strategy_name_map = {"dataresource": "DataResource", "parser": "Parser"}
 
-    strategy: "BaseStrategy" = getattr(
+    strategy: BaseStrategy = getattr(
         strategies, strategy_name_map.get(strategy_name, strategy_name.capitalize())
     )(server_url)
 
@@ -136,7 +138,7 @@ def test_pipe(
         # Real backend !
         # Dynamic response content - just check keys are the same and values are
         # non-empty
-        _content: "dict[str, Any]" = json.loads(content)
+        _content: dict[str, Any] = json.loads(content)
         assert list(_content) == list(testdata(strategy_name))
         assert all(_content.values())
     else:
@@ -148,7 +150,7 @@ def test_pipe(
             f"{strategy.url}{strategy.settings.prefix}/session/{strategy._session_id}",
             timeout=30,
         )
-        session: "dict[str, Any]" = content_session.json()
+        session: dict[str, Any] = content_session.json()
     elif backend == "python":
         session_ids = [x for x in strategy.cache if "session" in x]
         assert len(session_ids) == 1
@@ -168,7 +170,7 @@ def test_pipe(
         ):
             # The task ID is dynamically generated.
             # Simply check the value is non-empty
-            assert key in session and session[key]
+            assert session.get(key)
         else:
             assert value == session[key]
 
@@ -176,11 +178,11 @@ def test_pipe(
 @pytest.mark.usefixtures("mock_session")
 def test_pipeing_strategies(
     backend: str,
-    mock_ote_response: "OTEResponse",
-    ids: "TestResourceIds",
-    testdata: "Testdata",
+    mock_ote_response: OTEResponse,
+    ids: TestResourceIds,
+    testdata: Testdata,
     server_url: str,
-    requests_mock: "Mocker",
+    requests_mock: Mocker,
 ) -> None:
     """A simple pipeline will be tested."""
     import importlib
@@ -278,11 +280,9 @@ def test_pipeing_strategies(
         cache = {}
         strategy_kwargs["cache"] = cache
 
-    data_resource: "DataResource" = strategies.DataResource(
-        server_url, **strategy_kwargs
-    )
-    parser: "Parser" = strategies.Parser(server_url, **strategy_kwargs)
-    filter: "Filter" = strategies.Filter(server_url, **strategy_kwargs)
+    data_resource: DataResource = strategies.DataResource(server_url, **strategy_kwargs)
+    parser: Parser = strategies.Parser(server_url, **strategy_kwargs)
+    filter: Filter = strategies.Filter(server_url, **strategy_kwargs)
 
     # We must create the data resource and filter - getting IDs
     create_kwargs = dict(strategy_create_kwargs())
@@ -311,7 +311,7 @@ def test_pipeing_strategies(
             f"{pipeline.url}{pipeline.settings.prefix}/session/{pipeline._session_id}",
             timeout=30,
         )
-        session: "dict[str, Any]" = content_session.json()
+        session: dict[str, Any] = content_session.json()
     elif backend == "python":
         session_ids = [x for x in pipeline.cache if "session" in x]
         assert len(session_ids) == 1
@@ -330,10 +330,8 @@ def test_pipeing_strategies(
         cache = {}
         strategy_kwargs["cache"] = cache
 
-    data_resource: "DataResource" = strategies.DataResource(
-        server_url, **strategy_kwargs
-    )
-    filter: "Filter" = strategies.Filter(server_url, **strategy_kwargs)
+    data_resource: DataResource = strategies.DataResource(server_url, **strategy_kwargs)
+    filter: Filter = strategies.Filter(server_url, **strategy_kwargs)
 
     # We must create the data resource and filter - getting IDs
     create_kwargs = dict(strategy_create_kwargs())
@@ -360,7 +358,7 @@ def test_pipeing_strategies(
             f"{pipeline.url}{pipeline.settings.prefix}/session/{pipeline._session_id}",
             timeout=30,
         )
-        session: "dict[str, Any]" = content_session.json()
+        session: dict[str, Any] = content_session.json()
     elif backend == "python":
         session_ids = [x for x in pipeline.cache if "session" in x]
         assert len(session_ids) == 1
@@ -390,23 +388,23 @@ def test_pipeing_concatenate(
         cache = {}
         strategy_kwargs["cache"] = cache
 
-    data_resource1: "DataResource" = strategies.DataResource(
+    data_resource1: DataResource = strategies.DataResource(
         server_url, **strategy_kwargs
     )
     dataid1 = data_resource1.strategy_id
-    parser1: "Parser" = strategies.Parser(server_url, **strategy_kwargs)
+    parser1: Parser = strategies.Parser(server_url, **strategy_kwargs)
     parserid1 = parser1.strategy_id
-    filter1: "Filter" = strategies.Filter(server_url, **strategy_kwargs)
+    filter1: Filter = strategies.Filter(server_url, **strategy_kwargs)
     filterid1 = filter1.strategy_id
     pipeline1 = data_resource1 >> parser1 >> filter1
 
-    data_resource2: "DataResource" = strategies.DataResource(
+    data_resource2: DataResource = strategies.DataResource(
         server_url, **strategy_kwargs
     )
     dataid2 = data_resource2.strategy_id
-    parser2: "Parser" = strategies.Parser(server_url, **strategy_kwargs)
+    parser2: Parser = strategies.Parser(server_url, **strategy_kwargs)
     parserid2 = parser2.strategy_id
-    filter2: "Filter" = strategies.Filter(server_url, **strategy_kwargs)
+    filter2: Filter = strategies.Filter(server_url, **strategy_kwargs)
     filterid2 = filter2.strategy_id
     pipeline2 = data_resource2 >> filter2
 

@@ -3,6 +3,8 @@
 A package to interact with the Open Translation Environment (OTE) API.
 """
 
+from __future__ import annotations
+
 from .client import OTEClient
 
 __all__ = ("OTEClient",)

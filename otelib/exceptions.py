@@ -1,5 +1,7 @@
 """OTElib exceptions."""
 
+from __future__ import annotations
+
 
 class BaseOtelibException(Exception):
     """A base OTElib exception."""

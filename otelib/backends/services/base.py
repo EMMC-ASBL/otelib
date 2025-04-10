@@ -1,5 +1,7 @@
 """Base class for strategies in the service/REST API backend."""
 
+from __future__ import annotations
+
 import json
 from typing import TYPE_CHECKING
 
@@ -10,7 +12,7 @@ from otelib.exceptions import ApiError
 from otelib.settings import Settings
 
 if TYPE_CHECKING:  # pragma: no cover
-    from typing import Any, Optional
+    from typing import Any
 
 
 class BaseServicesStrategy(AbstractBaseStrategy):
@@ -22,19 +24,19 @@ class BaseServicesStrategy(AbstractBaseStrategy):
     Attributes:
         url (str): The base URL of the OTEAPI Service.
         settings (otelib.settings.Settings): OTEAPI Service settings.
-        input_pipe (Optional[Pipe]): An input pipeline.
+        input_pipe (Pipe | None): An input pipeline.
 
     """
 
     def __init__(self, source: str) -> None:
         super().__init__(source)
 
-        self.url: "Optional[str]" = source
-        self._headers: "Optional[dict[str, Any]]" = None
+        self.url: str | None = source
+        self._headers: dict[str, Any] | None = None
         self.settings = Settings()
 
     @property
-    def headers(self) -> "dict[str, Any]":
+    def headers(self) -> dict[str, Any]:
         """URL headers to use for all requests to the OTEAPI Service."""
         value = self._headers or {}
         if "Content-Type" not in value:
@@ -42,7 +44,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         return value
 
     @headers.setter
-    def headers(self, value: "dict[str, Any]") -> None:
+    def headers(self, value: dict[str, Any]) -> None:
         """Set the URL headers to use for all requests to the OTEAPI Service."""
         if not isinstance(value, dict):
             raise TypeError("headers must be a dictionary")

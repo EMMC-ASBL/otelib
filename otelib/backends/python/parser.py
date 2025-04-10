@@ -1,6 +1,9 @@
 """Common strategy for Download, Parse and Resource strategies."""
 
+from __future__ import annotations
+
 from oteapi.models import ParserConfig
+
 from otelib.backends.python.base import BasePythonStrategy
 
 
@@ -9,4 +12,4 @@ class Parser(BasePythonStrategy):
     operations."""
 
     strategy_name = "parser"
-    strategy_config: "type[ParserConfig]" = ParserConfig
+    strategy_config: type[ParserConfig] = ParserConfig

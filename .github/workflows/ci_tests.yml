@@ -20,24 +20,15 @@ jobs:
       run_build_docs: false
 
       # pre-commit
-      run_pre-commit: true
-      python_version_pre-commit: "3.9"
+      run_pre-commit: false
 
       run_pylint: false
       run_safety: true
-      # Ignore ID 44715 for now.
-      # See this NumPy issue for more information: https://github.com/numpy/numpy/issues/19038
-      # ID: 70612
-      #   Package: Jinja2
-      #   Has been disputed by the maintainer and multiple third parties.
-      #   For more information see: https://github.com/advisories/GHSA-f6pv-j8mr-w6rr
-      safety_options: |
-        --ignore=44715
-        --ignore=70612
+      python_version_pylint_safety: "3.10"
 
       # Build package
       run_build_package: true
-      python_version_package: "3.9"
+      python_version_package: "3.10"
       build_libs: flit
       build_cmd: flit build
 
@@ -51,10 +42,10 @@ jobs:
         os:
         - ["ubuntu-latest", "linux"]
         - ["windows-latest", "windows"]
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
-    - name: Checkout repository
+    - name: Checkout ${{ github.repository }}
       uses: actions/checkout@v4
       with:
         fetch-depth: 2
@@ -90,26 +81,25 @@ jobs:
     name: pytest-real backend
 
     env:
-      PORT: 8080
-      OTEAPI_prefix: "/api/v1"
+      OTEAPI_PORT: 8080
+      OTEAPI_PREFIX: "/api/v1"
 
     services:
       redis:
         image: redis:latest
-        volumes:
-          - redis-persist:/data
         ports:
           - "6379:6379"
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout ${{ github.repository }}
+      uses: actions/checkout@v4
       with:
         fetch-depth: 2
 
-    - name: Set up Python 3.9
+    - name: Set up Python 3.10
       uses: actions/setup-python@v5
       with:
-        python-version: "3.9"
+        python-version: "3.10"
 
     - name: Install python dependencies
       run: |
@@ -124,11 +114,11 @@ jobs:
           --env "OTEAPI_REDIS_TYPE=redis" \
           --env "OTEAPI_REDIS_HOST=localhost" \
           --env "OTEAPI_REDIS_PORT=6379" \
-          --env "OTEAPI_prefix=${OTEAPI_prefix}" \
+          --env OTEAPI_PREFIX \
           --network "host" \
           ghcr.io/emmc-asbl/oteapi:${DOCKER_OTEAPI_VERSION} &
 
-        .github/utils/wait_for_it.sh localhost:${PORT} -t 240
+        .github/utils/wait_for_it.sh localhost:${OTEAPI_PORT} -t 240
         sleep 5
       env:
         DOCKER_OTEAPI_VERSION: latest
@@ -136,4 +126,4 @@ jobs:
     - name: Test with pytest
       run: pytest -vvv
       env:
-        OTELIB_TEST_OTE_SERVER_URL: "http://localhost:${{ env.PORT }}"
+        OTELIB_TEST_OTE_SERVER_URL: "http://localhost:${{ env.OTEAPI_PORT }}"
