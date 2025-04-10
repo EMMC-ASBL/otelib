@@ -2,12 +2,53 @@
 
 ## [Unreleased](https://github.com/EMMC-ASBL/otelib/tree/HEAD)
 
-[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.5.0...HEAD)
+[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v1.0.0...HEAD)
 
-# Update to OTEAPI Core v0.7.0
+# OTELib v1
 
-This is based on pydantic v2 and a rethinking of the `session` object.
-The latest dev-versions of OTELib has already implemented support for these changes.
+This release marks the upgrade from in-development versions to a proper v1.
+It represents the vast work that has gone into the OTE work through various EU projects; developing and utilizing the technology to bring semantically documented data through to simulators and other software that can specify what they desire, semantically, and subsequently retrieve it through OTE pipelines.
+
+## Drop Python 3.9 support
+
+With this version Python 3.9 support is also dropped.
+This matches the drop of Python 3.9 support in the [OTEAPI Core](https://github.com/EMMC-ASBL/oteapi-core) package.
+
+The minimum required Python version is now Python 3.10.
+Python 3.13 test runs are added to the CI workflows.
+
+## DX
+
+Update dev tools, specifically the `ruff` configuration and add several other dev tools: `blacken-docs`, `markdownlint-cli2`, and `pyupgrade`.
+
+**Implemented enhancements:**
+
+- Update ruff configuration to match other OTE repositories [\#239](https://github.com/EMMC-ASBL/otelib/issues/239)
+
+## [v1.0.0](https://github.com/EMMC-ASBL/otelib/tree/v1.0.0) (2025-04-10)
+
+[Full Changelog](https://github.com/EMMC-ASBL/otelib/compare/v0.5.0...v1.0.0)
+
+# OTELib v1
+
+This release marks the upgrade from in-development versions to a proper v1.
+It represents the vast work that has gone into the OTE work through various EU projects; developing and utilizing the technology to bring semantically documented data through to simulators and other software that can specify what they desire, semantically, and subsequently retrieve it through OTE pipelines.
+
+## Drop Python 3.9 support
+
+With this version Python 3.9 support is also dropped.
+This matches the drop of Python 3.9 support in the [OTEAPI Core](https://github.com/EMMC-ASBL/oteapi-core) package.
+
+The minimum required Python version is now Python 3.10.
+Python 3.13 test runs are added to the CI workflows.
+
+## DX
+
+Update dev tools, specifically the `ruff` configuration and add several other dev tools: `blacken-docs`, `markdownlint-cli2`, and `pyupgrade`.
+
+**Merged pull requests:**
+
+- Compound updates to use OTEAPI Core v1 [\#280](https://github.com/EMMC-ASBL/otelib/pull/280) ([CasperWA](https://github.com/CasperWA))
 
 ## [v0.5.0](https://github.com/EMMC-ASBL/otelib/tree/v0.5.0) (2025-04-07)
 
