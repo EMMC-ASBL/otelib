@@ -22,15 +22,28 @@ jobs:
       # pre-commit
       run_pre-commit: false
 
+      # pylint + safety
       run_pylint: false
-      run_safety: true
-      python_version_pylint_safety: "3.10"
+      run_safety: false
 
       # Build package
       run_build_package: true
       python_version_package: "3.10"
       build_libs: flit
       build_cmd: flit build
+
+  safety:
+    name: Safety
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout ${{ github.repository }}
+      uses: actions/checkout@v4
+
+    - name: Run Safety CLI to check for vulnerabilities
+      uses: pyupio/safety-action@v1
+      with:
+        api-key: ${{ secrets.SAFETY_API_TOKEN }}
 
   pytest:
     name: pytest (${{ matrix.os[1] }}, py${{ matrix.python-version }})
