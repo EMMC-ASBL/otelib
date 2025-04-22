@@ -33,7 +33,7 @@ jobs:
       build_cmd: flit build
 
   pip-audit:
-    name: Safety
+    name: pip-audit
     runs-on: ubuntu-latest
 
     steps:
