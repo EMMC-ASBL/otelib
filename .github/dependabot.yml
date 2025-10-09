@@ -10,7 +10,9 @@ updates:
     - CI/CD
     - skip-changelog
 - package-ecosystem: pip
-  directory: "/"
+  directories:
+    - "/"
+    - "/.github/utils"
   schedule:
     interval: weekly
     day: monday
