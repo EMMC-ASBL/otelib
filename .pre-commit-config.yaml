@@ -33,7 +33,7 @@ repos:
       args: [--markdown-linebreak-ext=md]
 
   - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.19.1
+    rev: v0.20.0
     hooks:
     - id: markdownlint-cli2
       name: markdownlint
@@ -49,7 +49,7 @@ repos:
       args: [--py310-plus]
 
   - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 25.11.0
+    rev: 25.12.0
     hooks:
     - id: black
 
@@ -60,7 +60,7 @@ repos:
       additional_dependencies: [black]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.7
+    rev: v0.14.8
     hooks:
       - id: ruff-check
         name: ruff
