@@ -61,6 +61,12 @@ jobs:
       uses: pypa/gh-action-pip-audit@v1.1.0
       with:
         inputs: '${{ runner.temp }}/requirements.txt'
+        # CVE-2025-69872: DiskCache 5.6.3
+        #   DiskCache (python-diskcache) through 5.6.3 uses Python pickle for serialization by default.
+        #   An attacker with write access to the cache directory can achieve arbitrary code execution
+        #   when a victim application reads from the cache.
+        ignore-vulns: |
+          CVE-2025-69872
 
   pytest:
     name: pytest (${{ matrix.os[1] }}, py${{ matrix.python-version }})
