@@ -49,7 +49,7 @@ repos:
       args: [--py310-plus]
 
   - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 26.1.0
+    rev: 26.3.0
     hooks:
     - id: black
 
@@ -60,7 +60,7 @@ repos:
       additional_dependencies: [black]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.4
+    rev: v0.15.5
     hooks:
       - id: ruff-check
         name: ruff
