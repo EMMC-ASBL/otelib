@@ -9,6 +9,13 @@ updates:
   labels:
     - CI/CD
     - skip-changelog
+  groups:
+    actions:
+      applies-to: version-updates
+      patterns: ["*"]
+    actions-security:
+      applies-to: security-updates
+      patterns: ["*"]
 - package-ecosystem: pip
   directories:
     - "/"
@@ -22,12 +29,9 @@ updates:
     - dependencies
     - skip-changelog
   groups:
-    python-dependencies:
+    python:
       applies-to: version-updates
-      dependency-type: production
-    python-dependencies-dev:
-      applies-to: version-updates
-      dependency-type: development
-    python-dependencies-security:
+      patterns: ["*"]
+    python-security:
       applies-to: security-updates
-      dependency-type: production
+      patterns: ["*"]
