@@ -238,7 +238,7 @@ def mock_ote_response(requests_mock: Mocker, server_url: str) -> OTEResponse:
                 params = parse_qs(params)
             _params = "?"
 
-            key = sorted(params)[0]
+            key = min(params)
             values = (
                 [params.pop(key)]
                 if isinstance(params[key], (str, int, float))
@@ -246,7 +246,7 @@ def mock_ote_response(requests_mock: Mocker, server_url: str) -> OTEResponse:
             )
             _params += "&".join(f"{key}={value}" for value in sorted(values))
             while params:
-                key = sorted(params)[0]
+                key = min(params)
                 values = (
                     [params.pop(key)]
                     if isinstance(params[key], (str, int, float))
@@ -268,7 +268,7 @@ def mock_ote_response(requests_mock: Mocker, server_url: str) -> OTEResponse:
         if headers is not None:
             mock_kwargs["headers"] = headers
 
-        logging.debug(
+        logging.debug(  # noqa: LOG015
             "Mocking request: %s %s%s%s%s status_Code=%s %s",
             method,
             ote_client.url if ote_client else server_url,

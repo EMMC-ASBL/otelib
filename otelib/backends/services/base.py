@@ -84,11 +84,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         )
         if response.ok:
             return response.content
-        strategy_name = (
-            self.strategy_type[len("data") :]
-            if self.strategy_type.startswith("data")
-            else self.strategy_type
-        )
+        strategy_name = self.strategy_type.removeprefix("data")
         raise ApiError(
             f"Cannot fetch {self.strategy_type}: session_id={session_id!r} "
             f"{strategy_name}_id={self.strategy_id!r}"
@@ -109,11 +105,7 @@ class BaseServicesStrategy(AbstractBaseStrategy):
         )
         if response.ok:
             return response.content
-        strategy_name = (
-            self.strategy_type[len("data") :]
-            if self.strategy_type.startswith("data")
-            else self.strategy_type
-        )
+        strategy_name = self.strategy_type.removeprefix("data")
         raise ApiError(
             f"Cannot initialize {self.strategy_type}: session_id={session_id!r} "
             f"{strategy_name}_id={self.strategy_id!r}"
