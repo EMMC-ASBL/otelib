@@ -57,7 +57,7 @@ def test_create_strategies(
             method="post",
             endpoint=f"/{strategy}",
             response_json={
-                f"{strategy[len('data'):] if strategy.startswith('data') else strategy}"
+                f"{strategy.removeprefix('data')}"
                 "_id": ids(strategy)
             },
         )

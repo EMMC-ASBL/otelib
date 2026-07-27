@@ -67,7 +67,7 @@ def test_pipe(
             method="post",
             endpoint=f"/{strategy_name}",
             response_json={
-                f"{strategy_name[len('data'):] if strategy_name.startswith('data') else strategy_name}"
+                f"{strategy_name.removeprefix('data')}"
                 "_id": ids(strategy_name)
             },
         )
