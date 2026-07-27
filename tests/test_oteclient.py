@@ -56,7 +56,7 @@ def test_create_strategies(
         mock_ote_response(
             method="post",
             endpoint=f"/{strategy}",
-            response_json={f"{strategy.removeprefix('data')}" "_id": ids(strategy)},
+            response_json={f"{strategy.removeprefix('data')}_id": ids(strategy)},
         )
 
         # initialize()
