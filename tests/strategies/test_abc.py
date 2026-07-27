@@ -194,9 +194,7 @@ def test_services_get_fails(
     mock_ote_response(
         method="post",
         endpoint=f"/{strategy_name}",
-        response_json={
-            f"{strategy_name.removeprefix('data')}_id": ids(strategy_name)
-        },
+        response_json={f"{strategy_name.removeprefix('data')}_id": ids(strategy_name)},
     )
 
     # Creating a session
